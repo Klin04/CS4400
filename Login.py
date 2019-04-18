@@ -5,7 +5,7 @@
 # Created by: PyQt5 UI code generator 5.12.1
 #
 # WARNING! All changes made in this file will be lost!
-
+import sys
 from PyQt5 import QtCore, QtGui, QtWidgets
 
 
@@ -58,3 +58,10 @@ class Ui_MainWindow(object):
         self.pushButton_2.setText(_translate("MainWindow", "Register"))
 
 
+if __name__ == '__main__':
+    app = QtWidgets.QApplication(sys.argv)
+    ex = Ui_MainWindow()
+    w = QtWidgets.QMainWindow()
+    ex.setupUi(w)
+    w.show()
+    sys.exit(app.exec_())
