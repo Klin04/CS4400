@@ -1,7 +1,7 @@
 import sys
 from PyQt5 import QtCore, QtWidgets, QtGui
 
-class ManagerFunc(QtWidgets.QWidget):
+class ManagerVisitorFunc(QtWidgets.QWidget):
     def __init__(self):
         QtWidgets.QWidget.__init__(self)
         self.title = QtWidgets.QLabel()
@@ -15,6 +15,9 @@ class ManagerFunc(QtWidgets.QWidget):
         self.viewstaffButton = QtWidgets.QPushButton('View Staff', self)
         self.viewTransitHistButton = QtWidgets.QPushButton('View Transit History', self)
         self.backButton = QtWidgets.QPushButton('Back', self) 
+        self.exploreeventButton = QtWidgets.QPushButton('Explore Event', self)
+        self.viewvisitHistButton = QtWidgets.QPushButton('View Visit History', self)
+        self.exploresiteButton = QtWidgets.QPushButton('Explore Site', self)
         layout.addWidget(self.manageProfileButton)
         layout.addWidget(self.viewsitereportButton)
         layout.addWidget(self.manageeventButton)
@@ -22,5 +25,8 @@ class ManagerFunc(QtWidgets.QWidget):
         layout.addWidget(self.viewstaffButton)
         layout.addWidget(self.viewTransitHistButton)
         layout.addWidget(self.backButton)
+        layout.addWidget(self.exploreeventButton)
+        layout.addWidget(self.viewvisitHistButton)
+        layout.addWidget(self.exploresiteButton)
         self.setLayout(layout)
         self.resize(600, 150)
