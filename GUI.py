@@ -213,6 +213,8 @@ class visitorOnlyRegistration(QtWidgets.QWidget):
     def registerB(self):
         print("Success register a visitor")
 
+class RegisterEmployeeOnly(QtWidgets.QWidget):
+
 class Controller:
 
     def __init__(self):
