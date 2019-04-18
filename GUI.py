@@ -2,41 +2,51 @@ import sys
 from PyQt5 import QtCore, QtWidgets, QtGui
 
 
-class MainWindow(QtWidgets.QWidget):
+# class MainWindow(QtWidgets.QWidget):
 
-    switch_window = QtCore.pyqtSignal(str)
+#     switch_window = QtCore.pyqtSignal(str)
+
+#     def __init__(self):
+#         QtWidgets.QWidget.__init__(self)
+#         self.setWindowTitle('Main Window')
+
+#         layout = QtWidgets.QGridLayout()
+
+#         self.line_edit = QtWidgets.QLineEdit()
+#         layout.addWidget(self.line_edit)
+
+#         self.button = QtWidgets.QPushButton('Switch Window')
+#         self.button.clicked.connect(self.switch)
+#         layout.addWidget(self.button)
+
+#         self.setLayout(layout)
+
+#     def switch(self):
+#         self.switch_window.emit(self.line_edit.text())
+
+
+class RegisterNavigation(QtWidgets.QWidget):
 
     def __init__(self):
         QtWidgets.QWidget.__init__(self)
-        self.setWindowTitle('Main Window')
+        self.setWindowTitle('Register Navigation')
+        self.title = QtWidgets.QLabel()
+        self.title.setText("Register Navigation")
+        self.title.setAlignment(QtCore.Qt.AlignCenter)
+        self.userOnly = QtWidgets.QPushButton('User Only', self)
+        self.visitorOnly = QtWidgets.QPushButton('Visitor Only', self)
+        self.employeeOnly = QtWidgets.QPushButton('Employee Only', self)
+        self.employeeVisitor = QtWidgets.QPushButton('Employee-Visitor', self)
+        self.back = QtWidgets.QPushButton('Back', self)
 
         layout = QtWidgets.QGridLayout()
 
-        self.line_edit = QtWidgets.QLineEdit()
-        layout.addWidget(self.line_edit)
-
-        self.button = QtWidgets.QPushButton('Switch Window')
-        self.button.clicked.connect(self.switch)
-        layout.addWidget(self.button)
-
-        self.setLayout(layout)
-
-    def switch(self):
-        self.switch_window.emit(self.line_edit.text())
-
-
-class Register(QtWidgets.QWidget):
-
-    def __init__(self):
-        QtWidgets.QWidget.__init__(self)
-        self.setWindowTitle('Register')
-
-        layout = QtWidgets.QGridLayout()
-
-        self.button = QtWidgets.QPushButton('Close')
-        self.button.clicked.connect(self.close)
-
-        layout.addWidget(self.button)
+        layout.addWidget(self.title)
+        layout.addWidget(self.userOnly)
+        layout.addWidget(self.visitorOnly)
+        layout.addWidget(self.employeeOnly)
+        layout.addWidget(self.employeeVisitor)
+        layout.addWidget(self.back)
 
         self.setLayout(layout)
 
@@ -80,7 +90,7 @@ class Login(QtWidgets.QWidget):
                 self, 'Error', 'Bad user or password')
 
     def handleRegister(self):
-        self.cams = Register()
+        self.cams = RegisterNavigation()
         self.cams.show()
         self.close()
 
@@ -91,19 +101,19 @@ class Controller:
 
     def show_login(self):
         self.login = Login()
-        self.login.switch_window.connect(self.show_main)
+        # self.login.switch_window.connect(self.show_main)
         self.login.show()
 
-    def show_main(self):
-        self.window = MainWindow()
-        self.window.switch_window.connect(self.show_register)
-        self.login.close()
-        self.window.show()
+    # def show_main(self):
+    #     self.window = MainWindow()
+    #     self.window.switch_window.connect(self.show_register)
+    #     self.login.close()
+    #     self.window.show()
 
-    def show_register(self, text):
-        self.register = Regsiter(text)
-        self.window.close()
-        self.register.show()
+    # def show_register(self, text):
+    #     self.register = Regsiter(text)
+    #     self.window.close()
+    #     self.register.show()
 
 
 def main():
