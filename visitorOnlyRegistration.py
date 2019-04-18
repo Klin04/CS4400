@@ -1,3 +1,6 @@
+import sys
+from PyQt5 import QtCore, QtWidgets, QtGui
+
 class visitorOnlyRegistration(QtWidgets.QWidget):
     switch_window = QtCore.pyqtSignal(str)
 
@@ -48,6 +51,7 @@ class visitorOnlyRegistration(QtWidgets.QWidget):
         self.setLayout(layout)
 
     def backB(self):
+        from RegisterNavigation import RegisterNavigation
         self.cams = RegisterNavigation()
         self.cams.show()
         self.close()

@@ -1,19 +1,18 @@
 import sys
 from PyQt5 import QtCore, QtWidgets, QtGui
 
-class userOnlyRegistration(QtWidgets.QWidget):
-
-    switch_window = QtCore.pyqtSignal(str)
-
+class employeeOnlyRegistration(QtWidgets.QWidget):
     def __init__(self):
         QtWidgets.QWidget.__init__(self)
-        self.setWindowTitle('User Only Registration')
+        self.setWindowTitle('Visitor Only Registration')
         self.title = QtWidgets.QLabel()
-        self.title.setText("Register User")
+        self.title.setText("Register Visitor")
         self.fnameLabel = QtWidgets.QLabel()
         self.fnameLabel.setText('First Name')
         self.lnameLabel = QtWidgets.QLabel()
         self.lnameLabel.setText('Last Name')
+        self.userTypeLabel = QtWidgets.QLabel()
+        self.userTypeLabel.setText('User Type')
         self.usernameLabel = QtWidgets.QLabel()
         self.usernameLabel.setText('Username')
         self.passwordLabel = QtWidgets.QLabel()
@@ -32,6 +31,31 @@ class userOnlyRegistration(QtWidgets.QWidget):
         self.registerbutton.clicked.connect(self.registerB)
         self.backButton = QtWidgets.QPushButton('Back', self)
         self.backButton.clicked.connect(self.backB)
+        self.userType = QtWidgets.QComboBox()
+        self.userType.addItem("Manager")
+        self.userType.addItem("Staff")
+        self.phoneLabel = QtWidgets.QLabel()
+        self.phoneLabel.setText("Phone")
+        self.phone = QtWidgets.QLineEdit()
+        self.addressLabel = QtWidgets.QLabel()
+        self.addressLabel.setText("Address")
+        self.address = QtWidgets.QLineEdit()
+        self.cityLabel = QtWidgets.QLabel()
+        self.cityLabel.setText("City")
+        self.city = QtWidgets.QLineEdit()
+        self.stateLabel = QtWidgets.QLabel()
+        self.stateLabel.setText('State')
+        self.state = QtWidgets.QComboBox()
+        states = ["AL", "AK", "AZ", "AR", "CA", "CO", "CT", "DC", "DE", "FL", "GA", 
+          "HI", "ID", "IL", "IN", "IA", "KS", "KY", "LA", "ME", "MD", 
+          "MA", "MI", "MN", "MS", "MO", "MT", "NE", "NV", "NH", "NJ", 
+          "NM", "NY", "NC", "ND", "OH", "OK", "OR", "PA", "RI", "SC", 
+          "SD", "TN", "TX", "UT", "VT", "VA", "WA", "WV", "WI", "WY"]
+        for name in states:
+            self.state.addItem(name)
+        self.zipcodeLabel = QtWidgets.QLabel()
+        self.zipcodeLabel.setText("zipcode")
+        self.zipcode = QtWidgets.QLineEdit()
         layout = QtWidgets.QGridLayout()
 
         layout.addWidget(self.title)
@@ -41,15 +65,28 @@ class userOnlyRegistration(QtWidgets.QWidget):
         layout.addWidget(self.textLname)
         layout.addWidget(self.usernameLabel)
         layout.addWidget(self.textusername)
+        layout.addWidget(self.userTypeLabel)
+        layout.addWidget(self.userType)
         layout.addWidget(self.passwordLabel)
         layout.addWidget(self.textpassword)
         layout.addWidget(self.confpasswordLabel)
         layout.addWidget(self.textConfirmPass)
+        layout.addWidget(self.phoneLabel)
+        layout.addWidget(self.phone)
+        layout.addWidget(self.addressLabel)
+        layout.addWidget(self.address)
+        layout.addWidget(self.cityLabel)
+        layout.addWidget(self.city)
+        layout.addWidget(self.stateLabel)
+        layout.addWidget(self.state)
+        layout.addWidget(self.zipcodeLabel)
+        layout.addWidget(self.zipcode)
         layout.addWidget(self.emailLabel)
         layout.addWidget(self.emailEnter)
         layout.addWidget(self.backButton)
         layout.addWidget(self.registerbutton)
         self.setLayout(layout)
+        self.resize(600, 150)
 
     def backB(self):
         from RegisterNavigation import RegisterNavigation
@@ -58,4 +95,4 @@ class userOnlyRegistration(QtWidgets.QWidget):
         self.close()
     
     def registerB(self):
-        print("Success register a user")
+        print("Success register a visitor")

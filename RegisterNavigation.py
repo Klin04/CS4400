@@ -1,3 +1,10 @@
+import sys
+from PyQt5 import QtCore, QtWidgets, QtGui
+from userOnlyRegistration import userOnlyRegistration
+from visitorOnlyRegistration import visitorOnlyRegistration
+from employeeOnlyRegistration import employeeOnlyRegistration
+from employeeVisitorRegistration import employeeVisitorRegistration
+
 class RegisterNavigation(QtWidgets.QWidget):
 
     def __init__(self):
@@ -9,8 +16,11 @@ class RegisterNavigation(QtWidgets.QWidget):
         self.userOnly = QtWidgets.QPushButton('User Only', self)
         self.userOnly.clicked.connect(self.userOnlyB)
         self.visitorOnly = QtWidgets.QPushButton('Visitor Only', self)
+        self.visitorOnly.clicked.connect(self.visitorOnlyB)
         self.employeeOnly = QtWidgets.QPushButton('Employee Only', self)
+        self.employeeOnly.clicked.connect(self.employeeOnlyB)
         self.employeeVisitor = QtWidgets.QPushButton('Employee-Visitor', self)
+        self.employeeVisitor.clicked.connect(self.employeeVisitorB)
         self.back = QtWidgets.QPushButton('Back', self)
         self.back.clicked.connect(self.backB)
 
@@ -46,6 +56,7 @@ class RegisterNavigation(QtWidgets.QWidget):
         self.close()
     
     def backB(self):
+        from Login import Login
         self.cams = Login()
         self.cams.show()
         self.close()
