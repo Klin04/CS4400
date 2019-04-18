@@ -34,6 +34,7 @@ class RegisterNavigation(QtWidgets.QWidget):
         layout.addWidget(self.back)
 
         self.setLayout(layout)
+        self.resize(600, 150)
 
     def userOnlyB(self):
         self.cams = userOnlyRegistration()

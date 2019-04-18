@@ -49,6 +49,7 @@ class visitorOnlyRegistration(QtWidgets.QWidget):
         layout.addWidget(self.backButton)
         layout.addWidget(self.registerbutton)
         self.setLayout(layout)
+        self.resize(600, 150)
 
     def backB(self):
         from RegisterNavigation import RegisterNavigation
