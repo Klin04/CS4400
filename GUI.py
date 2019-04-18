@@ -33,8 +33,6 @@ class Register(QtWidgets.QWidget):
 
         layout = QtWidgets.QGridLayout()
 
-        self.
-
         self.button = QtWidgets.QPushButton('Close')
         self.button.clicked.connect(self.close)
 
@@ -49,6 +47,8 @@ class Login(QtWidgets.QWidget):
 
     def __init__(self, parent=None):
         QtWidgets.QWidget.__init__(self)
+        self.title = QtWidgets.QLabel()
+        self.title.setText("Atlanta BeltLine Login")
         self.setWindowTitle('Login Page')
         self.textName = QtWidgets.QLineEdit(self)
         self.textPass = QtWidgets.QLineEdit(self)
@@ -56,8 +56,17 @@ class Login(QtWidgets.QWidget):
         self.buttonRegister = QtWidgets.QPushButton('Register', self)
         self.buttonLogin.clicked.connect(self.handleLogin)
         self.buttonRegister.clicked.connect(self.handleRegister)
+        self.emailLabel = QtWidgets.QLabel()
+        self.passLabel = QtWidgets.QLabel()
+        self.emailLabel.setText("Email")
+        self.passLabel.setText("Password")
         layout = QtWidgets.QVBoxLayout(self)
+        layout.addWidget(self.title)
+        layout.addWidget(self.emailLabel)
+        layout.addStretch()
         layout.addWidget(self.textName)
+        layout.addWidget(self.passLabel)
+        layout.addStretch()
         layout.addWidget(self.textPass)
         layout.addWidget(self.buttonLogin)
         layout.addWidget(self.buttonRegister)
