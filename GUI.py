@@ -143,13 +143,17 @@ class userOnlyRegistration(QtWidgets.QWidget):
         layout.addWidget(self.textConfirmPass)
         layout.addWidget(self.emailLabel)
         layout.addWidget(self.emailEnter)
+        layout.addWidget(self.backButton)
+        layout.addWidget(self.registerbutton)
         self.setLayout(layout)
 
-        def backB(self):
-            self.cams = RegisterNavigation()
-            self.cams.show()
-            self.close()
+    def backB(self):
+        self.cams = RegisterNavigation()
+        self.cams.show()
+        self.close()
 
+class visitorOnlyRegistration(QtWidgets.QWidget):
+    
 
 class Controller:
 
