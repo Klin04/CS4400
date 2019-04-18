@@ -1,6 +1,8 @@
 import sys
 from PyQt5 import QtCore, QtWidgets, QtGui
 from RegisterNavigation import RegisterNavigation
+from UserFunc import UserFunc
+from AdminFunc import AdminFunc
 
 class Login(QtWidgets.QWidget):
 
@@ -31,12 +33,15 @@ class Login(QtWidgets.QWidget):
         layout.addWidget(self.textPass)
         layout.addWidget(self.buttonLogin)
         layout.addWidget(self.buttonRegister)
+        self.setLayout(layout)
         self.resize(600, 150)
 
     def handleLogin(self):
-        if (self.textName.text() == 'foo' and
-            self.textPass.text() == 'bar'):
-            self.accept()
+        if (self.textName.text() != '' and
+            self.textPass.text() != ''):
+            self.cams = AdminFunc()
+            self.cams.show()
+            self.close()
         else:
             QtWidgets.QMessageBox.warning(
                 self, 'Error', 'Bad user or password')
