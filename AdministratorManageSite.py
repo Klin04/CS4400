@@ -50,7 +50,7 @@ class Ui_Form(object):
         self.pushButton_5.setGeometry(QtCore.QRect(290, 400, 89, 31))
         self.pushButton_5.setObjectName("pushButton_5")
         self.tableWidget = QtWidgets.QTableWidget(Form)
-        self.tableWidget.setGeometry(QtCore.QRect(60, 200, 551, 192))
+        self.tableWidget.setGeometry(QtCore.QRect(70, 200, 551, 192))
         self.tableWidget.setObjectName("tableWidget")
         self.tableWidget.setColumnCount(0)
         self.tableWidget.setRowCount(0)
