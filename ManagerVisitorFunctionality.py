@@ -58,7 +58,7 @@ class Ui_Form(object):
         self.pushButton_7.setText(_translate("Form", "View Site Report"))
         self.pushButton_6.setText(_translate("Form", "Back"))
         self.label.setText(_translate("Form", "Manager Functionality"))
-        self.pushButton_2.setText(_translate("Form", "View Site Report"))
+        self.pushButton_2.setText(_translate("Form", "View Staff"))
         self.pushButton_5.setText(_translate("Form", "Explore Site"))
         self.pushButton_3.setText(_translate("Form", "Manage Event"))
         self.pushButton_8.setText(_translate("Form", "Take Transit"))

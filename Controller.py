@@ -173,6 +173,67 @@ class MainWindow(QtWidgets.QMainWindow):
         self.AdministratorEditTransit.setupUi(self)
         self.show()
 
+    def startAdministratorCreateTransit(self):
+        self.AdministratorCreateTransit.setupUi(self)
+        self.show()
+
+    def startManagerManageEvent(self):
+        self.ManagerManageEvent.setupUi(self)
+        self.show()
+
+    def startManagerViewEditEvent(self):
+        self.ManagerViewEditEvent.setupUi(self)
+        self.show()
+
+    def startManagerCreateEvent(self):
+        self.ManagerCreateEvent.setupUi(self)
+        self.show()
+
+    def startManagerManageStaff(self):
+        self.ManagerManageStaff.setupUi(self)
+        self.show()
+
+    def startManagerSiteReport(self):
+        self.ManagerSiteReport.setupUi(self)
+        self.show()
+
+    def startManagerDailyDetail(self):
+        self.ManagerDailyDetail.setupUi(self)
+        self.show()
+
+    def startStaffViewSchedule(self):
+        self.StaffViewSchedule.setupUi(self)
+        self.show()
+
+    def startStaffEventDetail(self):
+        self.StaffEventDetail.setupUi(self)
+        self.show()
+
+    def startVisitorExploreEvent(self):
+        self.VisitorExploreEvent.setupUi(self)
+        self.show()
+
+    def startVisitorEventDetail(self):
+        self.VisitorEventDetail.setupUi(self)
+        self.show()
+
+    def startVisitorExploreSite(self):
+        self.VisitorExploreSite.setupUi(self)
+        self.show()
+
+    def startVisitorTransitDetail(self):
+        self.VisitorTransitDetail.setupUi(self)
+        self.show()
+
+    def startVisitorSiteDetail(self):
+        self.VisitorSiteDetail.setupUi(self)
+        self.show()
+
+    def startVisitorVisitHistory(self):
+        self.VisitorSiteDetail.setupUi(self)
+        self.show()
+
+
 class Controller():
     def __init__(self):
         self.MainWindow = MainWindow()
@@ -217,6 +278,233 @@ class Controller():
         self.MainWindow.startRegisterEmployeeVisitor()
         self.MainWindow.RegisterEmployeeVisitorPage.pushButton_2.clicked.connect(self.showRegisterNavigation)
 
+    def showRegisterVisitorOnly(self):
+        self.MainWindow.close()
+        self.MainWindow = MainWindow()
+        self.MainWindow.startRegisterVisitorOnly()
+        self.MainWindow.RegisterVisitorOnlyPage.pushButton_2.clicked.connect(self.showRegisterNavigation())
+
+    def showUserFunctionality(self):
+        self.MainWindow.close()
+        self.MainWindow = MainWindow()
+        self.MainWindow.startUserFunctionality()
+        self.MainWindow.UserFunctionality.pushButton_3.clicked.connect(self.showLogin())
+        self.MainWindow.UserFunctionality.pushButton.clicked.connect(self.showUserTakeTransit())
+        self.MainWindow.UserFunctionality.pushButton_2.clicked.connect(self.showUserTransitHistory())
+
+    def showAdministratorFunctionality(self):
+        self.MainWindow.close()
+        self.MainWindow = MainWindow()
+        self.MainWindow.startAdministratorFunctionality()
+        self.MainWindow.AdministratorFunctionality.pushButton.clicked.connect(self.showEmployeeManageProfile())
+        self.MainWindow.AdministratorFunctionality.pushButton_2.clicked.connect(self.showUserTakeTransit())
+        self.MainWindow.AdministratorFunctionality.pushButton_3.clicked.connect(self.showAdministratorManagerUser())
+        self.MainWindow.AdministratorFunctionality.pushButton_4.clicked.connect(self.showUserTransitHistory())
+        self.MainWindow.AdministratorFunctionality.pushButton_5.clicked.connect(self.showAdministratorMangerSite())
+        self.MainWindow.AdministratorFunctionality.pushButton_6.clicked.connect(self.showLogin())
+        self.MainWindow.AdministratorFunctionality.pushButton_7.clicked.connect(self.showAdministratorEditSite())
+
+    def showAdminVisitorFunctionality(self):
+        self.MainWindow.close()
+        self.MainWindow = MainWindow()
+        self.MainWindow.startAdminVisitorFunctionality()
+        self.MainWindow.AdminVisitorFunctionality.pushButton.clicked.connect(self.showEmployeeManageProfile())
+        self.MainWindow.AdminVisitorFunctionality.pushButton_3.clicked.connect(self.showAdministratorManagerUser())
+        self.MainWindow.AdminVisitorFunctionality.pushButton_7.clicked.connect(self.showAdministratorManageSite())
+        self.MainWindow.AdminVisitorFunctionality.pushButton_2.clicked.connect(self.showUserTakeTransit())
+        self.MainWindow.AdminVisitorFunctionality.pushButton_4.clicked.connect(self.showUserTransitHistory())
+        self.MainWindow.AdminVisitorFunctionality.pushButton_6.clicked.connect(self.showLogin())
+        self.MainWindow.AdminVisitorFunctionality.pushButton_5.clicked.connect(self.showAdministratorManageTransit())
+        self.MainWindow.AdminVisitorFunctionality.pushButton_8.clicked.connect(self.showVisitorExploreSite())
+        self.MainWindow.AdminVisitorFunctionality.pushButton_9.clicked.connect(self.showManagerManageEvent())
+        self.MainWindow.AdminVisitorFunctionality.pushButton_10.clicked.connect(self.showVisitorVisitHistory())
+
+    def showManagerFunctionality(self):
+        self.MainWindow.close()
+        self.MainWindow = MainWindow()
+        self.MainWindow.startManagerFunctionality()
+        self.MainWindow.ManagerFunctionality.pushButton_3.clicked.connect(self.showManagerManageEvent())
+        self.MainWindow.ManagerFunctionality.pushButton_7.clicked.connect(self.showUserTakeTransit())
+        self.MainWindow.ManagerFunctionality.pushButton_2.clicked.connect(self.showManagerSiteReport())
+        self.MainWindow.ManagerFunctionality.pushButton.clicked.connect(self.showEmployeeManageProfile())
+        self.MainWindow.ManagerFunctionality.pushButton_4.clicked.connect(self.showUserTransitHistory())
+        self.MainWindow.ManagerFunctionality.pushButton_6.clicked.connect(self.showLogin())
+        self.MainWindow.ManagerFunctionality.pushButton_5.clicked.connect(self.showManagerManageStaff())
+
+
+    def showManagerVisitorFunctionality(self):
+        self.MainWindow.close()
+        self.MainWindow = MainWindow()
+        self.MainWindow.startManagerVisitorFunctionality()
+        self.MainWindow.ManagerVisitorFunctionality.pushButton_3.clicked.connect(self.showManagerManageEvent())
+        self.MainWindow.ManagerVisitorFunctionality.pushButton_8.clicked.connect(self.showUserTakeTransit())
+        self.MainWindow.ManagerVisitorFunctionality.pushButton_2.clicked.connect(self.showManagerManageStaff())
+        self.MainWindow.ManagerVisitorFunctionality.pushButton.clicked.connect(self.showEmployeeManageProfile())
+        self.MainWindow.ManagerVisitorFunctionality.pushButton_9.clicked.connect(self.showUserTransitHistory())
+        self.MainWindow.ManagerVisitorFunctionality.pushButton_6.clicked.connect(self.showLogin())
+        self.MainWindow.ManagerVisitorFunctionality.pushButton_4.clicked.connect(self.showVisitorExploreEvent())
+        self.MainWindow.ManagerVisitorFunctionality.pushButton_10.clicked.connect(self.showVisitorVisitHistory())
+        self.MainWindow.ManagerVisitorFunctionality.pushButton_5.clicked.connect(self.showVisitorExploreSite())
+        self.MainWindow.ManagerVisitorFunctionality.pushButton_7.clicked.connect(self.showManagerSiteReport())
+
+
+    def showStaffFunctionality(self):
+        self.MainWindow.close()
+        self.MainWindow = MainWindow()
+        self.MainWindow.startStaffFunctionality()
+        self.MainWindow.StaffFunctionality.pushButton_8.clicked.connect(self.showEmployeeManageProfile())
+        self.MainWindow.StaffFunctionality.pushButton.clicked.connect(self.showStaffViewSchedule())
+        self.MainWindow.StaffFunctionality.pushButton_2.clicked.connect(self.showUserTakeTransit())
+        self.MainWindow.StaffFunctionality.pushButton_3.clicked.connect(self.showUserTransitHistory())
+        self.MainWindow.StaffFunctionality.pushButton_9.clicked.connect(self.showLogin())
+
+
+    def showStaffVisitorFunctionality(self):
+        self.MainWindow.close()
+        self.MainWindow = MainWindow()
+        self.MainWindow.startStaffVisitorFunctionality()
+        self.MainWindow.StaffVisitorFunctionality.pushButton_8.clicked.connect(self.showEmployeeManageProfile())
+        self.MainWindow.StaffVisitorFunctionality.pushButton.clicked.connect(self.showStaffViewSchedule())
+        self.MainWindow.StaffVisitorFunctionality.pushButton_2.clicked.connect(self.showUserTakeTransit())
+        self.MainWindow.StaffVisitorFunctionality.pushButton_3.clicked.connect(self.showUserTransitHistory())
+        self.MainWindow.StaffVisitorFunctionality.pushButton_9.clicked.connect(self.showLogin())
+        self.MainWindow.StaffVisitorFunctionality.pushButton_10.clicked.connect(self.showVisitorExploreEvent())
+        self.MainWindow.StaffVisitorFunctionality.pushButton_11.clicked.connect(self.showVisitorExploreSite())
+        self.MainWindow.StaffVisitorFunctionality.pushButton_4.clicked.connect(self.showVisitorVisitHistory())
+
+
+    def showVisitorFunctionality(self):
+        self.MainWindow.close()
+        self.MainWindow = MainWindow()
+        self.MainWindow.startVisitorFunctionality()
+        self.MainWindow.VisitorFunctionality.pushButton_9.clicked.connect(self.showLogin())
+        self.MainWindow.VisitorFunctionality.pushButton_2.clicked.connect(self.showUserTakeTransit())
+        self.MainWindow.VisitorFunctionality.pushButton_3.clicked.connect(self.showVisitorVisitHistory())
+        self.MainWindow.VisitorFunctionality.pushButton_8.clicked.connect(self.showVisitorExploreEvent())
+        self.MainWindow.VisitorFunctionality.pushButton.clicked.connect(self.showVisitorExploreSite())
+        self.MainWindow.VisitorFunctionality.pushButton_4.clicked.connect(self.showUserTransitHistory())
+
+
+    def showUserTakeTransit(self):
+        self.MainWindow.close()
+        self.MainWindow = MainWindow()
+        self.MainWindow.startUserTakeTransit()
+        self
+
+    def showUserTransitHistory(self):
+        self.MainWindow.close()
+        self.MainWindow = MainWindow()
+        self.MainWindow.startUserTakeTransit()
+
+    def showEmployeeManageProfile(self):
+        self.MainWindow.close()
+        self.MainWindow = MainWindow()
+        self.MainWindow.startEmployeeManageProfile()
+
+    def showAdministratorManagerUser(self):
+        self.MainWindow.close()
+        self.MainWindow = MainWindow()
+        self.MainWindow.startAdministratorManagerUser()
+
+    def showAdministratorManageSite(self):
+        self.MainWindow.close()
+        self.MainWindow = MainWindow()
+        self.MainWindow.startAdministratorManageSite()
+
+    def showAdministratorEditSite(self):
+        self.MainWindow.close()
+        self.MainWindow = MainWindow()
+        self.MainWindow.startAdministratorEditSite()
+
+    def showAdministratorCreateSite(self):
+        self.MainWindow.close()
+        self.MainWindow = MainWindow()
+        self.MainWindow.startAdministratorCreateSite()
+
+    def showAdministratorManageTransit(self):
+        self.MainWindow.close()
+        self.MainWindow = MainWindow()
+        self.MainWindow.startAdministratorManageTransit()
+
+    def showAdministratorEditTransit(self):
+        self.MainWindow.close()
+        self.MainWindow = MainWindow()
+        self.MainWindow.startAdministratorEditTransit()
+
+    def showAdministratorCreateTransit(self):
+        self.MainWindow.close()
+        self.MainWindow = MainWindow()
+        self.MainWindow.startAdministratorCreateTransit()
+
+    def showManagerManageEvent(self):
+        self.MainWindow.close()
+        self.MainWindow = MainWindow()
+        self.MainWindow.startManagerManageEvent()
+
+    def showManagerViewEditEvent(self):
+        self.MainWindow.close()
+        self.MainWindow = MainWindow()
+        self.MainWindow.startManagerViewEditEvent()
+
+    def showManagerCreateEvent(self):
+        self.MainWindow.close()
+        self.MainWindow = MainWindow()
+        self.MainWindow.startManagerCreateEvent()
+
+    def showManagerManageStaff(self):
+        self.MainWindow.close()
+        self.MainWindow = MainWindow()
+        self.MainWindow.startManagerManageStaff()
+
+    def showManagerSiteReport(self):
+        self.MainWindow.close()
+        self.MainWindow = MainWindow()
+        self.MainWindow.startManagerSiteReport()
+
+    def showManagerDailyDetail(self):
+        self.MainWindow.close()
+        self.MainWindow = MainWindow()
+        self.MainWindow.startManagerDailyDetail()
+
+    def showStaffViewSchedule(self):
+        self.MainWindow.close()
+        self.MainWindow = MainWindow()
+        self.MainWindow.startStaffViewSchedule()
+
+    def showStaffEventDetail(self):
+        self.MainWindow.close()
+        self.MainWindow = MainWindow()
+        self.MainWindow.startStaffEventDetail()
+
+    def showVisitorExploreEvent(self):
+        self.MainWindow.close()
+        self.MainWindow = MainWindow()
+        self.MainWindow.startVisitorExploreEvent()
+
+    def showVisitorEventDetail(self):
+        self.MainWindow.close()
+        self.MainWindow = MainWindow()
+        self.MainWindow.startVisitorEventDetail()
+
+    def showVisitorExploreSite(self):
+        self.MainWindow.close()
+        self.MainWindow = MainWindow()
+        self.MainWindow.startVisitorExploreSite()
+
+    def showVisitorTransitDetail(self):
+        self.MainWindow.close()
+        self.MainWindow = MainWindow()
+        self.MainWindow.startVisitorTransitDetail()
+
+    def showVisitorSiteDetail(self):
+        self.MainWindow.close()
+        self.MainWindow = MainWindow()
+        self.MainWindow.startVisitorSiteDetail()
+
+    def showVisitorVisitHistory(self):
+        self.MainWindow.close()
+        self.MainWindow = MainWindow()
+        self.MainWindow.startVisitorVisitHistory()
 
 if __name__ == '__main__':
     app = QtWidgets.QApplication(sys.argv)
