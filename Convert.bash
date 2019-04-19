@@ -5,4 +5,5 @@ for filename in *.ui; do
     echo "$var1" 
     echo "$var2"
     pyuic5 "$filename" > "$var1.py"
+    IFS=' '
 done
