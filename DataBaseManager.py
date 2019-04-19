@@ -14,7 +14,7 @@ def Login(Email, Password):
     # encrypted_password = str(base64.b64encode(Password.encode()))
     mycursor = mydb.cursor()
     mycursor.execute("Select * from users where username = %s and pass_word = %s", (Email, Password, ))
-    myresult = mycursor.fetchall()
+    myresult = mycursor.fetchone()
     if len(myresult) != 0:
         return myresult
     return None
