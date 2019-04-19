@@ -6,6 +6,38 @@ import RegisterUser
 import RegisterEmployee
 import RegisterEmployeeVisitor
 import RegisterVisitorOnly
+import UserFunctionality
+import AdministratorFunctionality
+import AdminVisitorFunctionality
+import ManagerFunctionality
+import ManagerVisitorFunctionality
+import StaffFunctionality
+import StaffVisitorFunctionality
+import VisitorFunctionality
+import UserTakeTransit
+import UserTransitHistory
+import EmployeeManageProfile
+import AdministratorManagerUser
+import AdministratorManageSite
+import AdministratorEditSite
+import AdministratorCreateSite
+import AdministratorManageTransit
+import AdministratorEditTransit
+import AdministratorCreateTransit
+import ManagerManageEvent
+import ManagerViewEditEvent
+import ManagerCreateEvent
+import ManagerManageStaff
+import ManagerSiteReport
+import ManagerDailyDetail
+import StaffViewSchedule
+import StaffEventDetail
+import VisitorExploreEvent
+import VisitorEventDetail
+import VisitorExploreSite
+import VisitorTransitDetail
+import VisitorSiteDetail
+import VisitorVisitHistory
 
 class MainWindow(QtWidgets.QMainWindow):
     def __init__(self, parent=None):
@@ -16,6 +48,38 @@ class MainWindow(QtWidgets.QMainWindow):
         self.RegisterEmployeePage = RegisterEmployee.Ui_Form()
         self.RegisterEmployeeVisitorPage = RegisterEmployeeVisitor.Ui_Form()
         self.RegisterVisitorOnlyPage = RegisterVisitorOnly.Ui_Form()
+        self.UserFunctionality = UserFunctionality.Ui_Form()
+        self.AdministratorFunctionality = AdministratorFunctionality.Ui_Form()
+        self.AdminVisitorFunctionality = AdminVisitorFunctionality.Ui_Form()
+        self.ManagerFunctionality = ManagerFunctionality.Ui_Form()
+        self.ManagerVisitorFunctionality = ManagerVisitorFunctionality.Ui_Form()
+        self.StaffFunctionality = StaffFunctionality.Ui_Form()
+        self.StaffVisitorFunctionality = StaffVisitorFunctionality.Ui_Form()
+        self.VisitorFunctionality = VisitorFunctionality.Ui_Form()
+        self.UserTakeTransit = UserTakeTransit.Ui_Form()
+        self.UserTransitHistory = UserTransitHistory.Ui_Form()
+        self.EmployeeManageProfile = EmployeeManageProfile.Ui_Form()
+        self.AdministratorManageUser = AdministratorManagerUser.Ui_Form()
+        self.AdministratorManageSite = AdministratorManageSite.Ui_Form()
+        self.AdministratorEditSite = AdministratorEditSite.Ui_Form()
+        self.AdministratorCreateSite = AdministratorCreateSite.Ui_Form()
+        self.AdministratorManageTransit = AdministratorManageTransit.Ui_Form()
+        self.AdministratorEditTransit = AdministratorEditTransit.Ui_Form()
+        self.AdministratorCreateTransit = AdministratorCreateTransit.Ui_Form()
+        self.ManagerManageEvent = ManagerManageEvent.Ui_Form()
+        self.ManagerViewEditEvent = ManagerViewEditEvent.Ui_Form()
+        self.ManagerCreateEvent = ManagerCreateEvent.Ui_Form()
+        self.ManagerManageStaff = ManagerManageStaff.Ui_Form()
+        self.ManagerSiteReport = ManagerSiteReport.Ui_Form()
+        self.ManagerDailyDetail = ManagerDailyDetail.Ui_Form()
+        self.StaffViewSchedule = StaffViewSchedule.Ui_Form()
+        self.StaffEventDetail = StaffEventDetail.Ui_Form()
+        self.VisitorExploreEvent = VisitorExploreEvent.Ui_Form()
+        self.VisitorEventDetail = VisitorEventDetail.Ui_Form()
+        self.VisitorExploreSite = VisitorExploreSite.Ui_Form()
+        self.VisitorTransitDetail = VisitorTransitDetail.Ui_Form()
+        self.VisitorSiteDetail = VisitorSiteDetail.Ui_Form()
+        self.VisitorVisitHistory = VisitorVisitHistory.Ui_Form()
 
     def startRegisterNavigation(self, parent=None):
         self.RegisterNavigationPage.setupUi(self)
@@ -41,6 +105,73 @@ class MainWindow(QtWidgets.QMainWindow):
         self.RegisterEmployeeVisitorPage.setupUi(self)
         self.show()
 
+    def startUserFunctionality(self):
+        self.UserFunctionality.setupUi(self)
+        self.show()
+
+    def startAdministratorFunctionality(self):
+        self.AdministratorFunctionality.setupUi(self)
+        self.show()
+
+    def startAdminVisitorFunctionality(self):
+        self.AdminVisitorFunctionality.setupUi(self)
+        self.show()
+
+    def startManagerFunctionality(self):
+        self.ManagerFunctionality.setupUi(self)
+        self.show()
+
+    def startManagerVisitorFunctionality(self):
+        self.ManagerVisitorFunctionality.setupUi(self)
+        self.show()
+
+    def startStaffFunctionality(self):
+        self.StaffFunctionality.setupUi(self)
+        self.show()
+
+    def startStaffVisitorFunctionality(self):
+        self.StaffVisitorFunctionality.setupUi(self)
+        self.show()
+
+    def startVisitorFunctionality(self):
+        self.VisitorFunctionality.setupUi(self)
+        self.show()
+
+    def startUserTakeTransit(self):
+        self.UserTakeTransit.setupUi(self)
+        self.show()
+
+    def startUserTransitHistory(self):
+        self.UserTransitHistory.setupUi(self)
+        self.show()
+
+    def startEmployeeManageProfile(self):
+        self.EmployeeManageProfile.setupUi(self)
+        self.show()
+
+    def startAdministratorManagerUser(self):
+        self.AdministratorManageUser.setupUi(self)
+        self.show()
+
+    def startAdministratorManageSite(self):
+        self.AdministratorManageSite.setupUi(self)
+        self.show()
+
+    def startAdministratorEditSite(self):
+        self.AdministratorEditSite.setupUi(self)
+        self.show()
+
+    def startAdministratorCreateSite(self):
+        self.AdministratorCreateSite.setupUi(self)
+        self.show()
+
+    def startAdministratorManageTransit(self):
+        self.AdministratorManageTransit.setupUi(self)
+        self.show()
+
+    def startAdministratorEditTransit(self):
+        self.AdministratorEditTransit.setupUi(self)
+        self.show()
 
 class Controller():
     def __init__(self):
