@@ -11,7 +11,8 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 
 class Ui_Form(object):
     def __init__(self):
-        self.previousInformation = {}
+        self.EditLineList = []
+        self.EmailRemoveButtons = []
 
     def setupUi(self, Form):
         Form.setObjectName("Form")
@@ -100,22 +101,57 @@ class Ui_Form(object):
         self.lineEdit_11.setGeometry(QtCore.QRect(570, 280, 101, 25))
         self.lineEdit_11.setText("")
         self.lineEdit_11.setObjectName("lineEdit_11")
-        self.widget = QtWidgets.QWidget(Form)
-        self.widget.setGeometry(QtCore.QRect(160, 320, 521, 101))
-        self.widget.setObjectName("widget")
-        self.lineEdit_6 = QtWidgets.QLineEdit(self.widget)
-        self.lineEdit_6.setGeometry(QtCore.QRect(20, 10, 301, 25))
-        self.lineEdit_6.setText("")
-        self.lineEdit_6.setObjectName("lineEdit_6")
-        self.pushButton = QtWidgets.QPushButton(self.widget)
-        self.pushButton.setGeometry(QtCore.QRect(370, 10, 89, 25))
-        self.pushButton.setObjectName("pushButton")
         self.label_9 = QtWidgets.QLabel(Form)
         self.label_9.setGeometry(QtCore.QRect(110, 320, 67, 17))
         self.label_9.setObjectName("label_9")
+        self.pushButton = QtWidgets.QPushButton(Form)
+        self.pushButton.setGeometry(QtCore.QRect(310, 430, 89, 25))
+        self.pushButton.setObjectName("pushButton")
+        self.pushButton.clicked.connect(self.addEmail)
+
+        # use scroll to dynamically expand
+        self.widget = QtWidgets.QScrollArea(Form)
+        self.widget.setGeometry(QtCore.QRect(160, 320, 521, 101))
+        self.widget.setObjectName("widget")
+        self.widget.setWidgetResizable(True)
+        self.widget.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOn)
+        self.widget.setHorizontalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOff)
+
+        # set Qframe within QScroll Area to add and remove items
+        self.inner = QtWidgets.QFrame(self.widget)
+        self.inner.setLayout(QtWidgets.QVBoxLayout())
+        self.widget.setWidget(self.inner)
 
         self.retranslateUi(Form)
         QtCore.QMetaObject.connectSlotsByName(Form)
+
+    def addEmail(self):
+        # add the edit line
+        line_text = QtWidgets.QLineEdit(self.widget)
+        self.EditLineList.append(line_text)
+        line_text.setGeometry(QtCore.QRect(20, 10, 301, 25))
+        self.inner.layout().addWidget(line_text)
+        # now add the remove button and set listener
+        new_button = QtWidgets.QPushButton(self.widget)
+        self.EmailRemoveButtons.append(new_button)
+        new_button.setText("Remove")
+        self.inner.layout().addWidget(new_button)
+        # since we can't pass arguments into .connect, we pass in the lambda as a func
+        new_button.clicked.connect(lambda: self.removeEmail(new_button))
+
+    def removeEmail(self, button):
+        if len(self.EditLineList) == 0:
+            return
+        # find the button and editline to delete
+        index = self.EmailRemoveButtons.index(button)
+        # delete the button
+        self.inner.layout().removeWidget(self.EditLineList[index])
+        self.EditLineList[index].deleteLater()
+        self.EditLineList.pop(index)
+        # delete the button
+        self.inner.layout().removeWidget(self.EmailRemoveButtons[index])
+        self.EmailRemoveButtons[index].deleteLater()
+        self.EmailRemoveButtons.pop(index)
 
     def retranslateUi(self, Form):
         _translate = QtCore.QCoreApplication.translate
