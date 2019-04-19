@@ -254,7 +254,24 @@ class Controller():
         if found:
             if not found['is_employee'] and not found['is_visitor']:
                 self.showUserFunctionality()
-
+            elif found['is_employee'] and not found['is_visitor']:
+                employee = DataBaseManager.SearchEmployeeType(found['username'])
+                if employee['erole'] == 'Staff':
+                    self.showStaffFunctionality()
+                elif employee['erole'] == 'Manager':
+                    self.showManagerFunctionality()
+                elif employee['erole'] == 'Administrator':
+                    self.showAdministratorFunctionality()
+            elif found['is_employee'] and found['is_visitor']:
+                employee = DataBaseManager.SearchEmployeeType(found['username'])
+                if employee['erole'] == 'Staff':
+                    self.showStaffVisitorFunctionality()
+                elif employee['erole'] == 'Manager':
+                    self.showManagerVisitorFunctionality()
+                elif employee['erole'] == 'Administrator':
+                    self.showAdminVisitorFunctionality()
+            elif found['is_visitor']:
+                self.showVisitorFunctionality()
 
     def showRegisterNavigation(self):
         self.MainWindow.close()
