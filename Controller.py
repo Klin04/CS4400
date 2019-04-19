@@ -38,6 +38,7 @@ import VisitorExploreSite
 import VisitorTransitDetail
 import VisitorSiteDetail
 import VisitorVisitHistory
+import DataBaseManager
 
 class MainWindow(QtWidgets.QMainWindow):
     def __init__(self, parent=None):
@@ -237,12 +238,23 @@ class MainWindow(QtWidgets.QMainWindow):
 class Controller():
     def __init__(self):
         self.MainWindow = MainWindow()
+        self.user = None
     
     def showLogin(self):
         self.MainWindow.close()
         self.MainWindow = MainWindow()
         self.MainWindow.startLoginPage()
         self.MainWindow.LoginPage.pushButton_2.clicked.connect(self.showRegisterNavigation)
+        self.MainWindow.LoginPage.pushButton.clicked.connect(self.Login)
+
+    def Login(self):
+        email = self.MainWindow.LoginPage.lineEdit.text()
+        password = self.MainWindow.LoginPage.lineEdit_2.text()
+        found = DataBaseManager.Login(email, password)
+        if found:
+            if not found['is_employee'] and not found['is_visitor']:
+                self.showUserFunctionality()
+        
 
     def showRegisterNavigation(self):
         self.MainWindow.close()
