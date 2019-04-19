@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>653</width>
-    <height>703</height>
+    <width>827</width>
+    <height>697</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -16,21 +16,21 @@
   <widget class="QLabel" name="label">
    <property name="geometry">
     <rect>
-     <x>280</x>
+     <x>340</x>
      <y>20</y>
-     <width>111</width>
+     <width>221</width>
      <height>17</height>
     </rect>
    </property>
    <property name="text">
-    <string>Create Event</string>
+    <string>Explore Site</string>
    </property>
   </widget>
   <widget class="QLabel" name="label_2">
    <property name="geometry">
     <rect>
-     <x>60</x>
-     <y>60</y>
+     <x>80</x>
+     <y>70</y>
      <width>67</width>
      <height>17</height>
     </rect>
@@ -39,12 +39,12 @@
     <string>Name</string>
    </property>
   </widget>
-  <widget class="QLineEdit" name="lineEdit">
+  <widget class="QComboBox" name="comboBox">
    <property name="geometry">
     <rect>
-     <x>170</x>
-     <y>60</y>
-     <width>431</width>
+     <x>180</x>
+     <y>70</y>
+     <width>201</width>
      <height>25</height>
     </rect>
    </property>
@@ -52,22 +52,22 @@
   <widget class="QLabel" name="label_3">
    <property name="geometry">
     <rect>
-     <x>60</x>
-     <y>100</y>
-     <width>67</width>
-     <height>17</height>
+     <x>426</x>
+     <y>70</y>
+     <width>111</width>
+     <height>20</height>
     </rect>
    </property>
    <property name="text">
-    <string>Price</string>
+    <string>Open Everyday</string>
    </property>
   </widget>
-  <widget class="QLineEdit" name="lineEdit_2">
+  <widget class="QComboBox" name="comboBox_2">
    <property name="geometry">
     <rect>
-     <x>120</x>
-     <y>100</y>
-     <width>71</width>
+     <x>570</x>
+     <y>70</y>
+     <width>201</width>
      <height>25</height>
     </rect>
    </property>
@@ -75,54 +75,31 @@
   <widget class="QLabel" name="label_4">
    <property name="geometry">
     <rect>
-     <x>210</x>
-     <y>100</y>
-     <width>67</width>
+     <x>290</x>
+     <y>150</y>
+     <width>21</width>
      <height>17</height>
     </rect>
    </property>
    <property name="text">
-    <string>Capacity</string>
+    <string>--</string>
    </property>
   </widget>
-  <widget class="QLineEdit" name="lineEdit_3">
+  <widget class="QDateEdit" name="dateEdit">
    <property name="geometry">
     <rect>
-     <x>280</x>
-     <y>100</y>
-     <width>71</width>
-     <height>25</height>
-    </rect>
-   </property>
-  </widget>
-  <widget class="QLabel" name="label_5">
-   <property name="geometry">
-    <rect>
-     <x>370</x>
-     <y>100</y>
-     <width>171</width>
-     <height>17</height>
-    </rect>
-   </property>
-   <property name="text">
-    <string>Minimum Staff Required</string>
-   </property>
-  </widget>
-  <widget class="QLineEdit" name="lineEdit_4">
-   <property name="geometry">
-    <rect>
-     <x>550</x>
-     <y>100</y>
-     <width>71</width>
-     <height>25</height>
+     <x>180</x>
+     <y>110</y>
+     <width>110</width>
+     <height>26</height>
     </rect>
    </property>
   </widget>
   <widget class="QLabel" name="label_6">
    <property name="geometry">
     <rect>
-     <x>60</x>
-     <y>140</y>
+     <x>80</x>
+     <y>110</y>
      <width>91</width>
      <height>17</height>
     </rect>
@@ -131,21 +108,34 @@
     <string>Start Date</string>
    </property>
   </widget>
-  <widget class="QDateEdit" name="dateEdit">
+  <widget class="QLineEdit" name="lineEdit">
    <property name="geometry">
     <rect>
-     <x>160</x>
-     <y>140</y>
-     <width>110</width>
-     <height>26</height>
+     <x>220</x>
+     <y>150</y>
+     <width>51</width>
+     <height>25</height>
     </rect>
+   </property>
+  </widget>
+  <widget class="QLabel" name="label_5">
+   <property name="geometry">
+    <rect>
+     <x>80</x>
+     <y>150</y>
+     <width>141</width>
+     <height>17</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Total Visits Range</string>
    </property>
   </widget>
   <widget class="QLabel" name="label_7">
    <property name="geometry">
     <rect>
-     <x>350</x>
-     <y>140</y>
+     <x>370</x>
+     <y>110</y>
      <width>91</width>
      <height>17</height>
     </rect>
@@ -154,86 +144,145 @@
     <string>End Date</string>
    </property>
   </widget>
+  <widget class="QLineEdit" name="lineEdit_2">
+   <property name="geometry">
+    <rect>
+     <x>320</x>
+     <y>150</y>
+     <width>51</width>
+     <height>25</height>
+    </rect>
+   </property>
+  </widget>
   <widget class="QDateEdit" name="dateEdit_2">
    <property name="geometry">
     <rect>
-     <x>450</x>
-     <y>140</y>
+     <x>470</x>
+     <y>110</y>
      <width>110</width>
      <height>26</height>
+    </rect>
+   </property>
+  </widget>
+  <widget class="QLineEdit" name="lineEdit_3">
+   <property name="geometry">
+    <rect>
+     <x>590</x>
+     <y>150</y>
+     <width>51</width>
+     <height>25</height>
     </rect>
    </property>
   </widget>
   <widget class="QLabel" name="label_8">
    <property name="geometry">
     <rect>
-     <x>60</x>
-     <y>180</y>
-     <width>91</width>
+     <x>450</x>
+     <y>150</y>
+     <width>141</width>
      <height>17</height>
     </rect>
    </property>
    <property name="text">
-    <string>Description</string>
-   </property>
-  </widget>
-  <widget class="QTextEdit" name="textEdit">
-   <property name="geometry">
-    <rect>
-     <x>170</x>
-     <y>180</y>
-     <width>441</width>
-     <height>161</height>
-    </rect>
+    <string>Event Count Range</string>
    </property>
   </widget>
   <widget class="QLabel" name="label_9">
    <property name="geometry">
     <rect>
-     <x>70</x>
-     <y>350</y>
-     <width>91</width>
+     <x>660</x>
+     <y>150</y>
+     <width>21</width>
      <height>17</height>
     </rect>
    </property>
    <property name="text">
-    <string>Assign Staff</string>
+    <string>--</string>
    </property>
   </widget>
-  <widget class="QListWidget" name="listWidget">
+  <widget class="QLineEdit" name="lineEdit_4">
    <property name="geometry">
     <rect>
-     <x>170</x>
-     <y>360</y>
-     <width>441</width>
-     <height>192</height>
+     <x>690</x>
+     <y>150</y>
+     <width>51</width>
+     <height>25</height>
     </rect>
+   </property>
+  </widget>
+  <widget class="QCheckBox" name="checkBox_2">
+   <property name="geometry">
+    <rect>
+     <x>340</x>
+     <y>210</y>
+     <width>261</width>
+     <height>23</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Include Visited</string>
    </property>
   </widget>
   <widget class="QPushButton" name="pushButton">
    <property name="geometry">
     <rect>
-     <x>110</x>
-     <y>600</y>
+     <x>90</x>
+     <y>250</y>
+     <width>89</width>
+     <height>25</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Filter</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="pushButton_2">
+   <property name="geometry">
+    <rect>
+     <x>500</x>
+     <y>240</y>
+     <width>89</width>
+     <height>25</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Site Detail</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="pushButton_3">
+   <property name="geometry">
+    <rect>
+     <x>650</x>
+     <y>240</y>
+     <width>111</width>
+     <height>25</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Transit Detail</string>
+   </property>
+  </widget>
+  <widget class="QTableWidget" name="tableWidget">
+   <property name="geometry">
+    <rect>
+     <x>60</x>
+     <y>310</y>
+     <width>711</width>
+     <height>291</height>
+    </rect>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="pushButton_4">
+   <property name="geometry">
+    <rect>
+     <x>400</x>
+     <y>640</y>
      <width>89</width>
      <height>25</height>
     </rect>
    </property>
    <property name="text">
     <string>Back</string>
-   </property>
-  </widget>
-  <widget class="QPushButton" name="pushButton_2">
-   <property name="geometry">
-    <rect>
-     <x>420</x>
-     <y>600</y>
-     <width>89</width>
-     <height>25</height>
-    </rect>
-   </property>
-   <property name="text">
-    <string>Create</string>
    </property>
   </widget>
  </widget>
