@@ -277,7 +277,7 @@ class Controller():
                 self.user = 'Visitor'
                 self.showVisitorFunctionality()
         else:
-            return QtWidgets.QMessageBox.warning(self, "User not found :(", f"Email '{email}' not found.", QtWidgets.QMessageBox.Ok)
+            return QtWidgets.QMessageBox.warning(self.MainWindow, "User not found :(", f"Email '{email}' not found.", QtWidgets.QMessageBox.Ok)
 
     def showRegisterNavigation(self):
         self.MainWindow.close()
@@ -296,7 +296,7 @@ class Controller():
         self.MainWindow.RegisterUserPage.pushButton_2.clicked.connect(self.showRegisterNavigation)
 
     def RegisterUser(self):
-
+        pass
 
     def showRegisterVisitorOnly(self):
         self.MainWindow.close()
