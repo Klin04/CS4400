@@ -30,6 +30,7 @@ class Ui_MainWindow(object):
         self.lineEdit_2 = QtWidgets.QLineEdit(self.centralwidget)
         self.lineEdit_2.setGeometry(QtCore.QRect(160, 200, 331, 25))
         self.lineEdit_2.setObjectName("lineEdit_2")
+        self.lineEdit_2.setEchoMode(QtWidgets.QLineEdit.Password)
         self.pushButton = QtWidgets.QPushButton(self.centralwidget)
         self.pushButton.setGeometry(QtCore.QRect(150, 270, 89, 25))
         self.pushButton.setObjectName("pushButton")
@@ -53,7 +54,7 @@ class Ui_MainWindow(object):
         MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))
         self.label.setText(_translate("MainWindow", "Atlanta BeltLine Login"))
         self.label_2.setText(_translate("MainWindow", "Email:"))
-        self.label_3.setText(_translate("MainWindow", "Username:"))
+        self.label_3.setText(_translate("MainWindow", "Password:"))
         self.pushButton.setText(_translate("MainWindow", "Login"))
         self.pushButton_2.setText(_translate("MainWindow", "Register"))
 
