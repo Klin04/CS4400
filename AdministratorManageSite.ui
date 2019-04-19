@@ -160,51 +160,15 @@
     <string>Back</string>
    </property>
   </widget>
-  <widget class="QTableWidget" name="tableWidget_3">
+  <widget class="QTableWidget" name="tableWidget">
    <property name="geometry">
     <rect>
-     <x>120</x>
-     <y>190</y>
-     <width>451</width>
-     <height>191</height>
+     <x>70</x>
+     <y>200</y>
+     <width>551</width>
+     <height>192</height>
     </rect>
    </property>
-   <attribute name="horizontalHeaderCascadingSectionResizes">
-    <bool>true</bool>
-   </attribute>
-   <attribute name="horizontalHeaderDefaultSectionSize">
-    <number>150</number>
-   </attribute>
-   <attribute name="horizontalHeaderShowSortIndicator" stdset="0">
-    <bool>true</bool>
-   </attribute>
-   <attribute name="verticalHeaderCascadingSectionResizes">
-    <bool>false</bool>
-   </attribute>
-   <column>
-    <property name="text">
-     <string>Name</string>
-    </property>
-    <property name="textAlignment">
-     <set>AlignCenter</set>
-    </property>
-   </column>
-   <column>
-    <property name="text">
-     <string>Manager</string>
-    </property>
-    <property name="textAlignment">
-     <set>AlignCenter</set>
-    </property>
-   </column>
-   <column>
-    <property name="text">
-     <string>Open Everyday</string>
-    </property>
-    <property name="textAlignment">
-     <set>AlignCenter</set>
-    </property>
-   </column>
   </widget>
  </widget>
  <resources/>
