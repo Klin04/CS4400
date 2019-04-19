@@ -95,6 +95,11 @@ class Ui_Form(object):
         self.widget.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOn)
         self.widget.setHorizontalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOff)
 
+        # set Qframe within QScroll Area to add and remove items
+        self.inner = QtWidgets.QFrame(self.widget)
+        self.inner.setLayout(QtWidgets.QVBoxLayout())
+        self.widget.setWidget(self.inner)
+
         self.retranslateUi(Form)
         QtCore.QMetaObject.connectSlotsByName(Form)
 
