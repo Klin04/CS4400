@@ -254,7 +254,7 @@ class Controller():
         if found:
             if not found['is_employee'] and not found['is_visitor']:
                 self.showUserFunctionality()
-        
+
 
     def showRegisterNavigation(self):
         self.MainWindow.close()
