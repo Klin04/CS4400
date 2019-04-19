@@ -333,7 +333,7 @@ class Controller():
         self.MainWindow.AdministratorFunctionality.pushButton_2.clicked.connect(self.showUserTakeTransit)
         self.MainWindow.AdministratorFunctionality.pushButton_3.clicked.connect(self.showAdministratorManagerUser)
         self.MainWindow.AdministratorFunctionality.pushButton_4.clicked.connect(self.showUserTransitHistory)
-        self.MainWindow.AdministratorFunctionality.pushButton_5.clicked.connect(self.showAdministratorMangerSite)
+        self.MainWindow.AdministratorFunctionality.pushButton_5.clicked.connect(self.showAdministratorManageSite)
         self.MainWindow.AdministratorFunctionality.pushButton_6.clicked.connect(self.showLogin)
         self.MainWindow.AdministratorFunctionality.pushButton_7.clicked.connect(self.showAdministratorEditSite)
 
