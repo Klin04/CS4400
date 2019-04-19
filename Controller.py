@@ -253,9 +253,11 @@ class Controller():
         found = DataBaseManager.Login(email, password)
         if found:
             if not found['is_employee'] and not found['is_visitor']:
+                self.user = 'User'
                 self.showUserFunctionality()
             elif found['is_employee'] and not found['is_visitor']:
                 employee = DataBaseManager.SearchEmployeeType(found['username'])
+                self.user = employee['erole']
                 if employee['erole'] == 'Staff':
                     self.showStaffFunctionality()
                 elif employee['erole'] == 'Manager':
@@ -264,6 +266,7 @@ class Controller():
                     self.showAdministratorFunctionality()
             elif found['is_employee'] and found['is_visitor']:
                 employee = DataBaseManager.SearchEmployeeType(found['username'])
+                self.user = employee['erole'] + 'Visitor'
                 if employee['erole'] == 'Staff':
                     self.showStaffVisitorFunctionality()
                 elif employee['erole'] == 'Manager':
@@ -271,6 +274,7 @@ class Controller():
                 elif employee['erole'] == 'Administrator':
                     self.showAdminVisitorFunctionality()
             elif found['is_visitor']:
+                self.user = 'Visitor'
                 self.showVisitorFunctionality()
 
     def showRegisterNavigation(self):
@@ -418,31 +422,128 @@ class Controller():
         self.MainWindow.close()
         self.MainWindow = MainWindow()
         self.MainWindow.startUserTakeTransit()
+        if self.user == 'Visitor':
+            self.MainWindow.UserFunctionality.pushButton_2.clicked.connect(self.showVisitorFunctionality)
+        elif self.user == "Staff":
+            self.MainWindow.UserFunctionality.pushButton_2.clicked.connect(self.showStaffFunctionality)
+        elif self.user == 'Manager':
+            self.MainWindow.UserFunctionality.pushButton_2.clicked.connect(self.showManagerFunctionality)
+        elif self.user == 'Administrator':
+            self.MainWindow.UserFunctionality.pushButton_2.clicked.connect(self.showAdministratorFunctionality)
+        elif self.user == 'StaffVisitor':
+            self.MainWindow.UserFunctionality.pushButton_2.clicked.connect(self.showStaffVisitorFunctionality)
+        elif self.user == 'ManagerVisitor':
+            self.MainWindow.UserFunctionality.pushButton_2.clicked.connect(self.showManagerVisitorFunctionality)
+        elif self.user == 'AdministratorVisitor':
+            self.MainWindow.UserFunctionality.pushButton_2.clicked.connect(self.showAdminVisitorFunctionality)
+        elif self.user == 'Visitor':
+            self.MainWindow.UserFunctionality.pushButton_2.clicked.connect(self.showVisitorFunctionality)
 
     def showUserTransitHistory(self):
         self.MainWindow.close()
         self.MainWindow = MainWindow()
         self.MainWindow.startUserTakeTransit()
+        if self.user == 'Visitor':
+            self.MainWindow.UserFunctionality.pushButton_2.clicked.connect(self.showVisitorFunctionality)
+        elif self.user == "Staff":
+            self.MainWindow.UserFunctionality.pushButton_2.clicked.connect(self.showStaffFunctionality)
+        elif self.user == 'Manager':
+            self.MainWindow.UserFunctionality.pushButton_2.clicked.connect(self.showManagerFunctionality)
+        elif self.user == 'Administrator':
+            self.MainWindow.UserFunctionality.pushButton_2.clicked.connect(self.showAdministratorFunctionality)
+        elif self.user == 'StaffVisitor':
+            self.MainWindow.UserFunctionality.pushButton_2.clicked.connect(self.showStaffVisitorFunctionality)
+        elif self.user == 'ManagerVisitor':
+            self.MainWindow.UserFunctionality.pushButton_2.clicked.connect(self.showManagerVisitorFunctionality)
+        elif self.user == 'AdministratorVisitor':
+            self.MainWindow.UserFunctionality.pushButton_2.clicked.connect(self.showAdminVisitorFunctionality)
+        elif self.user == 'Visitor':
+            self.MainWindow.UserFunctionality.pushButton_2.clicked.connect(self.showVisitorFunctionality)
 
     def showEmployeeManageProfile(self):
         self.MainWindow.close()
         self.MainWindow = MainWindow()
         self.MainWindow.startEmployeeManageProfile()
+        if self.user == 'Visitor':
+            self.MainWindow.UserFunctionality.pushButton_3.clicked.connect(self.showVisitorFunctionality)
+        elif self.user == "Staff":
+            self.MainWindow.UserFunctionality.pushButton_3.clicked.connect(self.showStaffFunctionality)
+        elif self.user == 'Manager':
+            self.MainWindow.UserFunctionality.pushButton_3.clicked.connect(self.showManagerFunctionality)
+        elif self.user == 'Administrator':
+            self.MainWindow.UserFunctionality.pushButton_3.clicked.connect(self.showAdministratorFunctionality)
+        elif self.user == 'StaffVisitor':
+            self.MainWindow.UserFunctionality.pushButton_3.clicked.connect(self.showStaffVisitorFunctionality)
+        elif self.user == 'ManagerVisitor':
+            self.MainWindow.UserFunctionality.pushButton_3.clicked.connect(self.showManagerVisitorFunctionality)
+        elif self.user == 'AdministratorVisitor':
+            self.MainWindow.UserFunctionality.pushButton_3.clicked.connect(self.showAdminVisitorFunctionality)
+        elif self.user == 'Visitor':
+            self.MainWindow.UserFunctionality.pushButton_3.clicked.connect(self.showVisitorFunctionality)
+
 
     def showAdministratorManagerUser(self):
         self.MainWindow.close()
         self.MainWindow = MainWindow()
         self.MainWindow.startAdministratorManagerUser()
+        if self.user == 'Visitor':
+            self.MainWindow.UserFunctionality.pushButton_4.clicked.connect(self.showVisitorFunctionality)
+        elif self.user == "Staff":
+            self.MainWindow.UserFunctionality.pushButton_4.clicked.connect(self.showStaffFunctionality)
+        elif self.user == 'Manager':
+            self.MainWindow.UserFunctionality.pushButton_4.clicked.connect(self.showManagerFunctionality)
+        elif self.user == 'Administrator':
+            self.MainWindow.UserFunctionality.pushButton_4.clicked.connect(self.showAdministratorFunctionality)
+        elif self.user == 'StaffVisitor':
+            self.MainWindow.UserFunctionality.pushButton_4.clicked.connect(self.showStaffVisitorFunctionality)
+        elif self.user == 'ManagerVisitor':
+            self.MainWindow.UserFunctionality.pushButton_4.clicked.connect(self.showManagerVisitorFunctionality)
+        elif self.user == 'AdministratorVisitor':
+            self.MainWindow.UserFunctionality.pushButton_4.clicked.connect(self.showAdminVisitorFunctionality)
+        elif self.user == 'Visitor':
+            self.MainWindow.UserFunctionality.pushButton_4.clicked.connect(self.showVisitorFunctionality)
 
     def showAdministratorManageSite(self):
         self.MainWindow.close()
         self.MainWindow = MainWindow()
         self.MainWindow.startAdministratorManageSite()
+        if self.user == 'Visitor':
+            self.MainWindow.UserFunctionality.pushButton_5.clicked.connect(self.showVisitorFunctionality)
+        elif self.user == "Staff":
+            self.MainWindow.UserFunctionality.pushButton_5.clicked.connect(self.showStaffFunctionality)
+        elif self.user == 'Manager':
+            self.MainWindow.UserFunctionality.pushButton_5.clicked.connect(self.showManagerFunctionality)
+        elif self.user == 'Administrator':
+            self.MainWindow.UserFunctionality.pushButton_5.clicked.connect(self.showAdministratorFunctionality)
+        elif self.user == 'StaffVisitor':
+            self.MainWindow.UserFunctionality.pushButton_5.clicked.connect(self.showStaffVisitorFunctionality)
+        elif self.user == 'ManagerVisitor':
+            self.MainWindow.UserFunctionality.pushButton_5.clicked.connect(self.showManagerVisitorFunctionality)
+        elif self.user == 'AdministratorVisitor':
+            self.MainWindow.UserFunctionality.pushButton_5.clicked.connect(self.showAdminVisitorFunctionality)
+        elif self.user == 'Visitor':
+            self.MainWindow.UserFunctionality.pushButton_5.clicked.connect(self.showVisitorFunctionality)
 
     def showAdministratorEditSite(self):
         self.MainWindow.close()
         self.MainWindow = MainWindow()
         self.MainWindow.startAdministratorEditSite()
+        if self.user == 'Visitor':
+            self.MainWindow.UserFunctionality.pushButton.clicked.connect(self.showVisitorFunctionality)
+        elif self.user == "Staff":
+            self.MainWindow.UserFunctionality.pushButton.clicked.connect(self.showStaffFunctionality)
+        elif self.user == 'Manager':
+            self.MainWindow.UserFunctionality.pushButton.clicked.connect(self.showManagerFunctionality)
+        elif self.user == 'Administrator':
+            self.MainWindow.UserFunctionality.pushButton.clicked.connect(self.showAdministratorFunctionality)
+        elif self.user == 'StaffVisitor':
+            self.MainWindow.UserFunctionality.pushButton.clicked.connect(self.showStaffVisitorFunctionality)
+        elif self.user == 'ManagerVisitor':
+            self.MainWindow.UserFunctionality.pushButton.clicked.connect(self.showManagerVisitorFunctionality)
+        elif self.user == 'AdministratorVisitor':
+            self.MainWindow.UserFunctionality.pushButton.clicked.connect(self.showAdminVisitorFunctionality)
+        elif self.user == 'Visitor':
+            self.MainWindow.UserFunctionality.pushButton.clicked.connect(self.showVisitorFunctionality)
 
     def showAdministratorCreateSite(self):
         self.MainWindow.close()
