@@ -909,7 +909,7 @@ class Controller():
         self.MainWindow.close()
         self.MainWindow = MainWindow()
         self.MainWindow.startVisitorVisitHistory()
-        
+
 
 if __name__ == '__main__':
     app = QtWidgets.QApplication(sys.argv)
