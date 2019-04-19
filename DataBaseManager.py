@@ -29,3 +29,5 @@ def SearchEmployeeType(Username):
     if len(myresult) != 0:
         return myresult
     return None
+
+def Register(Fname, )
