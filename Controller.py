@@ -329,7 +329,7 @@ class Controller():
         self.MainWindow.close()
         self.MainWindow = MainWindow()
         self.MainWindow.startAdministratorFunctionality()
-        self.MainWindow.AdministratorFunctionality.pushButton.clicked.connect(self.showEmployeeManageProfil)
+        self.MainWindow.AdministratorFunctionality.pushButton.clicked.connect(self.showEmployeeManageProfile)
         self.MainWindow.AdministratorFunctionality.pushButton_2.clicked.connect(self.showUserTakeTransit)
         self.MainWindow.AdministratorFunctionality.pushButton_3.clicked.connect(self.showAdministratorManagerUser)
         self.MainWindow.AdministratorFunctionality.pushButton_4.clicked.connect(self.showUserTransitHistory)

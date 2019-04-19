@@ -16,7 +16,8 @@ def Login(Email, Password):
     mycursor.execute("Select * from emails where Email = %s",(Email, ))
     myresult = mycursor.fetchone()
     if len(myresult) != 0:
-        mycursor.execute("Select * from users where username = %s and pass_word = %s", (myresult['Username'], Password, ))
+        print (myresult)
+        mycursor.execute("Select * from users where username = %s and pass_word = %s", (myresult['username'], Password, ))
         myfinalResult = mycursor.fetchone()
         if len(myfinalResult) != 0:
             return myfinalResult
