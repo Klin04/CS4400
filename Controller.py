@@ -939,6 +939,22 @@ class Controller():
         self.MainWindow.close()
         self.MainWindow = MainWindow()
         self.MainWindow.startVisitorVisitHistory()
+        if self.user == 'User':
+            self.MainWindow.VisitorVisitHistory.pushButton_2.clicked.connect(self.showUserFunctionality)
+        elif self.user == "Staff":
+            self.MainWindow.VisitorVisitHistory.pushButton_2.clicked.connect(self.showStaffFunctionality)
+        elif self.user == 'Manager':
+            self.MainWindow.VisitorVisitHistory.pushButton_2.clicked.connect(self.showManagerFunctionality)
+        elif self.user == 'Administrator':
+            self.MainWindow.VisitorVisitHistory.pushButton_2.clicked.connect(self.showAdministratorFunctionality)
+        elif self.user == 'StaffVisitor':
+            self.MainWindow.VisitorVisitHistory.pushButton_2.clicked.connect(self.showStaffVisitorFunctionality)
+        elif self.user == 'ManagerVisitor':
+            self.MainWindow.VisitorVisitHistory.pushButton_2.clicked.connect(self.showManagerVisitorFunctionality)
+        elif self.user == 'AdministratorVisitor':
+            self.MainWindow.VisitorVisitHistory.pushButton_2.clicked.connect(self.showAdminVisitorFunctionality)
+        elif self.user == 'Visitor':
+            self.MainWindow.VisitorVisitHistory.pushButton_2.clicked.connect(self.showVisitorFunctionality)
 
 
 if __name__ == '__main__':
