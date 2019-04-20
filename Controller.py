@@ -1,4 +1,5 @@
 import sys
+import uuid
 from PyQt5 import QtCore, QtGui, QtWidgets
 from Login import Ui_MainWindow as LoginPage
 from RegisterNavigation import Ui_Form as RegisterNavigationPage
@@ -323,6 +324,8 @@ class Controller():
         for email in Emails:
             if not isValidEmail(email):
                 return QtWidgets.QMessageBox.warning(self.MainWindow, "Email not valid", "Please confirm your email", QtWidgets.QMessageBox.Ok)
+            if not DataBaseManager.IsEmailUnique(email):
+                return QtWidgets.QMessageBox.warning(self.MainWindow, "Email already registered", "Please use a new email", QtWidgets.QMessageBox.Ok)
         DataBaseManager.RegisterUser(Fname, Lname, Username, Password, Emails)
 
     def showRegisterVisitorOnly(self):
@@ -347,6 +350,8 @@ class Controller():
         for email in Emails:
             if not isValidEmail(email):
                 return QtWidgets.QMessageBox.warning(self.MainWindow, "Email not valid", "Please confirm your email", QtWidgets.QMessageBox.Ok)
+            if not DataBaseManager.IsEmailUnique(email):
+                return QtWidgets.QMessageBox.warning(self.MainWindow, "Email already registered", "Please use a new email", QtWidgets.QMessageBox.Ok)
         DataBaseManager.RegisterVisitor(Fname, Lname, Username, Password, Emails)
 
     def showRegisterEmployee(self):
@@ -372,6 +377,8 @@ class Controller():
         Address = self.MainWindow.RegisterEmployeePage.lineEdit_9.text()
         Zipcode = self.MainWindow.RegisterEmployeePage.lineEdit_11.text()
         City = self.MainWindow.RegisterEmployeePage.lineEdit_10.text()
+        State = self.MainWindow.RegisterEmployeePage.comboBox_2.currentText()
+        Erole = self.MainWindow.RegisterEmployeePage.comboBox.currentText()
         Emails = []
         for email in self.MainWindow.RegisterUserPage.EditLineList:
             Emails.append(email.text())
@@ -382,10 +389,15 @@ class Controller():
         for email in Emails:
             if not isValidEmail(email):
                 return QtWidgets.QMessageBox.warning(self.MainWindow, "Email not valid", "Please confirm your email", QtWidgets.QMessageBox.Ok)
+            if not DataBaseManager.IsEmailUnique(email):
+                return QtWidgets.QMessageBox.warning(self.MainWindow, "Email already registered", "Please use a new email", QtWidgets.QMessageBox.Ok)
         if not Phone.isdigit():
             return QtWidgets.QMessageBox.warning(self.MainWindow, "Phone not valid", "Please confirm your phone", QtWidgets.QMessageBox.Ok)
         if not Zipcode.isdigit():
             return QtWidgets.QMessageBox.warning(self.MainWindow, "Zipcode not valid", "Please confirm your zipcode", QtWidgets.QMessageBox.Ok)
+        if not DataBaseManager.IsPhoneUnique(int(Phone)):
+            return QtWidgets.QMessageBox.warning(self.MainWindow, "Phone already used", "Please use a new phone", QtWidgets.QMessageBox.Ok)
+        DataBaseManager.RegisterEmployeeVisitor(Fname, Lname, Username, Password, uuid.uuid4(), int(Phone), Address, City, State, int(Zipcode), Erole)
 
     def showRegisterEmployeeVisitor(self):
         self.MainWindow.close()
@@ -420,7 +432,11 @@ class Controller():
         for email in Emails:
             if not isValidEmail(email):
                 return QtWidgets.QMessageBox.warning(self.MainWindow, "Email not valid", "Please confirm your email", QtWidgets.QMessageBox.Ok)
+            if not DataBaseManager.IsEmailUnique(email):
+                return QtWidgets.QMessageBox.warning(self.MainWindow, "Email already registered", "Please use a new email", QtWidgets.QMessageBox.Ok)
         if not Phone.isdigit():
+            return QtWidgets.QMessageBox.warning(self.MainWindow, "Phone not valid", "Please confirm your phone", QtWidgets.QMessageBox.Ok)
+        if not DataBaseManager.IsPhoneUnique(int(Phone)):
             return QtWidgets.QMessageBox.warning(self.MainWindow, "Phone not valid", "Please confirm your phone", QtWidgets.QMessageBox.Ok)
         if not Zipcode.isdigit():
             return QtWidgets.QMessageBox.warning(self.MainWindow, "Zipcode not valid", "Please confirm your zipcode", QtWidgets.QMessageBox.Ok)
