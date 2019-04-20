@@ -39,12 +39,10 @@ import VisitorTransitDetail
 import VisitorSiteDetail
 import VisitorVisitHistory
 import DataBaseManager
-import re
+import validators
 
 def isValidEmail(email):
-    if re.match("^.+@([?)[a-zA-Z0-9-.]+.([a-zA-Z]{2,3}|[0-9]{1,3})(]?)$", email) != None:
-        return True
-    return False
+    return bool(validators.email(email))
 
 class MainWindow(QtWidgets.QMainWindow):
     def __init__(self, parent=None):
@@ -291,6 +289,7 @@ class Controller():
         else:
             return QtWidgets.QMessageBox.warning(self.MainWindow, "User not found", "User not found. Please register before you log in.", QtWidgets.QMessageBox.Ok)
 
+
     def showRegisterNavigation(self):
         self.MainWindow.close()
         self.MainWindow = MainWindow()
@@ -321,7 +320,10 @@ class Controller():
             return QtWidgets.QMessageBox.warning(self.MainWindow, "Missing Field", "There are missing fields", QtWidgets.QMessageBox.Ok)
         if Password != CPassword:
             return QtWidgets.QMessageBox.warning(self.MainWindow, "Password not match", "Please confirm your password", QtWidgets.QMessageBox.Ok)
-        DataBaseManager.Register(Fname, Lname, Username, Password, Emails)
+        for email in Emails:
+            if not isValidEmail(email):
+                return QtWidgets.QMessageBox.warning(self.MainWindow, "Email not valid", "Please confirm your email", QtWidgets.QMessageBox.Ok)
+        DataBaseManager.RegisterUser(Fname, Lname, Username, Password, Emails)
 
     def showRegisterVisitorOnly(self):
         self.MainWindow.close()
@@ -329,11 +331,46 @@ class Controller():
         self.MainWindow.startRegisterVisitorOnly()
         self.MainWindow.RegisterVisitorOnlyPage.pushButton_2.clicked.connect(self.showRegisterNavigation)
 
+    def RegisterVisitor(self):
+        Fname = self.MainWindow.RegisterUserPage.lineEdit.text()
+        Lname = self.MainWindow.RegisterUserPage.lineEdit_2.text()
+        Username = self.MainWindow.RegisterUserPage.lineEdit_3.text()
+        Password = self.MainWindow.RegisterUserPage.lineEdit_4.text()
+        CPassword = self.MainWindow.RegisterUserPage.lineEdit_5.text()
+        Emails = []
+        for email in self.MainWindow.RegisterUserPage.EditLineList:
+            Emails.append(email.text())
+        if len(Fname) == 0 or len(Lname) == 0 or len(Username) == 0 or len(Password) == 0 or len(Emails) == 0:
+            return QtWidgets.QMessageBox.warning(self.MainWindow, "Missing Field", "There are missing fields", QtWidgets.QMessageBox.Ok)
+        if Password != CPassword:
+            return QtWidgets.QMessageBox.warning(self.MainWindow, "Password not match", "Please confirm your password", QtWidgets.QMessageBox.Ok)
+        for email in Emails:
+            if not isValidEmail(email):
+                return QtWidgets.QMessageBox.warning(self.MainWindow, "Email not valid", "Please confirm your email", QtWidgets.QMessageBox.Ok)
+        DataBaseManager.RegisterVisitor(Fname, Lname, Username, Password, Emails)
+
     def showRegisterEmployee(self):
         self.MainWindow.close()
         self.MainWindow = MainWindow()
         self.MainWindow.startRegisterEmployee()
         self.MainWindow.RegisterEmployeePage.pushButton_2.clicked.connect(self.showRegisterNavigation)
+        states = ["AL", "AK", "AZ", "AR", "CA", "CO", "CT", "DC", "DE", "FL", "GA",
+                  "HI", "ID", "IL", "IN", "IA", "KS", "KY", "LA", "ME", "MD",
+                  "MA", "MI", "MN", "MS", "MO", "MT", "NE", "NV", "NH", "NJ",
+                  "NM", "NY", "NC", "ND", "OH", "OK", "OR", "PA", "RI", "SC",
+                  "SD", "TN", "TX", "UT", "VT", "VA", "WA", "WV", "WI", "WY"]
+        self.MainWindow.RegisterEmployeePage.comboBox_2.addItems(states)
+        self.MainWindow.RegisterEmployeePage.comboBox.addItems(["Manager", "Staff"])
+
+    def RegisterEmployee(self):
+        Fname = self.MainWindow.RegisterEmployeePage.lineEdit_2.text()
+        Lname = self.MainWindow.RegisterEmployeePage.lineEdit_3.text()
+        Username = self.MainWindow.RegisterEmployeePage.lineEdit_5.text()
+        Password = self.MainWindow.RegisterEmployeePage.lineEdit_4.text()
+        CPassword = self.MainWindow.RegisterEmployeePage.lineEdit_7.text()
+        Phone = self.MainWindow.RegisterEmployeePage.lineEdit_8.text()
+        Address = self.MainWindow.RegisterEmployeePage.lineEdit_9.text()
+
 
     def showRegisterEmployeeVisitor(self):
         self.MainWindow.close()
@@ -341,11 +378,6 @@ class Controller():
         self.MainWindow.startRegisterEmployeeVisitor()
         self.MainWindow.RegisterEmployeeVisitorPage.pushButton_2.clicked.connect(self.showRegisterNavigation)
 
-    def showRegisterVisitorOnly(self):
-        self.MainWindow.close()
-        self.MainWindow = MainWindow()
-        self.MainWindow.startRegisterVisitorOnly()
-        self.MainWindow.RegisterVisitorOnlyPage.pushButton_2.clicked.connect(self.showRegisterNavigation)
 
     def showUserFunctionality(self):
         self.MainWindow.close()

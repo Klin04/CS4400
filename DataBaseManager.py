@@ -28,6 +28,23 @@ def SearchEmployeeType(Username):
     myresult = mycursor.fetchone()
     return myresult
 
-def Register(Fname, Lname, Username, Password, Emails):
-    arguments = (Username, Password, 'pending', Fname, Lname, 0, 0)
+def RegisterUser(Fname, Lname, Username, Password, Emails):
+    arguments = (Username, Password, 'pending', Fname, Lname, 0, 0, )
     mycursor.execute("insert into users (username, pass_word, user_status, fname, lname, is_employee, is_visitor) values (%s, %s, %s, %s, %s, %d, %d)", arguments)
+    for email in Emails:
+        mycursor.execute("insert into emails(username, email) values (%s, $s)", (Username, email))
+
+def RegisterVisitor(Fname, Lname, Username, Password, Emails):
+    arguments = (Username, Password, 'pending', Fname, Lname, 0, 1, )
+    mycursor.execute(
+        "insert into users (username, pass_word, user_status, fname, lname, is_employee, is_visitor) values (%s, %s, %s, %s, %s, %d, %d)", arguments)
+    for email in Emails:
+        mycursor.execute("insert into emails(username, email) values (%s, $s)", (Username, email))
+
+def RegisterEmployee(Fname, Lname, Username, Password, Emails):
+    arguments = (Username, Password, 'pending', Fname, Lname, 1, 0,)
+    mycursor.execute(
+        "insert into users (username, pass_word, user_status, fname, lname, is_employee, is_visitor) values (%s, %s, %s, %s, %s, %d, %d)",
+        arguments)
+    for email in Emails:
+        mycursor.execute("insert into emails(username, email) values (%s, $s)", (Username, email))
