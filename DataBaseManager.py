@@ -19,7 +19,7 @@ def Login(Email, Password):
         return None
     mycursor.execute("Select * from users where username = %s and pass_word = %s", (myResult['username'], Password, ))
     myFinalResult = mycursor.fetchone()
-    if not myFinalResult:
+    if myFinalResult:
         return myFinalResult
     return None
 
@@ -28,5 +28,6 @@ def SearchEmployeeType(Username):
     myresult = mycursor.fetchone()
     return myresult
 
-def Register(Fname):
-    print()
+def Register(Fname, Lname, Username, Password, Emails):
+    arguments = (Username, Password, 'pending', Fname, Lname, 0, 0)
+    mycursor.execute("insert into users (username, pass_word, user_status, fname, lname, is_employee, is_visitor) values (%s, %s, %s, %s, %s, %d, %d)", arguments)

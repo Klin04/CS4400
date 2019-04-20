@@ -39,6 +39,12 @@ import VisitorTransitDetail
 import VisitorSiteDetail
 import VisitorVisitHistory
 import DataBaseManager
+import re
+
+def isValidEmail(email):
+    if re.match("^.+@([?)[a-zA-Z0-9-.]+.([a-zA-Z]{2,3}|[0-9]{1,3})(]?)$", email) != None:
+        return True
+    return False
 
 class MainWindow(QtWidgets.QMainWindow):
     def __init__(self, parent=None):
@@ -250,8 +256,14 @@ class Controller():
     def Login(self):
         email = self.MainWindow.LoginPage.lineEdit.text()
         password = self.MainWindow.LoginPage.lineEdit_2.text()
+        if len(email) == 0:
+            return QtWidgets.QMessageBox.warning(self.MainWindow, "Email not entered", "Email not entered.", QtWidgets.QMessageBox.Ok)
+        if len(password) == 0:
+            return QtWidgets.QMessageBox.warning(self.MainWindow, "Password not entered", "Password not entered", QtWidgets.QMessageBox.Ok)
         found = DataBaseManager.Login(email, password)
         if found:
+            if found['user_status'] != 'Approved':
+                return QtWidgets.QMessageBox.warning(self.MainWindow, "User not Approved", "User not Approved", QtWidgets.QMessageBox.Ok)
             if not found['is_employee'] and not found['is_visitor']:
                 self.user = 'User'
                 self.showUserFunctionality()
@@ -277,7 +289,7 @@ class Controller():
                 self.user = 'Visitor'
                 self.showVisitorFunctionality()
         else:
-            return QtWidgets.QMessageBox.warning(self.MainWindow, "User not found :(", f"Email '{email}' not found.", QtWidgets.QMessageBox.Ok)
+            return QtWidgets.QMessageBox.warning(self.MainWindow, "User not found", "User not found. Please register before you log in.", QtWidgets.QMessageBox.Ok)
 
     def showRegisterNavigation(self):
         self.MainWindow.close()
@@ -295,8 +307,21 @@ class Controller():
         self.MainWindow.startRegisterUser()
         self.MainWindow.RegisterUserPage.pushButton_2.clicked.connect(self.showRegisterNavigation)
 
+
     def RegisterUser(self):
-        pass
+        Fname = self.MainWindow.RegisterUserPage.lineEdit.text()
+        Lname = self.MainWindow.RegisterUserPage.lineEdit_2.text()
+        Username = self.MainWindow.RegisterUserPage.lineEdit_3.text()
+        Password = self.MainWindow.RegisterUserPage.lineEdit_4.text()
+        CPassword = self.MainWindow.RegisterUserPage.lineEdit_5.text()
+        Emails = []
+        for email in self.MainWindow.RegisterUserPage.EditLineList:
+            Emails.append(email.text())
+        if len(Fname) == 0 or len(Lname) == 0 or len(Username) == 0 or len(Password) == 0 or len(Emails) == 0:
+            return QtWidgets.QMessageBox.warning(self.MainWindow, "Missing Field", "There are missing fields", QtWidgets.QMessageBox.Ok)
+        if Password != CPassword:
+            return QtWidgets.QMessageBox.warning(self.MainWindow, "Password not match", "Please confirm your password", QtWidgets.QMessageBox.Ok)
+        DataBaseManager.Register(Fname, Lname, Username, Password, Emails)
 
     def showRegisterVisitorOnly(self):
         self.MainWindow.close()
