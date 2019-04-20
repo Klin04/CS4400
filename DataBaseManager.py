@@ -48,6 +48,20 @@ def RegisterEmployee(Fname, Lname, Username, Password, Emails, EmployeeId, Phone
         arguments)
     for email in Emails:
         mycursor.execute("insert into emails(username, email) values (%s, $s)", (Username, email))
+    arguments = (Username, EmployeeId, Phone, Address, City, State, Zipcode, Erole,)
+    mycursor.execute("insert into `project`.`employee`(username, employee_id, phone, address, city, state, zipcode, erole) values (%s, %s, %d, %s, %s, %s, %d, $s)",
+                     arguments)
+
+def RegisterEmployeeVisitor(Fname, Lname, Username, Password, Emails, EmployeeId, Phone, Address, City, State, Zipcode, Erole):
+    arguments = (Username, Password, 'pending', Fname, Lname, 1, 1,)
+    mycursor.execute(
+        "insert into users (username, pass_word, user_status, fname, lname, is_employee, is_visitor) values (%s, %s, %s, %s, %s, %d, %d)",
+        arguments)
+    for email in Emails:
+        mycursor.execute("insert into emails(username, email) values (%s, $s)", (Username, email))
+    arguments = (Username, EmployeeId, Phone, Address, City, State, Zipcode, Erole,)
+    mycursor.execute("insert into `project`.`employee`(username, employee_id, phone, address, city, state, zipcode, erole) values (%s, %s, %d, %s, %s, %s, %d, $s)",
+                     arguments)
 
 def IsEmailUnique(email):
     mycursor.execute("select * from emails where email = %s", email)
