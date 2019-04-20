@@ -72,9 +72,64 @@ def IsEmailUnique(email):
         return True
 
 def IsPhoneUnique(phone):
-    mycursor.execute("select * from employees where phone = %s", phone)
+    mycursor.execute("select * from employees where phone = %d", phone)
     any_phone = mycursor.fetchone()
     if any_phone:
         return False
     else:
         return True
+
+def GetAllTransportTypeFromTransits():
+    """
+    For Screen 15/22 drop down menu for Transport Type
+    :return: list of transport
+    """
+    mycursor.execute("select transit_type from transits")
+    return mycursor.fetchall()
+
+def GetAllSiteNameFromConnect():
+    """
+    For Screen 15/22 drop down menu for Contain Site
+    :return: list
+    """
+    mycursor.execute("select connect_name from connect")
+    return mycursor.fetchall()
+
+def GetAllRoutesForTakeTransit(transit_type):
+    """
+    Filters all the routes for taking transits, for Screen 15
+    :return: list of routes and their information
+    """
+    pass
+    # mycursor.execute("select transit_route, transit_type, price from `project`.`transits` where transit_type = %s",
+    #                  transit_type)
+    # mycursor.fetchall()
+
+    # finds the intersection of three lists
+    # res_list = [i for n, i in enumerate(first_filter_result) if i in second_filter_result and i in third_filter_result]
+
+def GetCurrentSiteManagerAndAllUnAssignedManagers(sitename):
+    """
+    For screen 20, shows a 'dropdown list containing the current site manager as well
+    as the managers who have not yet been assigned to another site'
+    :param sitename: the current site name
+    :return:
+    """
+    mycursor.execute("(select username from employees where employee_id in (select sitemanager_id from sites where sitename = %s)) "
+                     "union (select username from employees where employee_id not in (select sitemanager_id from sites))", sitename)
+    return mycursor.fetchall()
+
+def UpdateSiteInformation(sitename, zipcode, address, openeveryday, sitemanager_id, new_sitename):
+    """
+    Used for screen 20, edits the site information by administrator
+    :param sitename:
+    :param zipcode:
+    :param address:
+    :param openeveryday:
+    :param sitemanager_id:
+    :return:
+    """
+    arguments = (zipcode, address, openeveryday, sitemanager_id, sitename, )
+    mycursor.execute("UPDATE sites SET zipcode = %d, address = %s, openeveryday = %d, sitemanager_id = %d WHERE sitename = %s",
+                     arguments)
+    mycursor.execute("update sites set sitename = %s where sitename = %s", (new_sitename, sitename))
