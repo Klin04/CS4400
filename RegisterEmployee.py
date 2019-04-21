@@ -109,6 +109,9 @@ class Ui_Form(object):
         self.pushButton.setObjectName("pushButton")
         self.pushButton.clicked.connect(self.addEmail)
 
+        self.lineEdit_7.setEchoMode(QtWidgets.QLineEdit.Password)
+        self.lineEdit_4.setEchoMode(QtWidgets.QLineEdit.Password)
+
         # use scroll to dynamically expand
         self.widget = QtWidgets.QScrollArea(Form)
         self.widget.setGeometry(QtCore.QRect(160, 320, 521, 101))

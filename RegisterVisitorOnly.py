@@ -64,6 +64,9 @@ class Ui_Form(object):
         self.pushButton_5.setObjectName("pushButton_5")
         self.pushButton_5.clicked.connect(self.addEmail)
 
+        self.lineEdit_4.setEchoMode(QtWidgets.QLineEdit.Password)
+        self.lineEdit_5.setEchoMode(QtWidgets.QLineEdit.Password)
+
         self.widget = QtWidgets.QScrollArea(Form)
         self.widget.setGeometry(QtCore.QRect(90, 230, 521, 101))
         self.widget.setObjectName("widget")

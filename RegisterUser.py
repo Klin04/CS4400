@@ -59,6 +59,10 @@ class Ui_Form(object):
         self.label_14 = QtWidgets.QLabel(Form)
         self.label_14.setGeometry(QtCore.QRect(40, 240, 67, 17))
         self.label_14.setObjectName("label_14")
+
+        self.lineEdit_4.setEchoMode(QtWidgets.QLineEdit.Password)
+        self.lineEdit_5.setEchoMode(QtWidgets.QLineEdit.Password)
+
         # add email button is back in the Form parent (not in Scroll Area)
         self.pushButton_4 = QtWidgets.QPushButton(Form)
         self.pushButton_4.setGeometry(QtCore.QRect(240, 360, 89, 25))
