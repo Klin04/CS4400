@@ -672,11 +672,11 @@ def AddAssignedStaffForEvent(employee_id, sitename, event_name, startdate):
             "insert into assign_to (employee_id, sitename, event_name, startdate) values (%s, %s, %s, %s)",
             (employee_id, sitename, event_name, startdate,))
 
-def UpdateDescriptionForEvent(employee_id, sitename, event_name, startdate):
+def UpdateDescriptionForEvent(event_description, sitename, event_name, startdate):
     """
     This updates the description for an event for
     screen 26
-    :param employee_id:
+    :param event_description:
     :param sitename:
     :param event_name:
     :param startdate:
@@ -684,5 +684,22 @@ def UpdateDescriptionForEvent(employee_id, sitename, event_name, startdate):
     """
     with mydb as mycursor:
         mycursor.execute(
-            "insert into assign_to (employee_id, sitename, event_name, startdate) values (%s, %s, %s, %s)",
-            (employee_id, sitename, event_name, startdate,))
+            "update site_events set event_description = %s where sitename = %s "
+            "and event_name = %s and startdate = %s",
+            (event_description, sitename, event_name, startdate,))
+
+def GetDescriptionForEvent(sitename, event_name, startdate):
+    """
+    Gets the description for an event for
+    screen 26
+    :param sitename:
+    :param event_name:
+    :param startdate:
+    :return:
+    """
+    with mydb as mycursor:
+        mycursor.execute(
+            "select event_description from site_events where sitename = %s "
+            "and event_name = %s and startdate = %s",
+            (sitename, event_name, startdate,))
+        return mycursor.fetchone()
