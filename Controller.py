@@ -1363,8 +1363,12 @@ class Controller():
         self.MainWindow.startManagerCreateEvent()
         self.MainWindow.ManagerCreateEvent.pushButton.clicked.connect(self.showManagerManageEvent)
         self.MainWindow.ManagerCreateEvent.pushButton.clicked.connect(self.createEvent)
-        availableStaffs = []
-        self.MainWindow.ManagerCreateEvent.listWidget.addItems(availableStaffs)
+        self.MainWindow.ManagerCreateEvent.dateEdit.setDate(QtCore.QDate.currentDate())
+        self.MainWindow.ManagerCreateEvent.dateEdit_2.setDate(QtCore.QDate.currentDate())
+        self.MainWindow.ManagerCreateEvent.availableStaffs = []
+        self.MainWindow.ManagerCreateEvent.listWidget.addItems(self.MainWindow.ManagerCreateEvent.availableStaffs)
+        self.MainWindow.ManagerCreateEvent.dateEdit.dateChanged.connect(self.getAvailableStaffs())
+        self.MainWindow.ManagerCreateEvent.dateEdit_2.dateChanged.connect(self.getAvailableStaffs())
         # if self.user == 'User':
         #     self.MainWindow.ManagerCreateEvent.pushButton.clicked.connect(self.showUserFunctionality)
         # elif self.user == "Staff":
@@ -1381,6 +1385,15 @@ class Controller():
         #     self.MainWindow.ManagerCreateEvent.pushButton.clicked.connect(self.showAdminVisitorFunctionality)
         # elif self.user == 'Visitor':
         #     self.MainWindow.ManagerCreateEvent.pushButton.clicked.connect(self.showVisitorFunctionality)
+
+    def getAvailableStaffs(self):
+        startDate = self.MainWindow.ManagerCreateEvent.dateEdit.date().toPyDate()
+        endDate = self.MainWindow.ManagerCreateEvent.dateEdit_2.date().toPyDate()
+        allAvailableStaffs = DataBaseManager.GetAllAvailibleStaffForNewEvent(startDate, endDate)
+        self.MainWindow.ManagerCreateEvent.availableStaffs = []
+        for staff in allAvailableStaffs:
+            self.MainWindow.ManagerCreateEvent.availableStaffs.append(staff['fname'] + ' ' + staff['lname'])
+        self.MainWindow.ManagerCreateEvent.listWidget.addItems(self.MainWindow.ManagerCreateEvent.availableStaffs)
 
     def createEvent(self):
         startDate = self.MainWindow.ManagerCreateEvent.dateEdit.date().toPyDate()
@@ -1405,6 +1418,8 @@ class Controller():
             return QtWidgets.QMessageBox.warning(self.MainWindow, "Date not valid",
                                                  "Start Date must be before End Date",
                                                  QtWidgets.QMessageBox.Ok)
+        DataBaseManager.ManagerCreateEvent()
+
 
     def showManagerManageStaff(self):
         self.MainWindow.close()
@@ -1432,13 +1447,30 @@ class Controller():
             allSites.append(site['sitename'])
         self.MainWindow.ManagerManageStaff.comboBox.addItems(allSites)
         self.MainWindow.ManagerManageStaff.pushButton.clicked.connect(self.filterStaff)
+        self.MainWindow.ManagerManageStaff.dateEdit.setDate(QtCore.QDate.currentDate())
+        self.MainWindow.ManagerManageStaff.dateEdit_2.setDate(QtCore.QDate.currentDate())
 
     def filterStaff(self):
         Site = self.MainWindow.ManagerManageStaff.comboBox.currentText()
         Fname = self.MainWindow.ManagerManageStaff.lineEdit.text()
         Lname = self.MainWindow.ManagerManageStaff.lineEdit.text()
-        StartDate = self.MainWindow.ManagerManageStaff.dateEdit.date()
-        EndDate = self.MainWindow.ManagerManageStaff.dateEdit_2.date()
+        StartDate = self.MainWindow.ManagerManageStaff.dateEdit.date().toPyDate()
+        EndDate = self.MainWindow.ManagerManageStaff.dateEdit_2.date().toPyDate()
+        Fname = setNone(Fname)
+        Lname = setNone(Lname)
+        if Site == 'All':
+            Site = None
+        tableData = DataBaseManager.GetAllStaffByFilterBySite_Fname_Lname_StartDate_EndDate(Site, Fname, Lname, StartDate, EndDate)
+        self.MainWindow.ManagerManageStaff.tableWidget.setSortingEnabled(False)
+        for i in range(len(tableData)):
+            self.MainWindow.ManagerManageStaff.tableWidget.insertRow(i)
+            newItem = QtWidgets.QTableWidgetItem()
+            newItem.setText(str(tableData[i]['fname'] + ' ' + tableData[i]['lname']))
+            self.MainWindow.ManagerManageStaff.tableWidget.setItem(i, 0, newItem)
+            newItem = QtWidgets.QTableWidgetItem()
+            newItem.setText(str(tableData[i]['event_shifts']))
+            self.MainWindow.ManagerManageStaff.tableWidget.setItem(i, 1, newItem)
+        self.MainWindow.ManagerManageStaff.tableWidget.setSortingEnabled(True)
 
     def showManagerSiteReport(self):
         self.MainWindow.close()
@@ -1478,6 +1510,10 @@ class Controller():
         HighTotalRevenueRange = self.MainWindow.ManagerSiteReport.lineEdit_8.text()
 
     def showManagerDailyDetail(self):
+        if len(self.MainWindow.ManagerSiteReport.tableWidget.selectionModel().selectedRows()):
+            return QtWidgets.QMessageBox.warning(self.MainWindow, "Haven't selected a row",
+                                                 "Please select a row before seeing detail",
+                                                 QtWidgets.QMessageBox.Ok)
         Date = self.MainWindow.ManagerSiteReport.tableWidget.selectionModel().selectedRows()[0]
         selectedDate = self.MainWindow.AdministratorManageTransit.tableWidget.item(Date.row(), 0).text()
         self.MainWindow.close()
