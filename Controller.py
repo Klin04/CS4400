@@ -1164,7 +1164,7 @@ class Controller():
         self.MainWindow.startManagerViewEditEvent()
         self.MainWindow.ManagerViewEditEvent.pushButton_3.clicked.connect(self.showManagerManageEvent)
         self.MainWindow.ManagerViewEditEvent.label_2.setText(EventName)
-        self.MainWindow.ManagerViewEditEvent.label_4.setText(Price)
+        self.MainWindow.ManagerViewEditEvent.label_4.setText(str(Price))
         self.MainWindow.ManagerViewEditEvent.label_6.setText(str(startDate))
         self.MainWindow.ManagerViewEditEvent.label_8.setText(str(EndDate))
         allStaff = DataBaseManager.StaffAssignedAndAvailibleStaffForEvent(EventName, siteName, startDate, EndDate)
