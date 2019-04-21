@@ -920,7 +920,7 @@ class Controller():
         self.MainWindow.ManagerManageEvent.pushButton_3.clicked.connect(self.showManagerViewEditEvent)
         self.MainWindow.ManagerManageEvent.pushButton_4.clicked.connect(self.deleteEvent)
 
-    def filterEvents(self):
+    def filterManageEvents(self):
         print("filter events")
 
     def deleteEvent(self):
@@ -930,44 +930,74 @@ class Controller():
         self.MainWindow.close()
         self.MainWindow = MainWindow()
         self.MainWindow.startManagerViewEditEvent()
-        if self.user == 'User':
-            self.MainWindow.ManagerViewEditEvent.pushButton_3.clicked.connect(self.showUserFunctionality)
-        elif self.user == "Staff":
-            self.MainWindow.ManagerViewEditEvent.pushButton_3.clicked.connect(self.showStaffFunctionality)
-        elif self.user == 'Manager':
-            self.MainWindow.ManagerViewEditEvent.pushButton_3.clicked.connect(self.showManagerFunctionality)
-        elif self.user == 'Administrator':
-            self.MainWindow.ManagerViewEditEvent.pushButton_3.clicked.connect(self.showAdministratorFunctionality)
-        elif self.user == 'StaffVisitor':
-            self.MainWindow.ManagerViewEditEvent.pushButton_3.clicked.connect(self.showStaffVisitorFunctionality)
-        elif self.user == 'ManagerVisitor':
-            self.MainWindow.ManagerViewEditEvent.pushButton_3.clicked.connect(self.showManagerVisitorFunctionality)
-        elif self.user == 'AdministratorVisitor':
-            self.MainWindow.ManagerViewEditEvent.pushButton_3.clicked.connect(self.showAdminVisitorFunctionality)
-        elif self.user == 'Visitor':
-            self.MainWindow.ManagerViewEditEvent.pushButton_3.clicked.connect(self.showVisitorFunctionality)
-        
+        self.MainWindow.ManagerViewEditEvent.pushButton_3.clicked.connect(self.showManagerManageEvent)
+        # if self.user == 'User':
+        #     self.MainWindow.ManagerViewEditEvent.pushButton_3.clicked.connect(self.showUserFunctionality)
+        # elif self.user == "Staff":
+        #     self.MainWindow.ManagerViewEditEvent.pushButton_3.clicked.connect(self.showStaffFunctionality)
+        # elif self.user == 'Manager':
+        #     self.MainWindow.ManagerViewEditEvent.pushButton_3.clicked.connect(self.showManagerFunctionality)
+        # elif self.user == 'Administrator':
+        #     self.MainWindow.ManagerViewEditEvent.pushButton_3.clicked.connect(self.showAdministratorFunctionality)
+        # elif self.user == 'StaffVisitor':
+        #     self.MainWindow.ManagerViewEditEvent.pushButton_3.clicked.connect(self.showStaffVisitorFunctionality)
+        # elif self.user == 'ManagerVisitor':
+        #     self.MainWindow.ManagerViewEditEvent.pushButton_3.clicked.connect(self.showManagerVisitorFunctionality)
+        # elif self.user == 'AdministratorVisitor':
+        #     self.MainWindow.ManagerViewEditEvent.pushButton_3.clicked.connect(self.showAdminVisitorFunctionality)
+        # elif self.user == 'Visitor':
+        #     self.MainWindow.ManagerViewEditEvent.pushButton_3.clicked.connect(self.showVisitorFunctionality)
+        self.MainWindow.ManagerViewEditEvent.pushButton.clicked.connect(self.filterViewEditEvents)
+        self.MainWindow.ManagerViewEditEvent.pushButton_2.clicked.connect(self.updateEvent)
+
+    def filterViewEditEvents(self):
+        staffAssigned = self.MainWindow.ManagerViewEditEvent.listWidget.selectedItems()
+        LowDailyVisit = self.MainWindow.ManagerViewEditEvent.lineEdit.text()
+        HighDailyVisit = self.MainWindow.ManagerViewEditEvent.lineEdit_2.text()
+        LowDailyRevenue = self.MainWindow.ManagerViewEditEvent.lineEdit_3.text()
+        HighDailyRevenue = self.MainWindow.ManagerViewEditEvent.lineEdit_4.text()
+
+    def updateEvent(self):
+        staffAssigned = self.MainWindow.ManagerViewEditEvent.listWidget.selectedItems()
+        LowDailyVisit = self.MainWindow.ManagerViewEditEvent.lineEdit.text()
+        HighDailyVisit = self.MainWindow.ManagerViewEditEvent.lineEdit_2.text()
+        LowDailyRevenue = self.MainWindow.ManagerViewEditEvent.lineEdit_3.text()
+        HighDailyRevenue = self.MainWindow.ManagerViewEditEvent.lineEdit_4.text()
 
     def showManagerCreateEvent(self):
         self.MainWindow.close()
         self.MainWindow = MainWindow()
         self.MainWindow.startManagerCreateEvent()
-        if self.user == 'User':
-            self.MainWindow.ManagerCreateEvent.pushButton.clicked.connect(self.showUserFunctionality)
-        elif self.user == "Staff":
-            self.MainWindow.ManagerCreateEvent.pushButton.clicked.connect(self.showStaffFunctionality)
-        elif self.user == 'Manager':
-            self.MainWindow.ManagerCreateEvent.pushButton.clicked.connect(self.showManagerFunctionality)
-        elif self.user == 'Administrator':
-            self.MainWindow.ManagerCreateEvent.pushButton.clicked.connect(self.showAdministratorFunctionality)
-        elif self.user == 'StaffVisitor':
-            self.MainWindow.ManagerCreateEvent.pushButton.clicked.connect(self.showStaffVisitorFunctionality)
-        elif self.user == 'ManagerVisitor':
-            self.MainWindow.ManagerCreateEvent.pushButton.clicked.connect(self.showManagerVisitorFunctionality)
-        elif self.user == 'AdministratorVisitor':
-            self.MainWindow.ManagerCreateEvent.pushButton.clicked.connect(self.showAdminVisitorFunctionality)
-        elif self.user == 'Visitor':
-            self.MainWindow.ManagerCreateEvent.pushButton.clicked.connect(self.showVisitorFunctionality)
+        self.MainWindow.ManagerCreateEvent.pushButton.clicked.connect(self.showManagerManageEvent)
+        self.MainWindow.ManagerCreateEvent.pushButton.clicked.connect(self.createEvent)
+        availableStaffs = []
+        self.MainWindow.ManagerCreateEvent.listWidget.addItems(availableStaffs)
+        # if self.user == 'User':
+        #     self.MainWindow.ManagerCreateEvent.pushButton.clicked.connect(self.showUserFunctionality)
+        # elif self.user == "Staff":
+        #     self.MainWindow.ManagerCreateEvent.pushButton.clicked.connect(self.showStaffFunctionality)
+        # elif self.user == 'Manager':
+        #     self.MainWindow.ManagerCreateEvent.pushButton.clicked.connect(self.showManagerFunctionality)
+        # elif self.user == 'Administrator':
+        #     self.MainWindow.ManagerCreateEvent.pushButton.clicked.connect(self.showAdministratorFunctionality)
+        # elif self.user == 'StaffVisitor':
+        #     self.MainWindow.ManagerCreateEvent.pushButton.clicked.connect(self.showStaffVisitorFunctionality)
+        # elif self.user == 'ManagerVisitor':
+        #     self.MainWindow.ManagerCreateEvent.pushButton.clicked.connect(self.showManagerVisitorFunctionality)
+        # elif self.user == 'AdministratorVisitor':
+        #     self.MainWindow.ManagerCreateEvent.pushButton.clicked.connect(self.showAdminVisitorFunctionality)
+        # elif self.user == 'Visitor':
+        #     self.MainWindow.ManagerCreateEvent.pushButton.clicked.connect(self.showVisitorFunctionality)
+
+    def createEvent(self):
+        startDate = self.MainWindow.ManagerCreateEvent.dateEdit.date()
+        endDate = self.MainWindow.ManagerCreateEvent.dateEdit_2.date()
+        Name = self.MainWindow.ManagerCreateEvent.lineEdit.text()
+        Price = self.MainWindow.ManagerCreateEvent.lineEdit_2.text()
+        Capacity = self.MainWindow.ManagerCreateEvent.lineEdit_3.text()
+        MinStaffRequired = self.MainWindow.ManagerCreateEvent.lineEdit_4.text()
+        Description = self.MainWindow.ManagerCreateEvent.textEdit.toPlainText()
+
 
     def showManagerManageStaff(self):
         self.MainWindow.close()
@@ -989,6 +1019,16 @@ class Controller():
             self.MainWindow.ManagerManageStaff.pushButton_2.clicked.connect(self.showAdminVisitorFunctionality)
         elif self.user == 'Visitor':
             self.MainWindow.ManagerManageStaff.pushButton_2.clicked.connect(self.showVisitorFunctionality)
+        allSites = []
+        self.MainWindow.ManagerManageStaff.comboBox.addItems(allSites)
+        self.MainWindow.ManagerManageStaff.pushButton.clicked.connect(self.filterStaff)
+
+    def filterStaff(self):
+        Site = self.MainWindow.ManagerManageStaff.comboBox.currentText()
+        Fname = self.MainWindow.ManagerManageStaff.lineEdit.text()
+        Lname = self.MainWindow.ManagerManageStaff.lineEdit.text()
+        StartDate = self.MainWindow.ManagerManageStaff.dateEdit.date()
+        EndDate = self.MainWindow.ManagerManageStaff.dateEdit_2.date()
 
     def showManagerSiteReport(self):
         self.MainWindow.close()
