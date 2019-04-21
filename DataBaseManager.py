@@ -1023,6 +1023,11 @@ def AdminDeletesSite(sitename):
     with mydb as mycursor:
         mycursor.execute("delete from sites where sitename = %s", sitename)
 
+def GetSitenameWithManagerUsername(username):
+    with mydb as mycursor:
+        mycursor.execute("select sitename from sites where sitemanager_id in (select employee_id from employees where username = %s)", username)
+        return mycursor.fetchone()
+
 def GetEventWithSameNameAndDateAtSameSiteToCheckIfIsOverlapEvent(event_name, sitename):
     """
     Before creating an event, we need to check 'Two events with the same Name in the same Site must not overlap'
