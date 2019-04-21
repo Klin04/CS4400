@@ -938,7 +938,7 @@ def GetManagerDropdownMenuForAdminManageSite():
     :return:
     """
     with mydb as mycursor:
-        mycursor.execute("select users.fname, users.lname from users, (select temp.sitename as sitenames, username, "
+        mycursor.execute("select Concat(users.fname, ' ', users.lname) from users, (select temp.sitename as sitenames, username, "
                          "temp.openeveryday as openeverydays from employees, (select sitename, sitemanager_id, "
                          "openeveryday from sites) as temp where sitemanager_id = employees.employee_id) as temps "
                          "where temps.username = users.username")
