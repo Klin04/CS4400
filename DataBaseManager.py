@@ -408,11 +408,13 @@ def DeleteTransit(transit_type, transit_route):
         mycursor.execute("delete from transits where transit_type = %s and transit_route = %s",
                          (transit_type, transit_route))
 
+
 def Intify(stringInt):
     if stringInt is not None:
         return int(stringInt)
     else:
         return stringInt
+
 
 def GetAllEventFilteredByEventName_DescripKeyword_StartDate_EndDate_DurationRange_VisitRange_RevenueRange(
         event_name, keyword, start_date, end_date, duration_range_low, duration_range_high, visit_range_low,
@@ -672,6 +674,7 @@ def AddAssignedStaffForEvent(employee_id, sitename, event_name, startdate):
             "insert into assign_to (employee_id, sitename, event_name, startdate) values (%s, %s, %s, %s)",
             (employee_id, sitename, event_name, startdate,))
 
+
 def UpdateDescriptionForEvent(event_description, sitename, event_name, startdate):
     """
     This updates the description for an event for
@@ -687,6 +690,7 @@ def UpdateDescriptionForEvent(event_description, sitename, event_name, startdate
             "update site_events set event_description = %s where sitename = %s "
             "and event_name = %s and startdate = %s",
             (event_description, sitename, event_name, startdate,))
+
 
 def GetDescriptionForEvent(sitename, event_name, startdate):
     """
@@ -704,8 +708,10 @@ def GetDescriptionForEvent(sitename, event_name, startdate):
             (sitename, event_name, startdate,))
         return mycursor.fetchone()
 
+
 def GetUserTransitHistoryFilteredByTransportType_Route_StartDate_EndDate_ContainSite(usernames, transport_type,
-                                                                                     route, start_date, end_date, sitename):
+                                                                                     route, start_date, end_date,
+                                                                                     sitename):
     """
     User Transit History table for
     screen 16
