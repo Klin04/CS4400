@@ -138,7 +138,7 @@ def GetAllTransportTypeFromTransits():
 
 def GetAllSiteNameFromConnect():
     """
-    For Screen 15/22 drop down menu for Contain Site
+    For Screen 15/22/23 drop down menu for Contain Site
     :return: list
     """
     with mydb as mycursor:
@@ -366,3 +366,85 @@ def IsSitenameUnique(sitename):
             return True
         else:
             return False
+
+def DeleteEvent(event_name, sitename, startdate):
+    """
+    for screen 25, when managers deletes the selected tuples (event)
+    :param event_name:
+    :param sitename:
+    :param startdate:
+    :return:
+    """
+    with mydb as mycursor:
+        mycursor.execute(
+            "delete from site_events where event_name = %s and sitename = %s and startdate = %s",
+            (event_name, sitename, startdate))
+
+
+def DeleteTransit(transit_type, transit_route):
+    """
+    Deletes Transit given its PKs -> the two args
+    For Screen 22, when admin manage transit
+    :param transit_type:
+    :param transit_route:
+    :return:
+    """
+    with mydb as mycursor:
+        mycursor.execute("delete from transits where transit_type = %s and transit_route = %s", (transit_type, transit_route))
+
+def GetTransitByFilterByTransportType_Route_ContainSite_PriceRange(transit_type, route, low_price, high_price):
+    """
+    Specifically for screen 22, fetching that table, filters the 4 different types of filter,
+    If the filter is not applied, please pass in None
+    :param transit_type:
+    :param route:
+    :param low_price:
+    :param high_price:
+    :return:
+    """
+    with mydb as mycursor:
+        # first get ALL result
+        mycursor.execute("select transit_type, transit_route, price, connect_sites, visitors_logged from sites_logged")
+        all_result = mycursor.fetchall()
+
+        # Start filtering if this filtering type is applied
+        if transit_type is not None:
+            mycursor.execute("select transit_type, transit_route, price, connect_sites, visitors_logged from sites_logged "
+                         "where transit_type = %s", transit_type)
+            filtered_result = mycursor.fetchall()
+            all_result = [i for n, i in enumerate(all_result) if i in filtered_result]
+        if route is not None:
+            mycursor.execute("select transit_type, transit_route, price, connect_sites, visitors_logged from sites_logged "
+                             "where transit_route = %s", route)
+            filtered_result = mycursor.fetchall()
+            all_result = [i for n, i in enumerate(all_result) if i in filtered_result]
+        if low_price is not None and high_price is not None:
+            mycursor.execute("select transit_type, transit_route, price, connect_sites, visitors_logged from sites_logged "
+                             "WHERE price BETWEEN %s AND %s", (low_price, high_price))
+            filtered_result = mycursor.fetchall()
+            all_result = [i for n, i in enumerate(all_result) if i in filtered_result]
+        return all_result
+
+def GetTransitPrice(transit_type, transit_route):
+    """
+    This method and GetTransitConnectedSites works together to fetch the data needed for
+    screen 23
+    :param transit_type:
+    :param transit_route:
+    :return:
+    """
+    with mydb as mycursor:
+        mycursor.execute("select price, connect_name from transits, connect where transit_type = %s and transit_route = %s", (transit_type, transit_route))
+        return mycursor.fetchone()
+
+def GetTransitConnectedSites(transit_type, transit_route):
+    """
+    This method and GetTransitPrice works together to fetch the data needed for
+    screen 23
+    :param transit_type:
+    :param transit_route:
+    :return:
+    """
+    with mydb as mycursor:
+        mycursor.execute("select connect_name from connect where connect_type = %s and connect_route = %s", (transit_type, transit_route))
+        return mycursor.fetchall()
