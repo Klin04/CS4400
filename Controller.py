@@ -576,6 +576,8 @@ class Controller():
         self.MainWindow.UserTakeTransit.pushButton.clicked.connect(self.filterTransit())
         self.MainWindow.UserTakeTransit.comboBox_2.addItems(["All", "MARTA", "Bus", "Bike"])
         self.MainWindow.UserTakeTransit.comboBox.addItems(allSites)
+        allSitesFromDB = DataBaseManager.GetAllSiteNameFromConnect()
+        print(allSitesFromDB)
 
     def filterTransit(self):
         containSite = self.MainWindow.UserTakeTransit.comboBox.currentText()
