@@ -413,6 +413,21 @@ def GetAllEventFilteredByEventName_DescripKeyword_StartDate_EndDate_DurationRang
         event_name, keyword, start_date, end_date, duration_range_low, duration_range_high, visit_range_low,
         visit_range_high,
         revenue_range_low, revenue_range_high):
+    """
+    Screen 25 table, look at this insanely long method name
+    i luv it
+    :param event_name:
+    :param keyword:
+    :param start_date:
+    :param end_date:
+    :param duration_range_low:
+    :param duration_range_high:
+    :param visit_range_low:
+    :param visit_range_high:
+    :param revenue_range_low:
+    :param revenue_range_high:
+    :return:
+    """
     with mydb as mycursor:
         # first get ALL result
         mycursor.execute(
@@ -485,19 +500,19 @@ def GetTransitByFilterByTransportType_Route_ContainSite_PriceRange(transit_type,
         # Start filtering if this filtering type is applied
         if transit_type is not None:
             mycursor.execute(
-                "select transit_type, transit_route, price, connected_sites, visitors_logged from sites_logged "
+                "select transit_route, transit_type, price, connected_sites, visitors_logged from sites_logged "
                 "where transit_type = %s", transit_type)
             filtered_result = mycursor.fetchall()
             all_result = [i for n, i in enumerate(all_result) if i in filtered_result]
         if route is not None:
             mycursor.execute(
-                "select transit_type, transit_route, price, connected_sites, visitors_logged from sites_logged "
+                "select transit_route, transit_type, price, connected_sites, visitors_logged from sites_logged "
                 "where transit_route = %s", route)
             filtered_result = mycursor.fetchall()
             all_result = [i for n, i in enumerate(all_result) if i in filtered_result]
         if low_price is not None and high_price is not None:
             mycursor.execute(
-                "select transit_type, transit_route, price, connected_sites, visitors_logged from sites_logged "
+                "select transit_route, transit_type, price, connected_sites, visitors_logged from sites_logged "
                 "WHERE price BETWEEN %s AND %s", (low_price, high_price))
             filtered_result = mycursor.fetchall()
             all_result = [i for n, i in enumerate(all_result) if i in filtered_result]
@@ -545,3 +560,44 @@ def UserTakeTransitLogNewTransit(take_username, take_type, take_route, take_date
     with mydb as mycursor:
         mycursor.execute("insert into take (take_username, take_type, take_route, take_date) values(%s, %s, %s, %s)",
                          (take_username, take_type, take_route, take_date,))
+
+def GetEventViewEditEventByFilterByVisitRange_RevenueRange(event_name, price, visit_range_high, visit_range_low, revenue_range_low, revenue_range_high):
+    pass
+    # with mydb as mycursor:
+    #     # first get ALL result
+    #     mycursor.execute(
+    #         "select visit_event_date as date, count(*) as daily_visits, count(*) * price as daily_revenue "
+    #         "from visit_event join site_events on visit_event_name = site_events.event_name "
+    #         "and site_events.startdate = visit_event_startdate where visit_event_name = eventname "
+    #         "group by visit_event_date")
+    #     all_result = mycursor.fetchall()
+    #
+    #     # Start filtering if this filtering type is applied
+    #     if visit_range_high is not None and visit_range_low is not None:
+    #         mycursor.execute(
+    #             "select visit_event_date as date, count(*) as daily_visits, count(*) * price as daily_revenue "
+    #             "from visit_event join site_events on visit_event_name = site_events.event_name "
+    #             "and site_events.startdate = visit_event_startdate where visit_event_name = eventname "
+    #             "group by visit_event_date having daily_visits between %s and %s",
+    #             (visit_range_high, visit_range_low))
+    #         filtered_result = mycursor.fetchall()
+    #         all_result = [i for n, i in enumerate(all_result) if i in filtered_result]
+    #     if revenue_range_low is not None and revenue_range_high is not None:
+    #         mycursor.execute(
+    #             "select transit_type, transit_route, price, connected_sites, visitors_logged from sites_logged "
+    #             "where transit_type = %s", transit_type)
+    #         filtered_result = mycursor.fetchall()
+    #         all_result = [i for n, i in enumerate(all_result) if i in filtered_result]
+    #     if route is not None:
+    #         mycursor.execute(
+    #             "select transit_type, transit_route, price, connected_sites, visitors_logged from sites_logged "
+    #             "where transit_route = %s", route)
+    #         filtered_result = mycursor.fetchall()
+    #         all_result = [i for n, i in enumerate(all_result) if i in filtered_result]
+    #     if low_price is not None and high_price is not None:
+    #         mycursor.execute(
+    #             "select transit_type, transit_route, price, connected_sites, visitors_logged from sites_logged "
+    #             "WHERE price BETWEEN %s AND %s", (low_price, high_price))
+    #         filtered_result = mycursor.fetchall()
+    #         all_result = [i for n, i in enumerate(all_result) if i in filtered_result]
+    #     return all_result
