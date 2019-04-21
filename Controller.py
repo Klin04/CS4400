@@ -1132,9 +1132,19 @@ class Controller():
             newItem.setText(str(tableData[i]['revenue'] * tableData[i]['total_visit']))
             self.MainWindow.ManagerManageEvent.tableWidget.setItem(i, 4, newItem)
         self.MainWindow.ManagerManageEvent.tableWidget.setSortingEnabled(True)
+        self.MainWindow.ManagerManageEvent.tableData = tableData;
 
     def deleteEvent(self):
-        print("deleted")
+        Event =  Route = self.MainWindow.ManagerManageEvent.tableWidget.selectionModel().selectedRows()[0]
+        EventName = self.MainWindow.ManagerManageEvent.tableWidget.item(Event.row(), 0).text()
+        SiteName = None
+        startDate = None
+        for data in self.MainWindow.ManagerManageEvent.tableData:
+            if data['event_name'] == EventName:
+                siteName = data['sitename']
+                startDate = data['startdate']
+        DataBaseManager.DeleteEvent(EventName, SiteName, startDate)
+        self.filterManageEvents()
 
     def showManagerViewEditEvent(self):
         self.MainWindow.close()
