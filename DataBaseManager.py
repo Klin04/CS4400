@@ -643,6 +643,23 @@ def StaffAssignedAndAvailibleStaffForEvent(event_name, sitename, start_date, end
         all_result = mycursor.fetchall()
         return all_result
 
+def GetAssignedStaffsForEvent(event_name, sitename, start_date):
+    """
+    Get all the assigned staffs for event for
+    screen 26
+    :param event_name:
+    :param sitename:
+    :param start_date:
+    :return:
+    """
+    with mydb as mycursor:
+        mycursor.execute(
+            "select distinct (fname, lname) from users where username in (select username from employee "
+            "where employee_id in (select employee_id from assign_to WHERE event_name = %s and sitename = %s "
+            "and startdate = %s))",
+            (event_name, sitename, start_date,))
+        return mycursor.fetchall()
+
 
 def DeleteAllAssignedStaffsForEvent(event_name, sitename, start_date):
     """
