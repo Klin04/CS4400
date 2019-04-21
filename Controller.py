@@ -573,13 +573,13 @@ class Controller():
         elif self.user == 'Visitor':
             self.MainWindow.UserTakeTransit.pushButton_2.clicked.connect(self.showVisitorFunctionality)
         allSites = ['All']
-        self.MainWindow.UserTakeTransit.pushButton.clicked.connect(self.filterTransit())
+        self.MainWindow.UserTakeTransit.pushButton.clicked.connect(self.filterUserTransit)
         self.MainWindow.UserTakeTransit.comboBox_2.addItems(["All", "MARTA", "Bus", "Bike"])
         self.MainWindow.UserTakeTransit.comboBox.addItems(allSites)
         allSitesFromDB = DataBaseManager.GetAllSiteNameFromConnect()
         print(allSitesFromDB)
 
-    def filterTransit(self):
+    def filterUserTransit(self):
         containSite = self.MainWindow.UserTakeTransit.comboBox.currentText()
         transportType = self.MainWindow.UserTakeTransit.comboBox_2.currentText()
         LowRange = self.MainWindow.UserTakeTransit.lineEdit.text()
@@ -821,7 +821,7 @@ class Controller():
         self.MainWindow.AdministratorManageTransit.comboBox.addItems(["All", "MARTA", "Bus", "Bike"])
         allSites = ['All']
         self.MainWindow.AdministratorManageTransit.comboBox_2.addItems(allSites)
-        self.MainWindow.AdministratorManageTransit.pushButton.clicked.connect(self.filterTransit)
+        self.MainWindow.AdministratorManageTransit.pushButton.clicked.connect(self.filterAdminTransit)
         self.MainWindow.AdministratorManageTransit.pushButton_2.clicked.connect(self.showAdministratorCreateTransit)
         self.MainWindow.AdministratorManageTransit.pushButton_3.clicked.connect(self.showAdministratorEditTransit)
         self.MainWindow.AdministratorManageTransit.pushButton_4.clicked.connect(self.deleteTransit)
@@ -829,7 +829,7 @@ class Controller():
     def deleteTransit(self):
         print("Deleted")
 
-    def filterTransit(self):
+    def filterAdminTransit(self):
         TransportType = self.MainWindow.AdministratorManageTransit.comboBox.currentText()
         Route = self.MainWindow.AdministratorManageTransit.lineEdit.text()
         LowRange = self.MainWindow.AdministratorManageTransit.lineEdit_2.text()
