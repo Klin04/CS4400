@@ -1119,7 +1119,17 @@ class Controller():
             return QtWidgets.QMessageBox.warning(self.MainWindow, "Range not valid", "Please enter both ranges",
                                                  QtWidgets.QMessageBox.Ok)
         tableData = DataBaseManager.GetAllEventFilteredByEventName_DescripKeyword_StartDate_EndDate_DurationRange_VisitRange_RevenueRange(Name, DescriptionKeyword, StartDate, EndDate, LowDurationRange, HighDurationRange, LowTotalVisitRange, HighTotalVisitRange, LowTotalRevenueRange, HighTotalRevenueRange)
-        print(tableData)
+        self.MainWindow.ManagerManageEvent.tableWidget.setSortingEnabled(False)
+        for i in range(len(tableData)):
+            self.MainWindow.ManagerManageEvent.tableWidget.insertRow(i)
+            for column, key in enumerate(["event_name", 'staff_count','duration', 'total_visit']):
+                newItem = QtWidgets.QTableWidgetItem()
+                newItem.setText(str(tableData[i][key]))
+                self.MainWindow.AdministratorManageTransit.tableWidget.setItem(i, column, newItem)
+            newItem = QtWidgets.QTableWidgetItem()
+            newItem.setText(str(tableData['revenue'] * tableData['total_visit']))
+            self.MainWindow.AdministratorManageTransit.tableWidget.setItem(i, 4, newItem)
+        self.MainWindow.AdministratorManageTransit.tableWidget.setSortingEnabled(True)
 
     def deleteEvent(self):
         print("deleted")
