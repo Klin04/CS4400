@@ -62,7 +62,7 @@ def RegisterEmployee(Fname, Lname, Username, Password, Emails, EmployeeId, Phone
             mycursor.execute("insert into emails(username, email) values (%s, %s)", (Username, email))
         arguments = (Username, EmployeeId, Phone, Address, City, State, Zipcode, Erole,)
         mycursor.execute(
-            "insert into employee(username, employee_id, phone, address, city, state, zipcode, erole) values (%s, %s, %s, %s, %s, %s, %s, %s)",
+            "insert into employees(username, employee_id, phone, address, city, state, zipcode, erole) values (%s, %s, %s, %s, %s, %s, %s, %s)",
             arguments)
 
 
@@ -77,7 +77,7 @@ def RegisterEmployeeVisitor(Fname, Lname, Username, Password, Emails, EmployeeId
             mycursor.execute("insert into emails(username, email) values (%s, %s)", (Username, email))
         arguments = (Username, EmployeeId, Phone, Address, City, State, Zipcode, Erole,)
         mycursor.execute(
-            "insert into employee(username, employee_id, phone, address, city, state, zipcode, erole) values (%s, %s, %s, %s, %s, %s, %s, %s)",
+            "insert into employees(username, employee_id, phone, address, city, state, zipcode, erole) values (%s, %s, %s, %s, %s, %s, %s, %s)",
             arguments)
 
 
