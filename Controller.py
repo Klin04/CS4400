@@ -805,7 +805,7 @@ class Controller():
             QtWidgets.QAbstractItemView.SelectRows)
 
     def approveUsers(self):
-        print("Approved")
+        User = self.MainWindow.AdministratorManageUser.tableWidget.selectionModel().selectedRows()[0]
 
     def declineUsers(self):
         print("Declined")
@@ -819,6 +819,8 @@ class Controller():
             Type = None
         if Status == 'All':
             Status = None
+        if len(Username) == 0:
+            Username = None
         tableData = DataBaseManager.GetAllAdministratorManageUserInformationFilterByStatus_EmpType_Username(
             self.username, Type, Status)
         self.MainWindow.AdministratorManageUser.tableWidget.setSortingEnabled(False)
