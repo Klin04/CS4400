@@ -1024,9 +1024,20 @@ def AdminDeletesSite(sitename):
         mycursor.execute("delete from sites where sitename = %s", sitename)
 
 def GetSitenameWithManagerUsername(username):
+    """
+    screen 27
+    :param username
+    :return:
+    """
     with mydb as mycursor:
         mycursor.execute("select sitename from sites where sitemanager_id in (select employee_id from employees where username = %s)", username)
         return mycursor.fetchone()
+
+def GetEmployeeIdWithUsername(username):
+    with mydb as mycursor:
+        mycursor.execute("select employee_id from employees where username = %s", username)
+        return mycursor.fetchone()
+
 
 def GetEventWithSameNameAndDateAtSameSiteToCheckIfIsOverlapEvent(event_name, sitename):
     """

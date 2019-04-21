@@ -1418,7 +1418,15 @@ class Controller():
             return QtWidgets.QMessageBox.warning(self.MainWindow, "Date not valid",
                                                  "Start Date must be before End Date",
                                                  QtWidgets.QMessageBox.Ok)
-        DataBaseManager.ManagerCreateEvent()
+        sitename = DataBaseManager.GetSitenameWithManagerUsername(self.username)['sitename']
+        checkForOverlap = DataBaseManager.GetEventWithSameNameAndDateAtSameSiteToCheckIfIsOverlapEvent(Name, sitename)
+        employeeID = DataBaseManager.GetEmployeeIdWithUsername(self.username)['employee_id']
+        if not checkForOverlap:
+            DataBaseManager.ManagerCreateEvent(sitename, Name, startDate, int(MinStaffRequired), Description, float(Price), endDate, employeeID)
+        else:
+            return QtWidgets.QMessageBox.warning(self.MainWindow, "Overlap happens",
+                                                 "Please change date",
+                                                 QtWidgets.QMessageBox.Ok)
 
 
     def showManagerManageStaff(self):
