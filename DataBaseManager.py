@@ -244,6 +244,17 @@ def UpdateSiteInformation(sitename, zipcode, address, openeveryday, sitemanager_
             arguments)
         mycursor.execute("update sites set sitename = %s where sitename = %s", (new_sitename, sitename))
 
+def GetSiteInformationForEditSite(sitename):
+    """
+    screen 20
+    :param sitename:
+    :return:
+    """
+    with mydb as mycursor:
+        mycursor.execute(
+            "select zipcode, address, sitemanager_id, openeveryday from sites WHERE sitename = %s",
+            sitename)
+        return mycursor.fetchone()
 
 def GetManagersNotAssignedSite():
     """
@@ -1000,3 +1011,25 @@ def AdminDeletesSite(sitename):
     """
     with mydb as mycursor:
         mycursor.execute("delete from sites where sitename = %s", sitename)
+
+def GetEventWithSameNameAndDateAtSameSiteToCheckIfIsOverlapEvent(event_name, sitename):
+    """
+    Before creating an event, we need to check 'Two events with the same Name in the same Site must not overlap'
+    Use this to check
+    screen 27
+    :param event_name:
+    :param sitename:
+    :return:
+    """
+    with mydb as mycursor:
+        mycursor.execute("select event_name, sitename, startdate, endate from staff_visitor_revenue "
+                         "where event_name = %s and sitename = %s", (event_name, sitename))
+        return mycursor.fetchall()
+
+# def GetAllAvailibleStaffForNewEvent():
+#     with mydb as mycursor:
+#         mycursor.execute("select fname, lname from users where username in (select username from employee "
+#                          "where employee_id in (select distinct employee_id from assign_to where event_name in "
+#                          "(select event_name from staff_visitor_revenue where (startdate > end or endate < start))))",
+#                          (event_name, sitename))
+#         return mycursor.fetchall()
