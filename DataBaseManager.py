@@ -267,7 +267,9 @@ def GetEmployeeInformationForManageProfile(username):
         dict_fname_lname_IsVisitor = mycursor.fetchone()
         mycursor.execute("select employee_id, phone, address from employees where username = %s", username)
         dict_empId_phone_addr = mycursor.fetchone()
-        mycursor.execute("select sitename from sites where sitemanager_id in (select employee_id from employees where username = %s)", username)
+        mycursor.execute(
+            "select sitename from sites where sitemanager_id in (select employee_id from employees where username = %s)",
+            username)
         dict_sitename = mycursor.fetchone()
         return (dict_fname_lname_IsVisitor, dict_empId_phone_addr, dict_sitename)
 
@@ -683,6 +685,7 @@ def StaffAssignedAndAvailibleStaffForEvent(event_name, sitename, start_date, end
         all_result = mycursor.fetchall()
         return all_result
 
+
 def GetAssignedStaffsForEvent(event_name, sitename, start_date):
     """
     Get all the assigned staffs for event for
@@ -827,3 +830,104 @@ def GetUserTransitHistoryFilteredByTransportType_Route_StartDate_EndDate_Contain
             filtered_result = mycursor.fetchall()
             all_result = [i for n, i in enumerate(all_result) if i in filtered_result]
         return all_result
+
+
+def GetAllAdministratorManageUserInformationFilterByStatus_EmpType_Username(username, employee_type, user_status):
+    """
+    Fetch table for screen 18
+    :param username:
+    :param employee_type:
+    :param user_status:
+    :return: looks like this -> {usernames: "efw", email_count: "wef", temp.user_status: "ewe", UserTypes: "wf"}
+    """
+    with mydb as mycursor:
+        # first get ALL result
+        mycursor.execute(
+            "select temp.username as usernames, count(*) as email_count, temp.user_status, temp.erole as UserTypes from emails, "
+            "(select users.username as username, user_status, erole from users, employees "
+            "where employees.username = users.username) as temp where emails.username = temp.username "
+            "group by usernames")
+        all_result = mycursor.fetchall()
+
+        # Start filtering if this filtering type is applied
+        if employee_type is not None:
+            if employee_type == 'Staff':
+                mycursor.execute(
+                    "select temp.username as usernames, count(*) as email_count, temp.user_status, "
+                    "temp.erole as UserTypes from emails, (select users.username as username, user_status, erole from users, "
+                    "employees where employees.username = users.username) as temp "
+                    "where emails.username = temp.username and temp.erole = 'Staff' group by usernames")
+                filtered_result = mycursor.fetchall()
+                all_result = [i for n, i in enumerate(all_result) if i in filtered_result]
+            elif employee_type == 'Manager':
+                mycursor.execute(
+                    "select temp.username as usernames, count(*) as email_count, temp.user_status, "
+                    "temp.erole as UserTypes from emails, (select users.username as username, user_status, erole from users, "
+                    "employees where employees.username = users.username) as temp "
+                    "where emails.username = temp.username and temp.erole = 'Manager' group by usernames")
+                filtered_result = mycursor.fetchall()
+                all_result = [i for n, i in enumerate(all_result) if i in filtered_result]
+            elif employee_type == 'User':
+                mycursor.execute(
+                    "select temps.username as usernames, count(*) as email_count, 'User' as UserTypes, temps.user_status from emails, "
+                    "(SELECT username , user_status from users where is_visitor = 0) as temps "
+                    "where emails.username = temps.username group by usernames")
+                filtered_result = mycursor.fetchall()
+                all_result = [i for n, i in enumerate(all_result) if i in filtered_result]
+            elif employee_type == 'Visitor':
+                mycursor.execute(
+                    "select temps.username as usernames, count(*) as email_count, 'Visitor' as UserTypes, temps.user_status from emails, "
+                    "(SELECT username , user_status from users where is_visitor = 1) as temps "
+                    "where emails.username = temps.username group by usernames")
+                filtered_result = mycursor.fetchall()
+                all_result = [i for n, i in enumerate(all_result) if i in filtered_result]
+        if user_status is not None:
+            mycursor.execute(
+                "select temp.username as usernames, count(*) as email_count, temp.user_status, "
+                "temp.erole as UserTypes from emails, (select users.username as username, user_status, erole from users, "
+                "employees where employees.username = users.username) as temp "
+                "where emails.username = temp.username and temp.user_status = %s group by usernames", user_status)
+            filtered_result = mycursor.fetchall()
+            all_result = [i for n, i in enumerate(all_result) if i in filtered_result]
+        if username is not None:
+            mycursor.execute(
+                "select temp.username as usernames, count(*) as email_count, temp.user_status, "
+                "temp.erole as UserTypes from emails, (select users.username as username, user_status, erole from users, "
+                "employees where employees.username = users.username) as temp "
+                "where emails.username = temp.username and usernames = %s group by usernames", username)
+            filtered_result = mycursor.fetchall()
+            all_result = [i for n, i in enumerate(all_result) if i in filtered_result]
+        return all_result
+
+def ApproveUserStatus(username):
+    """
+    IMPORTANT: Can approve a pending/declined account
+    screen 18
+    :param username:
+    :return:
+    """
+    with mydb as mycursor:
+        mycursor.execute("update users set user_status = 'Approved' where username = %s", username)
+
+def DeclineUserStatus(username):
+    """
+    IMPORTANT: Can decline a pending account, cannot decline an approved account
+    screen 18
+    :param username:
+    :return:
+    """
+    if GetUserStatus(username) == 'Approved':
+        raise Exception("cannot decline an approved account")
+    with mydb as mycursor:
+        mycursor.execute("update users set user_status = 'Declined' where username = %s", username)
+
+def GetUserStatus(username):
+    """
+    To help with determining the user type
+    for screen 18
+    :param username:
+    :return:
+    """
+    with mydb as mycursor:
+        mycursor.execute("select user_status from users where username = %s", username)
+        return mycursor.fetchone()
