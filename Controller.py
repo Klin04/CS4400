@@ -1,5 +1,5 @@
 import sys
-import uuid
+import random
 from PyQt5 import QtCore, QtGui, QtWidgets
 from Login import Ui_MainWindow as LoginPage
 from RegisterNavigation import Ui_Form as RegisterNavigationPage
@@ -326,6 +326,8 @@ class Controller():
                 return QtWidgets.QMessageBox.warning(self.MainWindow, "Email not valid", "Please confirm your email", QtWidgets.QMessageBox.Ok)
             if not DataBaseManager.IsEmailUnique(email):
                 return QtWidgets.QMessageBox.warning(self.MainWindow, "Email already registered", "Please use a new email", QtWidgets.QMessageBox.Ok)
+        if not DataBaseManager.IsUsernameUnique(Username):
+            return QtWidgets.QMessageBox.warning(self.MainWindow, "Username not unique", "Please use a new username", QtWidgets.QMessageBox.Ok)
         DataBaseManager.RegisterUser(Fname, Lname, Username, Password, Emails)
         self.showLogin()
 
@@ -354,6 +356,8 @@ class Controller():
                 return QtWidgets.QMessageBox.warning(self.MainWindow, "Email not valid", "Please confirm your email", QtWidgets.QMessageBox.Ok)
             if not DataBaseManager.IsEmailUnique(email):
                 return QtWidgets.QMessageBox.warning(self.MainWindow, "Email already registered", "Please use a new email", QtWidgets.QMessageBox.Ok)
+        if not DataBaseManager.IsUsernameUnique(Username):
+            return QtWidgets.QMessageBox.warning(self.MainWindow, "Username not unique", "Please use a new username", QtWidgets.QMessageBox.Ok)
         DataBaseManager.RegisterVisitor(Fname, Lname, Username, Password, Emails)
         self.showLogin()
 
@@ -370,6 +374,12 @@ class Controller():
         self.MainWindow.RegisterEmployeePage.comboBox_2.addItems(states)
         self.MainWindow.RegisterEmployeePage.comboBox.addItems(["Manager", "Staff"])
         self.MainWindow.RegisterEmployeePage.pushButton_3.clicked.connect(self.RegisterEmployee)
+
+    def generate_unique_employee_id(self):
+        current_employee_id = random.randint(0, 999999999)
+        while not DataBaseManager.IsEmployeeIdUnique(current_employee_id):
+            current_employee_id = random.randint(0, 999999999)
+        return current_employee_id
 
     def RegisterEmployee(self):
         Fname = self.MainWindow.RegisterEmployeePage.lineEdit_2.text()
@@ -401,7 +411,9 @@ class Controller():
             return QtWidgets.QMessageBox.warning(self.MainWindow, "Zipcode not valid", "Please confirm your zipcode", QtWidgets.QMessageBox.Ok)
         if not DataBaseManager.IsPhoneUnique(int(Phone)):
             return QtWidgets.QMessageBox.warning(self.MainWindow, "Phone already used", "Please use a new phone", QtWidgets.QMessageBox.Ok)
-        DataBaseManager.RegisterEmployeeVisitor(Fname, Lname, Username, Password, Emails, uuid.uuid4(), int(Phone), Address, City, State, int(Zipcode), Erole)
+        if not DataBaseManager.IsUsernameUnique(Username):
+            return QtWidgets.QMessageBox.warning(self.MainWindow, "Username not unique", "Please use a new username", QtWidgets.QMessageBox.Ok)
+        DataBaseManager.RegisterEmployeeVisitor(Fname, Lname, Username, Password, Emails, self.generate_unique_employee_id(), int(Phone), Address, City, State, int(Zipcode), Erole)
         self.showLogin()
 
     def showRegisterEmployeeVisitor(self):
@@ -448,7 +460,9 @@ class Controller():
             return QtWidgets.QMessageBox.warning(self.MainWindow, "Phone not valid", "Please confirm your phone", QtWidgets.QMessageBox.Ok)
         if not Zipcode.isdigit():
             return QtWidgets.QMessageBox.warning(self.MainWindow, "Zipcode not valid", "Please confirm your zipcode", QtWidgets.QMessageBox.Ok)
-        DataBaseManager.RegisterEmployeeVisitor(Fname, Lname, Username, Password, Emails, uuid.uuid4(), int(Phone), Address, City, State, int(Zipcode), Erole)
+        if not DataBaseManager.IsUsernameUnique(Username):
+            return QtWidgets.QMessageBox.warning(self.MainWindow, "Username not unique", "Please use a new username", QtWidgets.QMessageBox.Ok)
+        DataBaseManager.RegisterEmployeeVisitor(Fname, Lname, Username, Password, Emails, self.generate_unique_employee_id(), int(Phone), Address, City, State, int(Zipcode), Erole)
         self.showLogin()
 
     def showUserFunctionality(self):
