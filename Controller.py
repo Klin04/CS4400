@@ -863,7 +863,7 @@ class Controller():
         self.MainWindow.AdministratorManageSite.pushButton.clicked.connect(self.filterSites)
         allSites = ['All']
         allSitesDB = DataBaseManager.GetAllSites()
-        for site in allSites:
+        for site in allSitesDB:
             allSites.append(site['sitename'])
         self.MainWindow.AdministratorManageSite.comboBox.addItems(allSites)
         allManagers = ['All']
