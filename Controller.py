@@ -1135,7 +1135,7 @@ class Controller():
         self.MainWindow.ManagerManageEvent.tableData = tableData;
 
     def deleteEvent(self):
-        Event =  Route = self.MainWindow.ManagerManageEvent.tableWidget.selectionModel().selectedRows()[0]
+        Event =  self.MainWindow.ManagerManageEvent.tableWidget.selectionModel().selectedRows()[0]
         EventName = self.MainWindow.ManagerManageEvent.tableWidget.item(Event.row(), 0).text()
         SiteName = None
         startDate = None
@@ -1147,10 +1147,31 @@ class Controller():
         self.filterManageEvents()
 
     def showManagerViewEditEvent(self):
+        Event = self.MainWindow.ManagerManageEvent.tableWidget.selectionModel().selectedRows()[0]
+        EventName = self.MainWindow.ManagerManageEvent.tableWidget.item(Event.row(), 0).text()
+        SiteName = None
+        startDate = None
+        Price = None
+        EndDate = None
+        for data in self.MainWindow.ManagerManageEvent.tableData:
+            if data['event_name'] == EventName:
+                siteName = data['sitename']
+                startDate = data['startdate']
+                Price = data['revenue']
+                EndDate = data['endate']
         self.MainWindow.close()
         self.MainWindow = MainWindow()
         self.MainWindow.startManagerViewEditEvent()
         self.MainWindow.ManagerViewEditEvent.pushButton_3.clicked.connect(self.showManagerManageEvent)
+        self.MainWindow.ManagerViewEditEvent.label_2.setText(EventName)
+        self.MainWindow.ManagerViewEditEvent.label_4.setText(Price)
+        self.MainWindow.ManagerViewEditEvent.label_6.setText(str(startDate))
+        self.MainWindow.ManagerViewEditEvent.label_8.setText(str(EndDate))
+        allStaff = DataBaseManager.StaffAssignedAndAvailibleStaffForEvent(EventName, siteName, startDate, EndDate)
+        allStaffNames = []
+        for staff in allStaff:
+            allStaffNames.append(allStaff['fname'] + ' ' + allStaff['lname'])
+        self.MainWindow.ManagerViewEditEvent.listWidget.addItems(allStaffNames)
         # if self.user == 'User':
         #     self.MainWindow.ManagerViewEditEvent.pushButton_3.clicked.connect(self.showUserFunctionality)
         # elif self.user == "Staff":
@@ -1169,6 +1190,9 @@ class Controller():
         #     self.MainWindow.ManagerViewEditEvent.pushButton_3.clicked.connect(self.showVisitorFunctionality)
         self.MainWindow.ManagerViewEditEvent.pushButton.clicked.connect(self.filterViewEditEvents)
         self.MainWindow.ManagerViewEditEvent.pushButton_2.clicked.connect(self.updateEvent)
+        Descrption = DataBaseManager.GetDescriptionForEvent(SiteName, EventName, startDate)
+        self.MainWindow.ManagerViewEditEvent.textBrowser.setText(Description['event_description'])
+
 
     def filterViewEditEvents(self):
         staffAssigned = self.MainWindow.ManagerViewEditEvent.listWidget.selectedItems()
