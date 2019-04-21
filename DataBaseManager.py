@@ -79,6 +79,17 @@ def IsPhoneUnique(phone):
     else:
         return True
 
+def IsUsernameUnique(username):
+    mycursor.execute("select * from users where username = %s", username)
+    any_user = mycursor.fetchone()
+    if any_user:
+        return False
+    else:
+        return True
+
+def AddEmailForUsername(email, username):
+    mycursor.execute("insert into emails(username, email) values (%s, %s)", (username, email))
+
 def GetAllTransportTypeFromTransits():
     """
     For Screen 15/22 drop down menu for Transport Type
@@ -130,6 +141,17 @@ def UpdateSiteInformation(sitename, zipcode, address, openeveryday, sitemanager_
     :return:
     """
     arguments = (zipcode, address, openeveryday, sitemanager_id, sitename, )
-    mycursor.execute("UPDATE sites SET zipcode = %d, address = %s, openeveryday = %d, sitemanager_id = %d WHERE sitename = %s",
+    mycursor.execute("update sites SET zipcode = %d, address = %s, openeveryday = %d, sitemanager_id = %d WHERE sitename = %s",
                      arguments)
     mycursor.execute("update sites set sitename = %s where sitename = %s", (new_sitename, sitename))
+
+def UpdateUserInformation(username, fname, lname, is_visitor, phone, employee_id):
+    mycursor.execute("update users set fname = %s, lname = %s, is_visitor = %d where username = %s", (fname, lname, is_visitor, username))
+    mycursor.execute("update employee set phone = %d where employee_id = %d", (phone, employee_id))
+
+def AddAllEmailsOfAUser(emails, username):
+    for email in emails:
+        mycursor.execute("insert into emails(username, email) values (%s, $s)", (username, email))
+
+def RemoveAllEmailsOfAUser(username):
+    mycursor.execute("delete from emails where username = %s)", username)
