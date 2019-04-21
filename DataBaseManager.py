@@ -226,6 +226,12 @@ def GetCurrentSiteManagerAndAllUnAssignedManagers(sitename):
             sitename)
         return mycursor.fetchall()
 
+def GetSiteManagerIdFromFname_Lname(fname, lname):
+    with mydb as mycursor:
+        mycursor.execute(
+            "select sitemanager_id from sites where fname = %s and lname = %s",
+            (fname, lname, ))
+        return mycursor.fetchone()
 
 def UpdateSiteInformation(sitename, zipcode, address, openeveryday, sitemanager_id, new_sitename):
     """
