@@ -933,6 +933,7 @@ class Controller():
         for site in allSites:
             allSitenames.append(site['sitename'])
         self.MainWindow.AdministratorCreateTransit.listWidget.addItems(allSitenames)
+        self.MainWindow.AdministratorCreateTransit.listWidget.setSelectionMode(QtWidgets.QAbstractItemView.ExtendedSelection)
         self.MainWindow.AdministratorCreateTransit.comboBox.addItems(["MARTA", "Bus", "Bike"])
         # if self.user == 'User':
         #     self.MainWindow.AdministratorCreateTransit.pushButton_5.clicked.connect(self.showUserFunctionality)
