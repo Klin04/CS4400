@@ -220,7 +220,7 @@ def GetCurrentSiteManagerAndAllUnAssignedManagers(sitename):
     """
     with mydb as mycursor:
         mycursor.execute(
-            "select distinct (fname, lname) as name from users where username in "
+            "select fname, lname from users where username in "
             "(select distinct username from employees where employee_id in (select sitemanager_id from sites where sitename = %s)) "
             "union (select username from employees where employee_id not in (select sitemanager_id from sites))",
             sitename)
@@ -1026,10 +1026,10 @@ def GetEventWithSameNameAndDateAtSameSiteToCheckIfIsOverlapEvent(event_name, sit
                          "where event_name = %s and sitename = %s", (event_name, sitename))
         return mycursor.fetchall()
 
-# def GetAllAvailibleStaffForNewEvent():
+# def GetAllAvailibleStaffForNewEvent(start_date, end_date):
 #     with mydb as mycursor:
 #         mycursor.execute("select fname, lname from users where username in (select username from employee "
 #                          "where employee_id in (select distinct employee_id from assign_to where event_name in "
-#                          "(select event_name from staff_visitor_revenue where (startdate > end or endate < start))))",
-#                          (event_name, sitename))
+#                          "(select event_name from staff_visitor_revenue where (startdate > %s or endate < %s))))",
+#                          (end_date, start_date))
 #         return mycursor.fetchall()
