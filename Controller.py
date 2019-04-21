@@ -1294,7 +1294,7 @@ class Controller():
         allStaffNames = []
         allAssignedStaffNames = [each['fname'] + ' ' + each['lname'] for each in allAssignedStaff]
         for staff in allStaff:
-            allStaffNames.append(allStaff['fname'] + ' ' + allStaff['lname'])
+            allStaffNames.append(staff['fname'] + ' ' + staff['lname'])
         self.MainWindow.ManagerViewEditEvent.listWidget.addItems(allStaffNames)
         for i in range(self.MainWindow.ManagerViewEditEvent.listWidget.count()):
             if self.MainWindow.ManagerViewEditEvent.listWidget.item(i).text() in allAssignedStaffNames:
@@ -1383,14 +1383,28 @@ class Controller():
         #     self.MainWindow.ManagerCreateEvent.pushButton.clicked.connect(self.showVisitorFunctionality)
 
     def createEvent(self):
-        startDate = self.MainWindow.ManagerCreateEvent.dateEdit.date()
-        endDate = self.MainWindow.ManagerCreateEvent.dateEdit_2.date()
+        startDate = self.MainWindow.ManagerCreateEvent.dateEdit.date().toPyDate()
+        endDate = self.MainWindow.ManagerCreateEvent.dateEdit_2.date().toPyDate()
         Name = self.MainWindow.ManagerCreateEvent.lineEdit.text()
         Price = self.MainWindow.ManagerCreateEvent.lineEdit_2.text()
         Capacity = self.MainWindow.ManagerCreateEvent.lineEdit_3.text()
         MinStaffRequired = self.MainWindow.ManagerCreateEvent.lineEdit_4.text()
         Description = self.MainWindow.ManagerCreateEvent.textEdit.toPlainText()
-
+        if not isFloat(Price) or float(Price) <  0:
+            return QtWidgets.QMessageBox.warning(self.MainWindow, "Price not valid", "Please enter a non-negative float",
+                                                 QtWidgets.QMessageBox.Ok)
+        if not Capacity.isdigit() or int(Capacity) <= 0:
+            return QtWidgets.QMessageBox.warning(self.MainWindow, "Capacity not valid",
+                                                 "Please enter a positive Integer",
+                                                 QtWidgets.QMessageBox.Ok)
+        if not MinStaffRequired.isdigit() or int(MinStaffRequired) <= 0:
+            return QtWidgets.QMessageBox.warning(self.MainWindow, "Min staff required not valid",
+                                                 "Please enter a positive Integer",
+                                                 QtWidgets.QMessageBox.Ok)
+        if startDate > endDate:
+            return QtWidgets.QMessageBox.warning(self.MainWindow, "Date not valid",
+                                                 "Start Date must be before End Date",
+                                                 QtWidgets.QMessageBox.Ok)
 
     def showManagerManageStaff(self):
         self.MainWindow.close()
@@ -1412,7 +1426,10 @@ class Controller():
             self.MainWindow.ManagerManageStaff.pushButton_2.clicked.connect(self.showAdminVisitorFunctionality)
         elif self.user == 'Visitor':
             self.MainWindow.ManagerManageStaff.pushButton_2.clicked.connect(self.showVisitorFunctionality)
-        allSites = []
+        allSites = ['All']
+        allSitesDB = DataBaseManager.GetAllSites()
+        for site in allSitesDB:
+            allSites.append(site['sitename'])
         self.MainWindow.ManagerManageStaff.comboBox.addItems(allSites)
         self.MainWindow.ManagerManageStaff.pushButton.clicked.connect(self.filterStaff)
 
@@ -1445,10 +1462,12 @@ class Controller():
             self.MainWindow.ManagerSiteReport.pushButton_3.clicked.connect(self.showVisitorFunctionality)
         self.MainWindow.ManagerSiteReport.pushButton_2.clicked.connect(self.showManagerDailyDetail)
         self.MainWindow.ManagerSiteReport.pushButton.clicked.connect(self.filterSiteReport)
+        self.MainWindow.ManagerSiteReport.tableWidget.setSelectionMode(QtWidgets.QAbstractItemView.SingleSelection)
+        self.MainWindow.ManagerSiteReport.tableWidget.setSelectionBehavior(QtWidgets.QAbstractItemView.SelectRows)
 
     def filterSiteReport(self):
-        StartDate = self.MainWindow.ManagerSiteReport.dateEdit.date()
-        EndDate = self.MainWindow.ManagerSiteReport.dateEdit_2.date()
+        StartDate = self.MainWindow.ManagerSiteReport.dateEdit.date().toPyDate()
+        EndDate = self.MainWindow.ManagerSiteReport.dateEdit_2.date().toPyDate()
         LowEventCountRange = self.MainWindow.ManagerSiteReport.lineEdit.text()
         HighEventCountRange = self.MainWindow.ManagerSiteReport.lineEdit_2.text()
         LowStaffCountRange = self.MainWindow.ManagerSiteReport.lineEdit_3.text()
@@ -1459,6 +1478,8 @@ class Controller():
         HighTotalRevenueRange = self.MainWindow.ManagerSiteReport.lineEdit_8.text()
 
     def showManagerDailyDetail(self):
+        Date = self.MainWindow.ManagerSiteReport.tableWidget.selectionModel().selectedRows()[0]
+        selectedDate = self.MainWindow.AdministratorManageTransit.tableWidget.item(Date.row(), 0).text()
         self.MainWindow.close()
         self.MainWindow = MainWindow()
         self.MainWindow.startManagerDailyDetail()
@@ -1502,9 +1523,14 @@ class Controller():
             self.MainWindow.StaffViewSchedule.pushButton_3.clicked.connect(self.showAdminVisitorFunctionality)
         elif self.user == 'Visitor':
             self.MainWindow.StaffViewSchedule.pushButton_3.clicked.connect(self.showVisitorFunctionality)
+        self.MainWindow.StaffViewSchedule.tableWidget.setSelectionMode(QtWidgets.QAbstractItemView.SingleSelection)
+        self.MainWindow.StaffViewSchedule.tableWidget.setSelectionBehavior(QtWidgets.QAbstractItemView.SelectRows)
 
 
     def showStaffEventDetail(self):
+        Event = self.MainWindow.StaffViewSchedule.tableWidget.selectionModel().selectedRows()[0]
+        EventName = self.MainWindow.StaffViewSchedule.tableWidget.item(Event.row(), 0).text()
+        Site = self.MainWindow.StaffViewSchedule.tableWidget.item(Event.row(), 1).text()
         self.MainWindow.close()
         self.MainWindow = MainWindow()
         self.MainWindow.startStaffEventDetail()
@@ -1563,6 +1589,22 @@ class Controller():
         HighTotalVisitRange = self.MainWindow.VisitorExploreEvent.lineEdit_6.text()
         LowTicketPriceRange = self.MainWindow.VisitorExploreEvent.lineEdit_7.text()
         HighTicketPriceRange = self.MainWindow.VisitorExploreEvent.lineEdit_8.text()
+        if SiteName == 'All':
+            SiteName = None
+        if len(LowTotalVisitRange) == 0 and len(HighTotalVisitRange) == 0:
+            LowTotalVisitRange = None
+            HighTotalVisitRange = None
+        elif len(LowTotalVisitRange) * len(HighTotalVisitRange) == 0:
+            return QtWidgets.QMessageBox.warning(self.MainWindow, "Range not valid", "Please enter both ranges",
+                                                 QtWidgets.QMessageBox.Ok)
+        if len(LowTicketPriceRange) == 0 and len(HighTicketPriceRange) == 0:
+            LowTicketPriceRange = None
+            HighTicketPriceRange = None
+        elif len(LowTicketPriceRange) * len(HighTicketPriceRange) == 0:
+            return QtWidgets.QMessageBox.warning(self.MainWindow, "Range not valid", "Please enter both ranges",
+                                                 QtWidgets.QMessageBox.Ok)
+        Name = setNone(Name)
+        DescriptionKeyword = setNone(DescriptionKeyword)
 
     def showVisitorEventDetail(self):
         self.MainWindow.close()
@@ -1588,7 +1630,7 @@ class Controller():
         #     self.MainWindow.VisitorEventDetail.pushButton.clicked.connect(self.showVisitorFunctionality)
 
     def LogVisit(self):
-        visitDate = self.MainWindow.VisitorEventDetail.dateEdit.date()
+        visitDate = self.MainWindow.VisitorEventDetail.dateEdit.date().toPyDate()
 
     def showVisitorExploreSite(self):
         self.MainWindow.close()
@@ -1634,6 +1676,9 @@ class Controller():
         self.MainWindow.VisitorTransitDetail.pushButton.clicked.connect(self.showVisitorExploreSite)
         self.MainWindow.VisitorTransitDetail.pushButton_2.clicked.connect(self.LogVisitorTransit)
         self.MainWindow.VisitorTransitDetail.comboBox.addItems(['All', 'MARTA', 'Bus', 'Bike'])
+        self.MainWindow.VisitorTransitDetail.dateEdit.setDate(QtCore.QDate.currentDate())
+        self.MainWindow.VisitorVisitHistory.tableWidget.setSelectionMode(QtWidgets.QAbstractItemView.SingleSelection)
+        self.MainWindow.VisitorVisitHistory.tableWidget.setSelectionBehavior(QtWidgets.QAbstractItemView.SelectRows)
         # if self.user == 'User':
         #     self.MainWindow.VisitorTransitDetail.pushButton.clicked.connect(self.showUserFunctionality)
         # elif self.user == "Staff":
@@ -1654,7 +1699,7 @@ class Controller():
     def LogVisitorTransit(self):
         Site = self.MainWindow.VisitorTransitDetail.label_2.text()
         TransportType = self.MainWindow.VisitorTransitDetail.comboBox.currentText()
-        TransitDate = self.MainWindow.VisitorTransitDetail.dateEdit.date()
+        TransitDate = self.MainWindow.VisitorTransitDetail.dateEdit.date().toPyDate()
 
     def showVisitorSiteDetail(self):
         self.MainWindow.close()
@@ -1662,6 +1707,7 @@ class Controller():
         self.MainWindow.startVisitorSiteDetail()
         self.MainWindow.VisitorSiteDetail.pushButton.clicked.connect(self.showVisitorExploreSite)
         self.MainWindow.VisitorSiteDetail.pushButton_2.clicked.connect(self.LogVisitorVisit)
+        self.MainWindow.VisitorSiteDetail.dateEdit.setDate(QtCore.QDate.currentDate())
         # if self.user == 'User':
         #     self.MainWindow.VisitorSiteDetail.pushButton.clicked.connect(self.showUserFunctionality)
         # elif self.user == "Staff":
@@ -1683,6 +1729,7 @@ class Controller():
         Site = self.MainWindow.VisitorSiteDetail.textBrowser.toPlainText()
         OpenEveryday = self.MainWindow.VisitorSiteDetail.textBrowser_2.toPlainText()
         Address = self.MainWindow.VisitorSiteDetail.textBrowser_3.toPlainText()
+        VisitDate = self.MainWindow.VisitorSiteDetail.dateEdit.date().toPyDate()
 
     def showVisitorVisitHistory(self):
         self.MainWindow.close()
@@ -1707,12 +1754,17 @@ class Controller():
             self.MainWindow.VisitorVisitHistory.pushButton_2.clicked.connect(self.showAdminVisitorFunctionality)
         elif self.user == 'Visitor':
             self.MainWindow.VisitorVisitHistory.pushButton_2.clicked.connect(self.showVisitorFunctionality)
+        self.MainWindow.VisitorVisitHistory.dateEdit_2.setDate(QtCore.QDate.currentDate())
 
     def FilterVisitorVisitHistory(self):
         Event = self.MainWindow.VisitorVisitHistory.lineEdit.text()
-        StartDate = self.MainWindow.VisitorVisitHistory.dateEdit.date()
-        EndDate = self.MainWindow.VisitorVisitHistory.dateEdit_2.date()
+        StartDate = self.MainWindow.VisitorVisitHistory.dateEdit.date().toPyDate()
+        EndDate = self.MainWindow.VisitorVisitHistory.dateEdit_2.date().toPyDate()
         Site = self.MainWindow.VisitorVisitHistory.comboxBox.currentText()
+        Event = setNone(Event)
+        if Site == 'All':
+            Site = None
+
 
 
 
