@@ -894,7 +894,7 @@ def GetAllAdministratorManageUserInformationFilterByStatus_EmpType_Username(user
                 "select temp.username as usernames, count(*) as email_count, temp.user_status, "
                 "temp.erole as UserTypes from emails, (select users.username as username, user_status, erole from users, "
                 "employees where employees.username = users.username) as temp "
-                "where emails.username = temp.username and usernames = %s group by usernames", username)
+                "where emails.username = temp.username and username = %s group by usernames", username)
             filtered_result = mycursor.fetchall()
             all_result = [i for n, i in enumerate(all_result) if i in filtered_result]
         return all_result
@@ -931,3 +931,66 @@ def GetUserStatus(username):
     with mydb as mycursor:
         mycursor.execute("select user_status from users where username = %s", username)
         return mycursor.fetchone()
+
+def GetManagerDropdownMenuForAdminManageSite():
+    """
+    screen 19 <- manager dropdown list
+    :return:
+    """
+    with mydb as mycursor:
+        mycursor.execute("select users.fname, users.lname from users, (select temp.sitename as sitenames, username, "
+                         "temp.openeveryday as openeverydays from employees, (select sitename, sitemanager_id, "
+                         "openeveryday from sites) as temp where sitemanager_id = employees.employee_id) as temps "
+                         "where temps.username = users.username")
+        return mycursor.fetchall()
+
+def GetAllSiteInformationForManageSiteFilterBySite_Manager_OpenEveryday(site):
+    pass
+    # with mydb as mycursor:
+    #     # first get ALL result
+    #     mycursor.execute(
+    #         "select temps.sitenames, users.fname, users.lname, temps.openeverydays from users,"
+    #         "(select temp.sitename as sitenames, username, temp.openeveryday as openeverydays "
+    #         "from employees, (select sitename, sitemanager_id, openeveryday from sites) as temp "
+    #         "where sitemanager_id = employees.employee_id) as temps where temps.username = users.username")
+    #     all_result = mycursor.fetchall()
+    #
+    #     # Start filtering if this filtering type is applied
+    #     if site is not None:
+    #         mycursor.execute(
+    #             "select temps.sitenames, users.fname, users.lname, temps.openeverydays from users,"
+    #             "(select temp.sitename as sitenames, username, temp.openeveryday as openeverydays "
+    #             "from employees, (select sitename, sitemanager_id, openeveryday from sites) as temp "
+    #             "where sitemanager_id = employees.employee_id and sitename = %s) as temps where temps.username = users.username",
+    #             (usernames, transport_type,))
+    #         filtered_result = mycursor.fetchall()
+    #         all_result = [i for n, i in enumerate(all_result) if i in filtered_result]
+    #     if route is not None:
+    #         mycursor.execute(
+    #             "select take_date, take_route, take_type, price from (select take_date, take_route, take_type, price "
+    #             "from transits, (select take_date, take_route, take_type from take where take_username = %s) "
+    #             "as temp where transits.transit_type = take_type and transits.transit_route = take_route) as temps "
+    #             "where take_route = %s",
+    #             (usernames, route,))
+    #         filtered_result = mycursor.fetchall()
+    #         all_result = [i for n, i in enumerate(all_result) if i in filtered_result]
+    #     if start_date is not None and end_date is not None:
+    #         mycursor.execute(
+    #             "select take_date, take_route, take_type, price from (select take_date, take_route, take_type, price "
+    #             "from transits, (select take_date, take_route, take_type from take where take_username = %s) "
+    #             "as temp where transits.transit_type = take_type and transits.transit_route = take_route) as temps "
+    #             "where take_date BETWEEN %s and %s",
+    #             (usernames, start_date, end_date,))
+    #         filtered_result = mycursor.fetchall()
+    #         all_result = [i for n, i in enumerate(all_result) if i in filtered_result]
+    #     if sitename is not None:
+    #         mycursor.execute(
+    #             "select take_date, take_route, take_type, price from (select take_date, take_route, take_type, price "
+    #             "from transits, (select take_date, take_route, take_type from take where take_username = %s) "
+    #             "as temp where transits.transit_type = take_type and transits.transit_route = take_route) as temps "
+    #             "where temps.take_type in (select connect_type from connect where connect_name = %s) "
+    #             "and temps.take_route in (select connect_route from connect where connect_name = %s)",
+    #             (usernames, sitename, sitename,))
+    #         filtered_result = mycursor.fetchall()
+    #         all_result = [i for n, i in enumerate(all_result) if i in filtered_result]
+    #     return all_result
