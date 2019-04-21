@@ -49,7 +49,7 @@ def RegisterEmployee(Fname, Lname, Username, Password, Emails, EmployeeId, Phone
     for email in Emails:
         mycursor.execute("insert into emails(username, email) values (%s, $s)", (Username, email))
     arguments = (Username, EmployeeId, Phone, Address, City, State, Zipcode, Erole,)
-    mycursor.execute("insert into `project`.`employee`(username, employee_id, phone, address, city, state, zipcode, erole) values (%s, %s, %d, %s, %s, %s, %d, $s)",
+    mycursor.execute("insert into employee(username, employee_id, phone, address, city, state, zipcode, erole) values (%s, %s, %d, %s, %s, %s, %d, $s)",
                      arguments)
 
 def RegisterEmployeeVisitor(Fname, Lname, Username, Password, Emails, EmployeeId, Phone, Address, City, State, Zipcode, Erole):
@@ -60,7 +60,7 @@ def RegisterEmployeeVisitor(Fname, Lname, Username, Password, Emails, EmployeeId
     for email in Emails:
         mycursor.execute("insert into emails(username, email) values (%s, $s)", (Username, email))
     arguments = (Username, EmployeeId, Phone, Address, City, State, Zipcode, Erole,)
-    mycursor.execute("insert into `project`.`employee`(username, employee_id, phone, address, city, state, zipcode, erole) values (%s, %s, %d, %s, %s, %s, %d, $s)",
+    mycursor.execute("insert into employee(username, employee_id, phone, address, city, state, zipcode, erole) values (%s, %s, %d, %s, %s, %s, %d, $s)",
                      arguments)
 
 def IsEmailUnique(email):
@@ -141,13 +141,21 @@ def UpdateSiteInformation(sitename, zipcode, address, openeveryday, sitemanager_
     :return:
     """
     arguments = (zipcode, address, openeveryday, sitemanager_id, sitename, )
-    mycursor.execute("update sites SET zipcode = %d, address = %s, openeveryday = %d, sitemanager_id = %d WHERE sitename = %s",
+    mycursor.execute("update sites SET zipcode = %d, address = %s, openeveryday = %d, sitemanager_id = %s WHERE sitename = %s",
                      arguments)
     mycursor.execute("update sites set sitename = %s where sitename = %s", (new_sitename, sitename))
 
+def GetManagersNotAssignedSite():
+    """
+    For screen 21, where we need a drop down list of all the managers not assigned to a site
+    :return: list
+    """
+    mycursor.execute("select username from employees where employee_id not in (select sitemanager_id from sites)")
+    return mycursor.fetchall()
+
 def UpdateUserInformation(username, fname, lname, is_visitor, phone, employee_id):
     mycursor.execute("update users set fname = %s, lname = %s, is_visitor = %d where username = %s", (fname, lname, is_visitor, username))
-    mycursor.execute("update employee set phone = %d where employee_id = %d", (phone, employee_id))
+    mycursor.execute("update employee set phone = %d where employee_id = %s", (phone, employee_id))
 
 def AddAllEmailsOfAUser(emails, username):
     for email in emails:
@@ -155,3 +163,15 @@ def AddAllEmailsOfAUser(emails, username):
 
 def RemoveAllEmailsOfAUser(username):
     mycursor.execute("delete from emails where username = %s)", username)
+
+def AddNewSites(sitename, zipcode, address, openeveryday, sitemanager_id):
+    """
+    Adds a new site, note that if there is NO ADDRESS, please pass in None
+    :param sitename:
+    :param zipcode:
+    :param address: None if no address is supplied
+    :param openeveryday:
+    :param sitemanager_id:
+    :return:
+    """
+    mycursor.execute("insert into sites(sitename, zipcode, address, openeveryday, sitemanager_id) values (%s, %d, %s, %d, %s)")
