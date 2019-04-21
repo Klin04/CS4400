@@ -718,7 +718,7 @@ def GetAssignedStaffsForEvent(event_name, sitename, start_date):
     """
     with mydb as mycursor:
         mycursor.execute(
-            "select distinct (fname, lname) from users where username in (select username from employee "
+            "select fname, lname from users where username in (select username from employees "
             "where employee_id in (select employee_id from assign_to WHERE event_name = %s and sitename = %s "
             "and startdate = %s))",
             (event_name, sitename, start_date,))
