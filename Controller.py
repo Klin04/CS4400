@@ -384,7 +384,7 @@ class Controller():
         State = self.MainWindow.RegisterEmployeePage.comboBox_2.currentText()
         Erole = self.MainWindow.RegisterEmployeePage.comboBox.currentText()
         Emails = []
-        for email in self.MainWindow.RegisterUserPage.EditLineList:
+        for email in self.MainWindow.RegisterEmployeePage.EditLineList:
             Emails.append(email.text())
         if len(Fname) == 0 or len(Lname) == 0 or len(Username) == 0 or len(Password) == 0 or len(Emails) == 0:
             return QtWidgets.QMessageBox.warning(self.MainWindow, "Missing Field", "There are missing fields", QtWidgets.QMessageBox.Ok)
@@ -401,7 +401,7 @@ class Controller():
             return QtWidgets.QMessageBox.warning(self.MainWindow, "Zipcode not valid", "Please confirm your zipcode", QtWidgets.QMessageBox.Ok)
         if not DataBaseManager.IsPhoneUnique(int(Phone)):
             return QtWidgets.QMessageBox.warning(self.MainWindow, "Phone already used", "Please use a new phone", QtWidgets.QMessageBox.Ok)
-        DataBaseManager.RegisterEmployeeVisitor(Fname, Lname, Username, Password, uuid.uuid4(), int(Phone), Address, City, State, int(Zipcode), Erole)
+        DataBaseManager.RegisterEmployeeVisitor(Fname, Lname, Username, Password, Emails, uuid.uuid4(), int(Phone), Address, City, State, int(Zipcode), Erole)
         self.showLogin()
 
     def showRegisterEmployeeVisitor(self):
