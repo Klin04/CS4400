@@ -703,3 +703,64 @@ def GetDescriptionForEvent(sitename, event_name, startdate):
             "and event_name = %s and startdate = %s",
             (sitename, event_name, startdate,))
         return mycursor.fetchone()
+
+def GetUserTransitHistoryFilteredByTransportType_Route_StartDate_EndDate_ContainSite(usernames, transport_type,
+                                                                                     route, start_date, end_date, sitename):
+    """
+    User Transit History table for
+    screen 16
+    :param usernames:
+    :param transport_type:
+    :param route:
+    :param start_date:
+    :param end_date:
+    :param sitename:
+    :return:
+    """
+    with mydb as mycursor:
+        # first get ALL result
+        mycursor.execute(
+            "select take_date, take_route, take_type, price from transits, (select take_date, take_route, take_type "
+            "from take where take_username = %s) as temp where transits.transit_type = %s "
+            "and transits.transit_route = %s", (usernames, transport_type, route,))
+        all_result = mycursor.fetchall()
+
+        # Start filtering if this filtering type is applied
+        if transport_type is not None:
+            mycursor.execute(
+                "select take_date, take_route, take_type, price from (select take_date, take_route, take_type, price "
+                "from transits, (select take_date, take_route, take_type from take where take_username = %s) "
+                "as temp where transits.transit_type = %s and transits.transit_route = %s) as temps "
+                "where take_type = %s",
+                (usernames, transport_type, route, transport_type,))
+            filtered_result = mycursor.fetchall()
+            all_result = [i for n, i in enumerate(all_result) if i in filtered_result]
+        if route is not None:
+            mycursor.execute(
+                "select take_date, take_route, take_type, price from (select take_date, take_route, take_type, price "
+                "from transits, (select take_date, take_route, take_type from take where take_username = %s) "
+                "as temp where transits.transit_type = %s and transits.transit_route = %s) as temps "
+                "where take_route = %s",
+                (usernames, transport_type, route, route,))
+            filtered_result = mycursor.fetchall()
+            all_result = [i for n, i in enumerate(all_result) if i in filtered_result]
+        if start_date is not None and end_date is not None:
+            mycursor.execute(
+                "select take_date, take_route, take_type, price from (select take_date, take_route, take_type, price "
+                "from transits, (select take_date, take_route, take_type from take where take_username = usernames) "
+                "as temp where transits.transit_type = take_type and transits.transit_route = take_route) as temps "
+                "where take_date BETWEEN startdates and enddates",
+                (usernames, transport_type, route, start_date, end_date,))
+            filtered_result = mycursor.fetchall()
+            all_result = [i for n, i in enumerate(all_result) if i in filtered_result]
+        if sitename is not None:
+            mycursor.execute(
+                "select take_date, take_route, take_type, price from (select take_date, take_route, take_type, price "
+                "from transits, (select take_date, take_route, take_type from take where take_username = %s) "
+                "as temp where transits.transit_type = %s and transits.transit_route = %s) as temps "
+                "where temps.take_type in (select connect_type from connect where connect_name = %s) "
+                "and temps.take_route in (select connect_route from connect where connect_name = %s)",
+                (usernames, transport_type, route, sitename, sitename,))
+            filtered_result = mycursor.fetchall()
+            all_result = [i for n, i in enumerate(all_result) if i in filtered_result]
+        return all_result
