@@ -869,7 +869,7 @@ class Controller():
         allManagers = ['All']
         allManagersDB = DataBaseManager.GetManagerDropdownMenuForAdminManageSite()
         for manager in allManagersDB:
-            allManagers.append(manager[manager.keys()[0]])
+            allManagers.append(manager[list(manager.keys())[0]])
         self.MainWindow.AdministratorManageSite.comboBox_2.addItems(allManagers)
         self.MainWindow.AdministratorManageSite.comboBox_3.addItems(["Yes", "No"])
         self.MainWindow.AdministratorManageSite.pushButton_2.clicked.connect(self.showAdministratorCreateSite)
@@ -882,13 +882,23 @@ class Controller():
         Site = self.MainWindow.AdministratorManageSite.comboBox.currentText()
         Manager = self.MainWindow.AdministratorManageSite.comboBox_2.currentText()
         OpenEveryday = self.MainWindow.AdministratorManageSite.comboBox_3.currentText()
+        if Site == 'All':
+            Site = None
+        if Manager == 'All':
+            Manager = None
+        if OpenEveryday == 'Yes':
+            OpenEveryday = True
+        else:
+            OpenEveryday = False
         self.MainWindow.AdministratorManageSite.tableWidget.setRowCount(0)
-        tableData = DataBaseManager.GetManagerDropdownMenuForAdminManageSite()
+        tableData = DataBaseManager.GetAllSiteInformationForManageSiteFilterBySite_Manager_OpenEveryday(Site, Manager, OpenEveryday)
         self.MainWindow.AdministratorManageSite.tableWidget.setSortingEnabled(False)
         for i in range(len(tableData)):
             self.MainWindow.AdministratorManageSite.tableWidget.insertRow(i)
             for column, key in enumerate(tableData[i].keys()):
                 newItem = QtWidgets.QTableWidgetItem()
+                if key == 'openeverydays':
+                    tableData[i][key] = 'Yes' if tableData[i][key] == 1 else 'No'
                 newItem.setText(str(tableData[i][key]))
                 self.MainWindow.AdministratorManageSite.tableWidget.setItem(i, column, newItem)
         self.MainWindow.AdministratorManageSite.tableWidget.setSortingEnabled(True)
