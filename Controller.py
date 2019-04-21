@@ -722,8 +722,6 @@ class Controller():
             self.MainWindow.EmployeeManageProfile.pushButton_3.clicked.connect(self.showVisitorFunctionality)
         self.MainWindow.EmployeeManageProfile.pushButton_2.clicked.connect(self.updateEmployeeProfile)
         tableData = DataBaseManager.GetEmployeeInformationForManageProfile(self.username)
-        print(self.username)
-        print(tableData)
         self.MainWindow.EmployeeManageProfile.lineEdit.setText(tableData[0]['fname'])
         self.MainWindow.EmployeeManageProfile.lineEdit_2.setText(tableData[0]['lname'])
         self.MainWindow.EmployeeManageProfile.lineEdit_3.setText(str(tableData[1]['phone']))
