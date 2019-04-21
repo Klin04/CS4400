@@ -595,7 +595,7 @@ class Controller():
     def showUserTransitHistory(self):
         self.MainWindow.close()
         self.MainWindow = MainWindow()
-        self.MainWindow.startUserTakeTransit()
+        self.MainWindow.startUserTransitHistory()
         if self.user == 'User':
             self.MainWindow.UserTransitHistory.pushButton_2.clicked.connect(self.showUserFunctionality)
         elif self.user == "Staff":
@@ -681,17 +681,17 @@ class Controller():
         elif self.user == 'Manager':
             self.MainWindow.AdministratorManageUser.pushButton_4.clicked.connect(self.showManagerFunctionality)
         elif self.user == 'Administrator':
-            self.MainWindow.AdministratorManagerUser.pushButton_4.clicked.connect(self.showAdministratorFunctionality)
+            self.MainWindow.AdministratorManageUser.pushButton_4.clicked.connect(self.showAdministratorFunctionality)
         elif self.user == 'StaffVisitor':
-            self.MainWindow.AdministratorManagerUser.pushButton_4.clicked.connect(self.showStaffVisitorFunctionality)
+            self.MainWindow.AdministratorManageUser.pushButton_4.clicked.connect(self.showStaffVisitorFunctionality)
         elif self.user == 'ManagerVisitor':
-            self.MainWindow.AdministratorManagerUser.pushButton_4.clicked.connect(self.showManagerVisitorFunctionality)
+            self.MainWindow.AdministratorManageUser.pushButton_4.clicked.connect(self.showManagerVisitorFunctionality)
         elif self.user == 'AdministratorVisitor':
-            self.MainWindow.AdministratorManagerUser.pushButton_4.clicked.connect(self.showAdminVisitorFunctionality)
+            self.MainWindow.AdministratorManageUser.pushButton_4.clicked.connect(self.showAdminVisitorFunctionality)
         elif self.user == 'Visitor':
             self.MainWindow.AdministratorManagerUser.pushButton_4.clicked.connect(self.showVisitorFunctionality)
         self.MainWindow.AdministratorManageUser.comboBox_2.addItems(["Approved", "Pending", "Declined", "All"])
-        self.MainWindow.AdministratorManageUser.comboBox.addItems("All", "Manager", "User", "Visitor", "Staff")
+        self.MainWindow.AdministratorManageUser.comboBox.addItems(["All", "Manager", "User", "Visitor", "Staff"])
         self.MainWindow.AdministratorManageUser.pushButton.clicked.connect(self.filterUsers)
         self.MainWindow.AdministratorManageUser.pushButton_2.clicked.connect(self.approveUsers)
         self.MainWindow.AdministratorManageUser.pushButton_3.clicked.connect(self.declineUsers)
@@ -734,8 +734,8 @@ class Controller():
         allManagers = ['All']
         self.MainWindow.AdministratorManageSite.comboBox_2.addItems(allManagers)
         self.MainWindow.AdministratorManageSite.comboBox_3.addItems(["Yes", "No"])
-        self.MainWindow.AdministratorManageSite.pushButton_2.clicked.connect(self.showAdministratorCreateSite())
-        self.MainWindow.AdministratorManageSite.pushButton_3.clicked.connect(self.showAdministratorEditSite())
+        self.MainWindow.AdministratorManageSite.pushButton_2.clicked.connect(self.showAdministratorCreateSite)
+        self.MainWindow.AdministratorManageSite.pushButton_3.clicked.connect(self.showAdministratorEditSite)
         self.MainWindow.AdministratorManageSite.pushButton_4.clicked.connect(self.deleteSite)
 
     def filterSites(self):
@@ -743,7 +743,7 @@ class Controller():
         Manager = self.MainWindow.AdministratorManageSite.comboBox_2.currentText()
         OpenEveryday = self.MainWindow.AdministratorManageSite.comboBox_3.currentText()
 
-    def deleteSites(self):
+    def deleteSite(self):
         print("Delete a site")
 
     def showAdministratorEditSite(self):
