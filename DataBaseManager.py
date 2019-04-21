@@ -145,6 +145,7 @@ def GetAllSiteNameFromConnect():
         mycursor.execute("select distinct connect_name from connect")
         return mycursor.fetchall()
 
+
 def GetAllRoutesWithSitename(sitename):
     with mydb as mycursor:
         mycursor.execute("select transit_type, transit_route , price, count(*) as connected_sites from connect, "
@@ -152,8 +153,9 @@ def GetAllRoutesWithSitename(sitename):
                          "connect_type from connect where connect_name = %s) and transit_route in (select "
                          "connect_route from connect where connect_name =  %s)) as temp where "
                          "connect.connect_type = temp.transit_type  and connect.connect_route = temp.transit_route "
-                         "group by transit_type , transit_route", (sitename, sitename, ))
+                         "group by transit_type , transit_route", (sitename, sitename,))
         return mycursor.fetchall()
+
 
 def GetAllRoutesWithTransportType(transit_type):
     with mydb as mycursor:
@@ -164,6 +166,7 @@ def GetAllRoutesWithTransportType(transit_type):
                          transit_type)
         return mycursor.fetchall()
 
+
 def GetAllRoutesWithPriceRange(low_price, high_price):
     with mydb as mycursor:
         mycursor.execute("select transit_type, transit_route , price, count(*) as connected_sites from connect, "
@@ -173,6 +176,7 @@ def GetAllRoutesWithPriceRange(low_price, high_price):
                          (low_price, high_price,))
         return mycursor.fetchall()
 
+
 def GetAllRoutes():
     with mydb as mycursor:
         mycursor.execute("select transit_type, transit_route , price, count(*) as connected_sites from connect, "
@@ -181,6 +185,7 @@ def GetAllRoutes():
                          "and connect.connect_route = temp.transit_route "
                          "group by transit_type , transit_route")
         return mycursor.fetchall()
+
 
 def GetAllRoutesForTakeTransit(transit_type, sitename, low_price, high_price):
     """
@@ -205,6 +210,7 @@ def GetAllRoutesForTakeTransit(transit_type, sitename, low_price, high_price):
                               i in list_of_routes_filtered_by_price_range]
     return list_of_all_routes
 
+
 def GetCurrentSiteManagerAndAllUnAssignedManagers(sitename):
     """
     For screen 20, shows a 'dropdown list containing the current site manager as well
@@ -214,7 +220,7 @@ def GetCurrentSiteManagerAndAllUnAssignedManagers(sitename):
     """
     with mydb as mycursor:
         mycursor.execute(
-            "select distinct concat(fname, ' ', lname) as name from users where username in "
+            "select distinct (fname, lname) as name from users where username in "
             "(select distinct username from employees where employee_id in (select sitemanager_id from sites where sitename = %s)) "
             "union (select username from employees where employee_id not in (select sitemanager_id from sites))",
             sitename)
@@ -249,12 +255,14 @@ def GetManagersNotAssignedSite():
                          "(select distinct username from employees where employee_id not in (select sitemanager_id from sites))")
         return mycursor.fetchall()
 
+
 def GetEmployeeInformation():
     # TODO: this
     with mydb as mycursor:
         # mycursor.execute("select fname, lname from users where username in "
         #                  "(select distinct username from employees where employee_id not in (select sitemanager_id from sites))")
         return mycursor.fetchall()
+
 
 def UpdateUserInformation(username, fname, lname, is_visitor, phone, employee_id):
     with mydb as mycursor:
@@ -287,7 +295,8 @@ def AddNewSites(sitename, zipcode, address, openeveryday, sitemanager_id):
     with mydb as mycursor:
         mycursor.execute(
             "insert into sites(sitename, zipcode, address, openeveryday, sitemanager_id) values (%s, %s, %s, %s, %s)",
-            (sitename, zipcode, address, openeveryday, sitemanager_id, ))
+            (sitename, zipcode, address, openeveryday, sitemanager_id,))
+
 
 def UpdateTransitPriceAndRoute(price, transit_type, old_transit_route, new_transit_route):
     """
@@ -308,6 +317,7 @@ def UpdateTransitPriceAndRoute(price, transit_type, old_transit_route, new_trans
             "update transits set transit_route = %s where transit_type = %s, transit_route = %s",
             (new_transit_route, transit_type, old_transit_route))
 
+
 def UpdateTransitAddSites(connect_type, connect_route, connect_name):
     """
     add new sites to the transit (connected sites)
@@ -322,6 +332,7 @@ def UpdateTransitAddSites(connect_type, connect_route, connect_name):
             "insert into connect (connect_type, connect_route, connect_name) values (%s, %s, %s)",
             (connect_type, connect_route, connect_name))
 
+
 def UpdateTransitDeleteAllSites(connect_type, connect_route):
     """
     delete ALL sites from a transit (PK-> transit_type:connect_type, transit_route:connect_route)
@@ -335,6 +346,7 @@ def UpdateTransitDeleteAllSites(connect_type, connect_route):
             "delete from connect where connect_type = %s and connect_route = %s",
             (connect_type, connect_route))
 
+
 def GetAllSites():
     """
     returns all the distinct sitenames
@@ -343,6 +355,7 @@ def GetAllSites():
     with mydb as mycursor:
         mycursor.execute("select distinct sitename from sites")
         return mycursor.fetchall()
+
 
 def AddTransit(transit_type, transit_route, price):
     """
@@ -359,6 +372,7 @@ def AddTransit(transit_type, transit_route, price):
             "insert into transits(transit_type, transit_route, price) values (%s, %s, %s)",
             (transit_type, transit_route, price))
 
+
 def IsSitenameUnique(sitename):
     with mydb as mycursor:
         mycursor.execute("select * from sites where sitename = %s", sitename)
@@ -366,6 +380,7 @@ def IsSitenameUnique(sitename):
             return True
         else:
             return False
+
 
 def DeleteEvent(event_name, sitename, startdate):
     """
@@ -390,7 +405,66 @@ def DeleteTransit(transit_type, transit_route):
     :return:
     """
     with mydb as mycursor:
-        mycursor.execute("delete from transits where transit_type = %s and transit_route = %s", (transit_type, transit_route))
+        mycursor.execute("delete from transits where transit_type = %s and transit_route = %s",
+                         (transit_type, transit_route))
+
+
+def GetAllEventFilteredByEventName_DescripKeyword_StartDate_EndDate_DurationRange_VisitRange_RevenueRange(
+        event_name, keyword, start_date, end_date, duration_range_low, duration_range_high, visit_range_low,
+        visit_range_high,
+        revenue_range_low, revenue_range_high):
+    with mydb as mycursor:
+        # first get ALL result
+        mycursor.execute(
+            "SELECT event_name, sitename, startdate, endate, duration, staff_count, total_visit, revenue FROM staff_visitor_revenue")
+        all_result = mycursor.fetchall()
+        if event_name is not None:
+            mycursor.execute(
+                "SELECT event_name, sitename, startdate, endate, duration, staff_count, total_visit, revenue "
+                "FROM staff_visitor_revenue WHERE event_name like concat('%', %s,'%')", event_name)
+            filtered_result = mycursor.fetchall()
+            all_result = [i for n, i in enumerate(all_result) if i in filtered_result]
+        if keyword is not None:
+            mycursor.execute(
+                "SELECT event_name, sitename, startdate, endate, duration, staff_count, total_visit, revenue "
+                "FROM staff_visitor_revenue WHERE event_name like concat('%', %s,'%')", keyword)
+            filtered_result = mycursor.fetchall()
+            all_result = [i for n, i in enumerate(all_result) if i in filtered_result]
+        if start_date is not None:
+            mycursor.execute(
+                "SELECT event_name, sitename, startdate, endate, duration, staff_count, total_visit, revenue "
+                "FROM staff_visitor_revenue WHERE startdate = start", start_date)
+            filtered_result = mycursor.fetchall()
+            all_result = [i for n, i in enumerate(all_result) if i in filtered_result]
+        if end_date is not None:
+            mycursor.execute(
+                "SELECT event_name, sitename, startdate, endate, duration, staff_count, total_visit, revenue "
+                "FROM staff_visitor_revenue WHERE endate = end", end_date)
+            filtered_result = mycursor.fetchall()
+            all_result = [i for n, i in enumerate(all_result) if i in filtered_result]
+        if duration_range_low is not None and duration_range_high is not None:
+            mycursor.execute(
+                "SELECT event_name, sitename, startdate, endate, duration, staff_count, total_visit, revenue "
+                "FROM staff_visitor_revenue WHERE duration between %s and %s",
+                (duration_range_low, duration_range_high))
+            filtered_result = mycursor.fetchall()
+            all_result = [i for n, i in enumerate(all_result) if i in filtered_result]
+        if visit_range_low is not None and visit_range_high is not None:
+            mycursor.execute(
+                "SELECT event_name, sitename, startdate, endate, duration, staff_count, total_visit, revenue "
+                "FROM staff_visitor_revenue WHERE total_visit between low and high",
+                (visit_range_low, visit_range_high))
+            filtered_result = mycursor.fetchall()
+            all_result = [i for n, i in enumerate(all_result) if i in filtered_result]
+        if revenue_range_low is not None and revenue_range_high is not None:
+            mycursor.execute(
+                "SELECT event_name, sitename, startdate, endate, duration, staff_count, total_visit, revenue "
+                "FROM staff_visitor_revenue WHERE revenue between low and high",
+                (revenue_range_low, revenue_range_high))
+            filtered_result = mycursor.fetchall()
+            all_result = [i for n, i in enumerate(all_result) if i in filtered_result]
+        return all_result
+
 
 def GetTransitByFilterByTransportType_Route_ContainSite_PriceRange(transit_type, route, low_price, high_price):
     """
@@ -404,26 +478,31 @@ def GetTransitByFilterByTransportType_Route_ContainSite_PriceRange(transit_type,
     """
     with mydb as mycursor:
         # first get ALL result
-        mycursor.execute("select transit_type, transit_route, price, connected_sites, visitors_logged from sites_logged")
+        mycursor.execute(
+            "select transit_type, transit_route, price, connected_sites, visitors_logged from sites_logged")
         all_result = mycursor.fetchall()
 
         # Start filtering if this filtering type is applied
         if transit_type is not None:
-            mycursor.execute("select transit_type, transit_route, price, connected_sites, visitors_logged from sites_logged "
-                         "where transit_type = %s", transit_type)
+            mycursor.execute(
+                "select transit_type, transit_route, price, connected_sites, visitors_logged from sites_logged "
+                "where transit_type = %s", transit_type)
             filtered_result = mycursor.fetchall()
             all_result = [i for n, i in enumerate(all_result) if i in filtered_result]
         if route is not None:
-            mycursor.execute("select transit_type, transit_route, price, connected_sites, visitors_logged from sites_logged "
-                             "where transit_route = %s", route)
+            mycursor.execute(
+                "select transit_type, transit_route, price, connected_sites, visitors_logged from sites_logged "
+                "where transit_route = %s", route)
             filtered_result = mycursor.fetchall()
             all_result = [i for n, i in enumerate(all_result) if i in filtered_result]
         if low_price is not None and high_price is not None:
-            mycursor.execute("select transit_type, transit_route, price, connected_sites, visitors_logged from sites_logged "
-                             "WHERE price BETWEEN %s AND %s", (low_price, high_price))
+            mycursor.execute(
+                "select transit_type, transit_route, price, connected_sites, visitors_logged from sites_logged "
+                "WHERE price BETWEEN %s AND %s", (low_price, high_price))
             filtered_result = mycursor.fetchall()
             all_result = [i for n, i in enumerate(all_result) if i in filtered_result]
         return all_result
+
 
 def GetTransitPrice(transit_type, transit_route):
     """
@@ -434,8 +513,11 @@ def GetTransitPrice(transit_type, transit_route):
     :return:
     """
     with mydb as mycursor:
-        mycursor.execute("select price, connect_name from transits, connect where transit_type = %s and transit_route = %s", (transit_type, transit_route))
+        mycursor.execute(
+            "select price, connect_name from transits, connect where transit_type = %s and transit_route = %s",
+            (transit_type, transit_route))
         return mycursor.fetchone()
+
 
 def GetTransitConnectedSites(transit_type, transit_route):
     """
@@ -446,8 +528,10 @@ def GetTransitConnectedSites(transit_type, transit_route):
     :return:
     """
     with mydb as mycursor:
-        mycursor.execute("select connect_name from connect where connect_type = %s and connect_route = %s", (transit_type, transit_route))
+        mycursor.execute("select connect_name from connect where connect_type = %s and connect_route = %s",
+                         (transit_type, transit_route))
         return mycursor.fetchall()
+
 
 def UserTakeTransitLogNewTransit(take_username, take_type, take_route, take_date):
     """
@@ -459,4 +543,5 @@ def UserTakeTransitLogNewTransit(take_username, take_type, take_route, take_date
     :return:
     """
     with mydb as mycursor:
-        mycursor.execute("insert into take (take_username, take_type, take_route, take_date) values(%s, %s, %s, %s)", (take_username, take_type, take_route, take_date, ))
+        mycursor.execute("insert into take (take_username, take_type, take_route, take_date) values(%s, %s, %s, %s)",
+                         (take_username, take_type, take_route, take_date,))
