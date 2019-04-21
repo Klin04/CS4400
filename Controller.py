@@ -1231,54 +1231,73 @@ class Controller():
         EndDate = self.MainWindow.VisitorExploreSite.dateEdit_2.date()
         LowTotalVisitRange = self.MainWindow.VisitorExploreSite.lineEdit.text()
         HighTotalVisitRange = self.MainWindow.VisitorExploreSite.lineEdit_2.text()
-        LowEventCount
+        LowEventCount = self.MainWindow.VisitorExploreSite.lineEdit_3.text()
+        HighEventCount = self.MainWindow.VisitorExploreSite.lineEdit_4.text()
 
     def showVisitorTransitDetail(self):
         self.MainWindow.close()
         self.MainWindow = MainWindow()
         self.MainWindow.startVisitorTransitDetail()
-        if self.user == 'User':
-            self.MainWindow.VisitorTransitDetail.pushButton.clicked.connect(self.showUserFunctionality)
-        elif self.user == "Staff":
-            self.MainWindow.VisitorTransitDetail.pushButton.clicked.connect(self.showStaffFunctionality)
-        elif self.user == 'Manager':
-            self.MainWindow.VisitorTransitDetail.pushButton.clicked.connect(self.showManagerFunctionality)
-        elif self.user == 'Administrator':
-            self.MainWindow.VisitorTransitDetail.pushButton.clicked.connect(self.showAdministratorFunctionality)
-        elif self.user == 'StaffVisitor':
-            self.MainWindow.VisitorTransitDetail.pushButton.clicked.connect(self.showStaffVisitorFunctionality)
-        elif self.user == 'ManagerVisitor':
-            self.MainWindow.VisitorTransitDetail.pushButton.clicked.connect(self.showManagerVisitorFunctionality)
-        elif self.user == 'AdministratorVisitor':
-            self.MainWindow.VisitorTransitDetail.pushButton.clicked.connect(self.showAdminVisitorFunctionality)
-        elif self.user == 'Visitor':
-            self.MainWindow.VisitorTransitDetail.pushButton.clicked.connect(self.showVisitorFunctionality)
+        self.MainWindow.VisitorTransitDetail.pushButton.clicked.connect(self.showVisitorExploreSite)
+        self.MainWindow.VisitorTransitDetail.pushButton_2.clicked.connect(self.LogVisitorTransit)
+        self.MainWindow.VisitorTransitDetail.comboBox.addItems(['All', 'MARTA', 'Bus', 'Bike'])
+        # if self.user == 'User':
+        #     self.MainWindow.VisitorTransitDetail.pushButton.clicked.connect(self.showUserFunctionality)
+        # elif self.user == "Staff":
+        #     self.MainWindow.VisitorTransitDetail.pushButton.clicked.connect(self.showStaffFunctionality)
+        # elif self.user == 'Manager':
+        #     self.MainWindow.VisitorTransitDetail.pushButton.clicked.connect(self.showManagerFunctionality)
+        # elif self.user == 'Administrator':
+        #     self.MainWindow.VisitorTransitDetail.pushButton.clicked.connect(self.showAdministratorFunctionality)
+        # elif self.user == 'StaffVisitor':
+        #     self.MainWindow.VisitorTransitDetail.pushButton.clicked.connect(self.showStaffVisitorFunctionality)
+        # elif self.user == 'ManagerVisitor':
+        #     self.MainWindow.VisitorTransitDetail.pushButton.clicked.connect(self.showManagerVisitorFunctionality)
+        # elif self.user == 'AdministratorVisitor':
+        #     self.MainWindow.VisitorTransitDetail.pushButton.clicked.connect(self.showAdminVisitorFunctionality)
+        # elif self.user == 'Visitor':
+        #     self.MainWindow.VisitorTransitDetail.pushButton.clicked.connect(self.showVisitorFunctionality)
+
+    def LogVisitorTransit(self):
+        Site = self.MainWindow.VisitorTransitDetail.label_2.text()
+        TransportType = self.MainWindow.VisitorTransitDetail.comboBox.currentText()
+        TransitDate = self.MainWindow.VisitorTransitDetail.dateEdit.date()
 
     def showVisitorSiteDetail(self):
         self.MainWindow.close()
         self.MainWindow = MainWindow()
         self.MainWindow.startVisitorSiteDetail()
-        if self.user == 'User':
-            self.MainWindow.VisitorSiteDetail.pushButton.clicked.connect(self.showUserFunctionality)
-        elif self.user == "Staff":
-            self.MainWindow.VisitorSiteDetail.pushButton.clicked.connect(self.showStaffFunctionality)
-        elif self.user == 'Manager':
-            self.MainWindow.VisitorSiteDetail.pushButton.clicked.connect(self.showManagerFunctionality)
-        elif self.user == 'Administrator':
-            self.MainWindow.VisitorSiteDetail.pushButton.clicked.connect(self.showAdministratorFunctionality)
-        elif self.user == 'StaffVisitor':
-            self.MainWindow.VisitorSiteDetail.pushButton.clicked.connect(self.showStaffVisitorFunctionality)
-        elif self.user == 'ManagerVisitor':
-            self.MainWindow.VisitorSiteDetail.pushButton.clicked.connect(self.showManagerVisitorFunctionality)
-        elif self.user == 'AdministratorVisitor':
-            self.MainWindow.VisitorSiteDetail.pushButton.clicked.connect(self.showAdminVisitorFunctionality)
-        elif self.user == 'Visitor':
-            self.MainWindow.VisitorSiteDetail.pushButton.clicked.connect(self.showVisitorFunctionality)
+        self.MainWindow.VisitorSiteDetail.pushButton.clicked.connect(self.showVisitorExploreSite)
+        self.MainWindow.VisitorSiteDetail.pushButton_2.clicked.connect(self.LogVisitorVisit)
+        # if self.user == 'User':
+        #     self.MainWindow.VisitorSiteDetail.pushButton.clicked.connect(self.showUserFunctionality)
+        # elif self.user == "Staff":
+        #     self.MainWindow.VisitorSiteDetail.pushButton.clicked.connect(self.showStaffFunctionality)
+        # elif self.user == 'Manager':
+        #     self.MainWindow.VisitorSiteDetail.pushButton.clicked.connect(self.showManagerFunctionality)
+        # elif self.user == 'Administrator':
+        #     self.MainWindow.VisitorSiteDetail.pushButton.clicked.connect(self.showAdministratorFunctionality)
+        # elif self.user == 'StaffVisitor':
+        #     self.MainWindow.VisitorSiteDetail.pushButton.clicked.connect(self.showStaffVisitorFunctionality)
+        # elif self.user == 'ManagerVisitor':
+        #     self.MainWindow.VisitorSiteDetail.pushButton.clicked.connect(self.showManagerVisitorFunctionality)
+        # elif self.user == 'AdministratorVisitor':
+        #     self.MainWindow.VisitorSiteDetail.pushButton.clicked.connect(self.showAdminVisitorFunctionality)
+        # elif self.user == 'Visitor':
+        #     self.MainWindow.VisitorSiteDetail.pushButton.clicked.connect(self.showVisitorFunctionality)
+
+    def LogVisitorVisit(self):
+        Site = self.MainWindow.VisitorSiteDetail.textBrowser.toPlainText()
+        OpenEveryday = self.MainWindow.VisitorSiteDetail.textBrowser_2.toPlainText()
+        Address = self.MainWindow.VisitorSiteDetail.textBrowser_3.toPlainText()
 
     def showVisitorVisitHistory(self):
         self.MainWindow.close()
         self.MainWindow = MainWindow()
         self.MainWindow.startVisitorVisitHistory()
+        self.MainWindow.VisitorVisitHistory.pushButton_2.clicked.connect(self.FilterVisitorVisitHistory)
+        allSites = ['All']
+        self.MainWindow.VisitorVisitHistory.comboxBox.addItems(allSites)
         if self.user == 'User':
             self.MainWindow.VisitorVisitHistory.pushButton_2.clicked.connect(self.showUserFunctionality)
         elif self.user == "Staff":
@@ -1295,6 +1314,13 @@ class Controller():
             self.MainWindow.VisitorVisitHistory.pushButton_2.clicked.connect(self.showAdminVisitorFunctionality)
         elif self.user == 'Visitor':
             self.MainWindow.VisitorVisitHistory.pushButton_2.clicked.connect(self.showVisitorFunctionality)
+
+    def FilterVisitorVisitHistory(self):
+        Event = self.MainWindow.VisitorVisitHistory.lineEdit.text()
+        StartDate = self.MainWindow.VisitorVisitHistory.dateEdit.date()
+        EndDate = self.MainWindow.VisitorVisitHistory.dateEdit_2.date()
+        Site = self.MainWindow.VisitorVisitHistory.comboxBox.currentText()
+        
 
 
 if __name__ == '__main__':
