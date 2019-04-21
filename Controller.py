@@ -599,6 +599,7 @@ class Controller():
         self.MainWindow.UserTakeTransit.pushButton_3.clicked.connect(self.LogUserTransit)
 
     def filterUserTransit(self):
+        self.MainWindow.UserTakeTransit.tableWidget.setRowCount(0)
         containSite = self.MainWindow.UserTakeTransit.comboBox.currentText()
         transportType = self.MainWindow.UserTakeTransit.comboBox_2.currentText()
         LowRange = self.MainWindow.UserTakeTransit.lineEdit.text()
@@ -625,7 +626,7 @@ class Controller():
                 newItem = QtWidgets.QTableWidgetItem()
                 newItem.setText(str(tableData[i][key]))
                 self.MainWindow.UserTakeTransit.tableWidget.setItem(i, column, newItem)
-        self.MainWindow.UserTakeTransit.tableWidget.setSortingEnabled(False)
+        self.MainWindow.UserTakeTransit.tableWidget.setSortingEnabled(True)
 
     def LogUserTransit(self):
         Route = self.MainWindow.UserTakeTransit.tableWidget.selectedItems()[0]
@@ -901,6 +902,7 @@ class Controller():
         print("Deleted")
 
     def filterAdminTransit(self):
+        self.MainWindow.AdministratorManageTransit.tableWidget.setRowCount(0)
         TransportType = self.MainWindow.AdministratorManageTransit.comboBox.currentText()
         if TransportType == 'All':
             TransportType = None
@@ -923,7 +925,14 @@ class Controller():
         else:
             tableData = DataBaseManager.GetTransitByFilterByTransportType_Route_ContainSite_PriceRange(TransportType, Route, float(LowRange),
                                                                    float(HighRange))
-        print(tableData)
+        self.MainWindow.AdministratorManageTransit.tableWidget.setSortingEnabled(False)
+        for i in range(len(tableData)):
+            self.MainWindow.AdministratorManageTransit.tableWidget.insertRow(i)
+            for column, key in enumerate(tableData[i].keys()):
+                newItem = QtWidgets.QTableWidgetItem()
+                newItem.setText(str(tableData[i][key]))
+                self.MainWindow.AdministratorManageTransit.tableWidget.setItem(i, column, newItem)
+        self.MainWindow.AdministratorManageTransit.tableWidget.setSortingEnabled(True)
 
     def showAdministratorEditTransit(self):
         self.MainWindow.close()
