@@ -138,6 +138,7 @@ def GetAllRoutesForTakeTransit(transit_type):
     # finds the intersection of three lists
     # res_list = [i for n, i in enumerate(first_filter_result) if i in second_filter_result and i in third_filter_result]
 
+
 def GetCurrentSiteManagerAndAllUnAssignedManagers(sitename):
     """
     For screen 20, shows a 'dropdown list containing the current site manager as well
