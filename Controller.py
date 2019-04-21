@@ -863,23 +863,61 @@ class Controller():
         self.MainWindow.AdministratorManageSite.pushButton.clicked.connect(self.filterSites)
         allSites = ['All']
         allSitesDB = DataBaseManager.GetAllSites()
+        for site in allSitesDB:
+            allSites.append(site['sitename'])
         self.MainWindow.AdministratorManageSite.comboBox.addItems(allSites)
         allManagers = ['All']
+        allManagersDB = DataBaseManager.GetManagerDropdownMenuForAdminManageSite()
+        for manager in allManagersDB:
+            allManagers.append(manager[list(manager.keys())[0]])
         self.MainWindow.AdministratorManageSite.comboBox_2.addItems(allManagers)
         self.MainWindow.AdministratorManageSite.comboBox_3.addItems(["Yes", "No"])
         self.MainWindow.AdministratorManageSite.pushButton_2.clicked.connect(self.showAdministratorCreateSite)
         self.MainWindow.AdministratorManageSite.pushButton_3.clicked.connect(self.showAdministratorEditSite)
         self.MainWindow.AdministratorManageSite.pushButton_4.clicked.connect(self.deleteSite)
+        self.MainWindow.AdministratorManageSite.tableWidget.setSelectionMode(QtWidgets.QAbstractItemView.SingleSelection)
+        self.MainWindow.AdministratorManageSite.tableWidget.setSelectionBehavior(QtWidgets.QAbstractItemView.SelectRows)
 
     def filterSites(self):
         Site = self.MainWindow.AdministratorManageSite.comboBox.currentText()
         Manager = self.MainWindow.AdministratorManageSite.comboBox_2.currentText()
         OpenEveryday = self.MainWindow.AdministratorManageSite.comboBox_3.currentText()
+        if Site == 'All':
+            Site = None
+        if Manager == 'All':
+            Manager = None
+        if OpenEveryday == 'Yes':
+            OpenEveryday = True
+        else:
+            OpenEveryday = False
+        self.MainWindow.AdministratorManageSite.tableWidget.setRowCount(0)
+        tableData = DataBaseManager.GetAllSiteInformationForManageSiteFilterBySite_Manager_OpenEveryday(Site, Manager, OpenEveryday)
+        self.MainWindow.AdministratorManageSite.tableWidget.setSortingEnabled(False)
+        for i in range(len(tableData)):
+            self.MainWindow.AdministratorManageSite.tableWidget.insertRow(i)
+            for column, key in enumerate(tableData[i].keys()):
+                newItem = QtWidgets.QTableWidgetItem()
+                if key == 'openeverydays':
+                    tableData[i][key] = 'Yes' if tableData[i][key] == 1 else 'No'
+                newItem.setText(str(tableData[i][key]))
+                self.MainWindow.AdministratorManageSite.tableWidget.setItem(i, column, newItem)
+        self.MainWindow.AdministratorManageSite.tableWidget.setSortingEnabled(True)
+
 
     def deleteSite(self):
-        print("Delete a site")
+        Site = None
+        try:
+            Site = self.MainWindow.AdministratorManageTransit.tableWidget.selectionModel().selectedRows()[0]
+        except:
+            return QtWidgets.QMessageBox.warning(self.MainWindow, "Haven't selected a site",
+                                                 "Please select a site first", QtWidgets.QMessageBox.Ok)
+        Sitename = self.MainWindow.AdministratorManageTransit.tableWidget.item(Site.row(), 0).text()
+        DataBaseManager.AdminDeletesSite(Sitename)
+        self.filterSites()
 
     def showAdministratorEditSite(self):
+        Site = self.MainWindow.AdministratorManageTransit.tableWidget.selectionModel().selectedRows()[0]
+        Sitename = self.MainWindow.AdministratorManageTransit.tableWidget.item(Site.row(), 0).text()
         self.MainWindow.close()
         self.MainWindow = MainWindow()
         self.MainWindow.startAdministratorEditSite()
@@ -997,6 +1035,7 @@ class Controller():
         TakeRoute = self.MainWindow.AdministratorManageTransit.tableWidget.item(Route.row(), 0).text()
         Price = self.MainWindow.AdministratorManageTransit.tableWidget.item(Route.row(), 2).text()
         DataBaseManager.DeleteTransit(TakeType, TakeRoute)
+        self.filterAdminTransit()
 
     def filterAdminTransit(self):
         self.MainWindow.AdministratorManageTransit.tableWidget.setRowCount(0)
