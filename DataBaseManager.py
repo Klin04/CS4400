@@ -113,7 +113,7 @@ def IsUsernameUnique(username):
 
 def IsEmployeeIdUnique(username):
     with mydb as mycursor:
-        mycursor.execute("select * from employee where username = %s", username)
+        mycursor.execute("select * from employees where username = %s", username)
         any_user = mycursor.fetchone()
         if any_user:
             return False
