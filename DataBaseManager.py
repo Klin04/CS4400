@@ -404,22 +404,22 @@ def GetTransitByFilterByTransportType_Route_ContainSite_PriceRange(transit_type,
     """
     with mydb as mycursor:
         # first get ALL result
-        mycursor.execute("select transit_type, transit_route, price, connect_sites, visitors_logged from sites_logged")
+        mycursor.execute("select transit_type, transit_route, price, connected_sites, visitors_logged from sites_logged")
         all_result = mycursor.fetchall()
 
         # Start filtering if this filtering type is applied
         if transit_type is not None:
-            mycursor.execute("select transit_type, transit_route, price, connect_sites, visitors_logged from sites_logged "
+            mycursor.execute("select transit_type, transit_route, price, connected_sites, visitors_logged from sites_logged "
                          "where transit_type = %s", transit_type)
             filtered_result = mycursor.fetchall()
             all_result = [i for n, i in enumerate(all_result) if i in filtered_result]
         if route is not None:
-            mycursor.execute("select transit_type, transit_route, price, connect_sites, visitors_logged from sites_logged "
+            mycursor.execute("select transit_type, transit_route, price, connected_sites, visitors_logged from sites_logged "
                              "where transit_route = %s", route)
             filtered_result = mycursor.fetchall()
             all_result = [i for n, i in enumerate(all_result) if i in filtered_result]
         if low_price is not None and high_price is not None:
-            mycursor.execute("select transit_type, transit_route, price, connect_sites, visitors_logged from sites_logged "
+            mycursor.execute("select transit_type, transit_route, price, connected_sites, visitors_logged from sites_logged "
                              "WHERE price BETWEEN %s AND %s", (low_price, high_price))
             filtered_result = mycursor.fetchall()
             all_result = [i for n, i in enumerate(all_result) if i in filtered_result]
