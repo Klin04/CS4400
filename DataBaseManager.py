@@ -180,6 +180,7 @@ def GetCurrentSiteManagerAndAllUnAssignedManagers(sitename):
     """
     with mydb as mycursor:
         mycursor.execute(
+            "select distinct concat(fname, ' ', lname) as name from users where username in "
             "(select distinct username from employees where employee_id in (select sitemanager_id from sites where sitename = %s)) "
             "union (select username from employees where employee_id not in (select sitemanager_id from sites))",
             sitename)
@@ -210,9 +211,16 @@ def GetManagersNotAssignedSite():
     :return: list
     """
     with mydb as mycursor:
-        mycursor.execute("select distinct username from employees where employee_id not in (select sitemanager_id from sites)")
+        mycursor.execute("select fname, lname from users where username in "
+                         "(select distinct username from employees where employee_id not in (select sitemanager_id from sites))")
         return mycursor.fetchall()
 
+def GetEmployeeInformation():
+    # TODO: this
+    with mydb as mycursor:
+        # mycursor.execute("select fname, lname from users where username in "
+        #                  "(select distinct username from employees where employee_id not in (select sitemanager_id from sites))")
+        return mycursor.fetchall()
 
 def UpdateUserInformation(username, fname, lname, is_visitor, phone, employee_id):
     with mydb as mycursor:
