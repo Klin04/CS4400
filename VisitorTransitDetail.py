@@ -49,8 +49,6 @@ class Ui_Form(object):
         self.tableWidget.horizontalHeader().setDefaultSectionSize(120)
         self.tableWidget.horizontalHeader().setSortIndicatorShown(True)
         self.tableWidget.verticalHeader().setCascadingSectionResizes(False)
-        self.tableWidget.setColumnCount(0)
-        self.tableWidget.setRowCount(0)
         self.pushButton = QtWidgets.QPushButton(Form)
         self.pushButton.setGeometry(QtCore.QRect(100, 490, 89, 25))
         self.pushButton.setObjectName("pushButton")
