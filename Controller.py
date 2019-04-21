@@ -268,7 +268,7 @@ class Controller():
         password = self.MainWindow.LoginPage.lineEdit_2.text()
         if len(email) == 0:
             return QtWidgets.QMessageBox.warning(self.MainWindow, "Email not entered", "Email not entered.", QtWidgets.QMessageBox.Ok)
-        if len(password) == 0:
+        if len(password) < 8:
             return QtWidgets.QMessageBox.warning(self.MainWindow, "Password not entered", "Password not entered", QtWidgets.QMessageBox.Ok)
         found = DataBaseManager.Login(email, password)
         if found:
@@ -361,7 +361,7 @@ class Controller():
             Emails.append(email.text())
         if len(Fname) == 0 or len(Lname) == 0 or len(Username) == 0 or len(Password) == 0 or len(Emails) == 0:
             return QtWidgets.QMessageBox.warning(self.MainWindow, "Missing Field", "There are missing fields", QtWidgets.QMessageBox.Ok)
-        if Password != CPassword:
+        if Password != CPassword or len(Password) < 8:
             return QtWidgets.QMessageBox.warning(self.MainWindow, "Password not match", "Please confirm your password", QtWidgets.QMessageBox.Ok)
         for email in Emails:
             if not isValidEmail(email):
@@ -410,7 +410,7 @@ class Controller():
             Emails.append(email.text())
         if len(Fname) == 0 or len(Lname) == 0 or len(Username) == 0 or len(Password) == 0 or len(Emails) == 0:
             return QtWidgets.QMessageBox.warning(self.MainWindow, "Missing Field", "There are missing fields", QtWidgets.QMessageBox.Ok)
-        if Password != CPassword:
+        if len(Password) < 8 and Password != CPassword:
             return QtWidgets.QMessageBox.warning(self.MainWindow, "Password not match", "Please confirm your password", QtWidgets.QMessageBox.Ok)
         for email in Emails:
             if not isValidEmail(email):
@@ -459,7 +459,7 @@ class Controller():
             Emails.append(email.text())
         if len(Fname) == 0 or len(Lname) == 0 or len(Username) == 0 or len(Password) == 0 or len(Emails) == 0:
             return QtWidgets.QMessageBox.warning(self.MainWindow, "Missing Field", "There are missing fields", QtWidgets.QMessageBox.Ok)
-        if Password != CPassword:
+        if len(Password) < 8 and Password != CPassword:
             return QtWidgets.QMessageBox.warning(self.MainWindow, "Password not match", "Please confirm your password", QtWidgets.QMessageBox.Ok)
         for email in Emails:
             if not isValidEmail(email):
@@ -679,11 +679,27 @@ class Controller():
         self.MainWindow.UserTransitHistory.dateEdit_2.setDate(QtCore.QDate.currentDate())
 
     def filterTransitHistory(self):
+        self.MainWindow.UserTransitHistory.tableWidget.setRowCount(0)
         containSite = self.MainWindow.UserTransitHistory.comboBox.currentText()
         transportType = self.MainWindow.UserTransitHistory.comboBox_2.currentText()
-        startDate = self.MainWindow.UserTransitHistory.dateEdit.date()
-        endDate = self.MainWindow.UserTransitHistory.dateEdit.date()
+        startDate = self.MainWindow.UserTransitHistory.dateEdit.date().toPyDate()
+        endDate = self.MainWindow.UserTransitHistory.dateEdit_2.date().toPyDate()
         Route = self.MainWindow.UserTransitHistory.lineEdit.text()
+        if transportType == 'All':
+            transportType = None
+        if containSite == 'All':
+            containSite = None
+        if len(Route) == 0:
+            Route = None
+        tableData = DataBaseManager.GetUserTransitHistoryFilteredByTransportType_Route_StartDate_EndDate_ContainSite(self.username, transportType, Route, startDate, endDate, containSite)
+        self.MainWindow.UserTransitHistory.tableWidget.setSortingEnabled(False)
+        for i in range(len(tableData)):
+            self.MainWindow.UserTransitHistory.tableWidget.insertRow(i)
+            for column, key in enumerate(tableData[i].keys()):
+                newItem = QtWidgets.QTableWidgetItem()
+                newItem.setText(str(tableData[i][key]))
+                self.MainWindow.UserTransitHistory.tableWidget.setItem(i, column, newItem)
+        self.MainWindow.UserTransitHistory.tableWidget.setSortingEnabled(True)
 
     def showEmployeeManageProfile(self):
         self.MainWindow.close()
@@ -706,12 +722,41 @@ class Controller():
         elif self.user == 'Visitor':
             self.MainWindow.EmployeeManageProfile.pushButton_3.clicked.connect(self.showVisitorFunctionality)
         self.MainWindow.EmployeeManageProfile.pushButton_2.clicked.connect(self.updateEmployeeProfile)
+        tableData = DataBaseManager.GetEmployeeInformationForManageProfile(self.username)
+        self.MainWindow.EmployeeManageProfile.lineEdit.setText(tableData[0]['fname'])
+        self.MainWindow.EmployeeManageProfile.lineEdit_2.setText(tableData[0]['lname'])
+        self.MainWindow.EmployeeManageProfile.lineEdit_3.setText(str(tableData[1]['phone']))
+        self.MainWindow.EmployeeManageProfile.label_6.setText(self.username)
+        self.MainWindow.EmployeeManageProfile.label_10.setText(str(tableData[1]['employee_id']))
+        if tableData[2]:
+            self.MainWindow.EmployeeManageProfile.label_7.setText(tableData[2]['sitename'])
+        else:
+            self.MainWindow.EmployeeManageProfile.label_7.setText("")
+        self.MainWindow.EmployeeManageProfile.label_13.setText(tableData[1]['address'])
+        Emails = DataBaseManager.GetAllEmailsOfUser(self.username)
+        for email in Emails:
+            line_text = QtWidgets.QLineEdit(self.MainWindow.EmployeeManageProfile.widget)
+            line_text.setText(email['email'])
+            self.MainWindow.EmployeeManageProfile.EditLineList.append(line_text)
+            line_text.setGeometry(QtCore.QRect(20, 10, 301, 25))
+            self.MainWindow.EmployeeManageProfile.inner.layout().addWidget(line_text)
+            new_button = QtWidgets.QPushButton(self.MainWindow.EmployeeManageProfile.widget)
+            self.MainWindow.EmployeeManageProfile.EmailRemoveButtons.append(new_button)
+            new_button.setText("Remove")
+            self.MainWindow.EmployeeManageProfile.inner.layout().addWidget(new_button)
+            # since we can't pass arguments into .connect, we pass in the lambda as a func
+            new_button.clicked.connect(lambda: self.MainWindow.EmployeeManageProfile.removeEmail(new_button))
+        if tableData[0]['is_visitor']:
+            self.MainWindow.EmployeeManageProfile.checkBox.setChecked(True)
+        else:
+            self.MainWindow.EmployeeManageProfile.checkBox.setChecked(False)
 
     def updateEmployeeProfile(self):
         Fname = self.MainWindow.EmployeeManageProfile.lineEdit.text()
         Lname = self.MainWindow.EmployeeManageProfile.lineEdit_2.text()
         Phone = self.MainWindow.EmployeeManageProfile.lineEdit_3.text()
         Emails = []
+        Employee_id = self.MainWindow.EmployeeManageProfile.label_10.text()
         for email in self.MainWindow.RegisterUserPage.EditLineList:
             Emails.append(email.text())
         if self.MainWindow.EmployeeManageProfile.lineEdit_3.isModified() and not Phone.isdigit():
@@ -727,7 +772,8 @@ class Controller():
             if not DataBaseManager.IsEmailUnique(email):
                 return QtWidgets.QMessageBox.warning(self.MainWindow, "Email already registered",
                                                      "Please use a new email", QtWidgets.QMessageBox.Ok)
-    
+        DataBaseManager.UpdateUserInformation(self.username, Fname, Lname, self.MainWindow.EmployeeManageProfile.checkBox.isChecked(), int(Phone), Employee_id)
+
     def showAdministratorManagerUser(self):
         self.MainWindow.close()
         self.MainWindow = MainWindow()
@@ -1084,8 +1130,11 @@ class Controller():
         self.MainWindow.ManagerManageEvent.pushButton_4.clicked.connect(self.deleteEvent)
         self.MainWindow.ManagerManageEvent.dateEdit.setDate(QtCore.QDate.currentDate())
         self.MainWindow.ManagerManageEvent.dateEdit_2.setDate(QtCore.QDate.currentDate())
+        self.MainWindow.ManagerManageEvent.tableWidget.setSelectionBehavior(QtWidgets.QAbstractItemView.SelectRows)
+        self.MainWindow.ManagerManageEvent.tableWidget.setSelectionMode(QtWidgets.QAbstractItemView.SingleSelection)
 
     def filterManageEvents(self):
+        self.MainWindow.ManagerManageEvent.tableWidget.setRowCount(0)
         Name = self.MainWindow.ManagerManageEvent.lineEdit.text()
         DescriptionKeyword = self.MainWindow.ManagerManageEvent.lineEdit_2.text()
         LowDurationRange = self.MainWindow.ManagerManageEvent.lineEdit_3.text()
@@ -1098,7 +1147,6 @@ class Controller():
         EndDate = self.MainWindow.ManagerManageEvent.dateEdit_2.date().toPyDate()
         Name = setNone(Name)
         DescriptionKeyword = setNone(DescriptionKeyword)
-        print(Name, DescriptionKeyword, LowDurationRange, HighDurationRange)
         tableData = None
         if len(LowDurationRange) == 0 and len(HighDurationRange) == 0:
             LowDurationRange = None
@@ -1119,16 +1167,62 @@ class Controller():
             return QtWidgets.QMessageBox.warning(self.MainWindow, "Range not valid", "Please enter both ranges",
                                                  QtWidgets.QMessageBox.Ok)
         tableData = DataBaseManager.GetAllEventFilteredByEventName_DescripKeyword_StartDate_EndDate_DurationRange_VisitRange_RevenueRange(Name, DescriptionKeyword, StartDate, EndDate, LowDurationRange, HighDurationRange, LowTotalVisitRange, HighTotalVisitRange, LowTotalRevenueRange, HighTotalRevenueRange)
-        print(tableData)
+        self.MainWindow.ManagerManageEvent.tableWidget.setSortingEnabled(False)
+        for i in range(len(tableData)):
+            self.MainWindow.ManagerManageEvent.tableWidget.insertRow(i)
+            for column, key in enumerate(["event_name", 'staff_count','duration', 'total_visit']):
+                newItem = QtWidgets.QTableWidgetItem()
+                newItem.setText(str(tableData[i][key]))
+                self.MainWindow.ManagerManageEvent.tableWidget.setItem(i, column, newItem)
+            newItem = QtWidgets.QTableWidgetItem()
+            newItem.setText(str(tableData[i]['revenue'] * tableData[i]['total_visit']))
+            self.MainWindow.ManagerManageEvent.tableWidget.setItem(i, 4, newItem)
+        self.MainWindow.ManagerManageEvent.tableWidget.setSortingEnabled(True)
+        self.MainWindow.ManagerManageEvent.tableData = tableData
 
     def deleteEvent(self):
-        print("deleted")
+        Event =  self.MainWindow.ManagerManageEvent.tableWidget.selectionModel().selectedRows()[0]
+        EventName = self.MainWindow.ManagerManageEvent.tableWidget.item(Event.row(), 0).text()
+        SiteName = None
+        startDate = None
+        for data in self.MainWindow.ManagerManageEvent.tableData:
+            if data['event_name'] == EventName:
+                siteName = data['sitename']
+                startDate = data['startdate']
+        DataBaseManager.DeleteEvent(EventName, SiteName, startDate)
+        self.filterManageEvents()
 
     def showManagerViewEditEvent(self):
+        Event = self.MainWindow.ManagerManageEvent.tableWidget.selectionModel().selectedRows()[0]
+        EventName = self.MainWindow.ManagerManageEvent.tableWidget.item(Event.row(), 0).text()
+        SiteName = None
+        startDate = None
+        Price = None
+        EndDate = None
+        for data in self.MainWindow.ManagerManageEvent.tableData:
+            if data['event_name'] == EventName:
+                siteName = data['sitename']
+                startDate = data['startdate']
+                Price = data['revenue']
+                EndDate = data['endate']
         self.MainWindow.close()
         self.MainWindow = MainWindow()
         self.MainWindow.startManagerViewEditEvent()
         self.MainWindow.ManagerViewEditEvent.pushButton_3.clicked.connect(self.showManagerManageEvent)
+        self.MainWindow.ManagerViewEditEvent.label_2.setText(EventName)
+        self.MainWindow.ManagerViewEditEvent.label_4.setText(str(Price))
+        self.MainWindow.ManagerViewEditEvent.label_6.setText(str(startDate))
+        self.MainWindow.ManagerViewEditEvent.label_8.setText(str(EndDate))
+        allStaff = DataBaseManager.StaffAssignedAndAvailibleStaffForEvent(EventName, siteName, startDate, EndDate)
+        allAssignedStaff = DataBaseManager.GetAssignedStaffsForEvent(EventName, SiteName, startDate)
+        allStaffNames = []
+        allAssignedStaffNames = [each['fname'] + ' ' + each['lname'] for each in allAssignedStaff]
+        for staff in allStaff:
+            allStaffNames.append(allStaff['fname'] + ' ' + allStaff['lname'])
+        self.MainWindow.ManagerViewEditEvent.listWidget.addItems(allStaffNames)
+        for i in range(self.MainWindow.ManagerViewEditEvent.listWidget.count()):
+            if self.MainWindow.ManagerViewEditEvent.listWidget.item(i).text() in allAssignedStaffNames:
+                self.MainWindow.AdministratorEditTransit.listWidget.item(i).setSelected(True)
         # if self.user == 'User':
         #     self.MainWindow.ManagerViewEditEvent.pushButton_3.clicked.connect(self.showUserFunctionality)
         # elif self.user == "Staff":
@@ -1145,23 +1239,47 @@ class Controller():
         #     self.MainWindow.ManagerViewEditEvent.pushButton_3.clicked.connect(self.showAdminVisitorFunctionality)
         # elif self.user == 'Visitor':
         #     self.MainWindow.ManagerViewEditEvent.pushButton_3.clicked.connect(self.showVisitorFunctionality)
-        self.MainWindow.ManagerViewEditEvent.pushButton.clicked.connect(self.filterViewEditEvents)
-        self.MainWindow.ManagerViewEditEvent.pushButton_2.clicked.connect(self.updateEvent)
+        self.MainWindow.ManagerViewEditEvent.pushButton.clicked.connect(lambda: self.filterViewEditEvents(EventName))
+        self.MainWindow.ManagerViewEditEvent.pushButton_2.clicked.connect(lambda: self.updateEvent(EventName, SiteName, startDate))
+        Description = DataBaseManager.GetDescriptionForEvent(SiteName, EventName, startDate)
+        self.MainWindow.ManagerViewEditEvent.textBrowser.setText(Description['event_description'])
+        self.MainWindow.ManagerViewEditEvent.listWidget.setSelectionMode(QtWidgets.QAbstractItemView.ExtendedSelection)
 
-    def filterViewEditEvents(self):
+
+    def filterViewEditEvents(self, EventName):
         staffAssigned = self.MainWindow.ManagerViewEditEvent.listWidget.selectedItems()
         LowDailyVisit = self.MainWindow.ManagerViewEditEvent.lineEdit.text()
         HighDailyVisit = self.MainWindow.ManagerViewEditEvent.lineEdit_2.text()
         LowDailyRevenue = self.MainWindow.ManagerViewEditEvent.lineEdit_3.text()
         HighDailyRevenue = self.MainWindow.ManagerViewEditEvent.lineEdit_4.text()
+        Price = self.MainWindow.ManagerViewEditEvent.label_4.text()
+        if len(LowDailyVisit) == 0 and len(HighDailyVisit) == 0:
+            LowTotalRevenueRange = None
+            HighTotalRevenueRange = None
+        elif len(LowDailyVisit) * len(HighDailyVisit) == 0:
+            return QtWidgets.QMessageBox.warning(self.MainWindow, "Range not valid", "Please enter both ranges",
+                                                 QtWidgets.QMessageBox.Ok)
+        if len(LowDailyRevenue) == 0 and len(HighDailyRevenue) == 0:
+            LowTotalRevenueRange = None
+            HighTotalRevenueRange = None
+        elif len(LowDailyRevenue) * len(HighDailyRevenue) == 0:
+            return QtWidgets.QMessageBox.warning(self.MainWindow, "Range not valid", "Please enter both ranges",
+                                                 QtWidgets.QMessageBox.Ok)
+        tableData = DataBaseManager.GetEventViewEditEventByFilterByVisitRange_RevenueRange(EventName, Price, LowDailyVisit, HighDailyVisit, LowDailyRevenue, HighDailyRevenue)
+        print (tableData)
 
-    def updateEvent(self):
+    def updateEvent(self, EventName, SiteName, startDate):
         staffAssigned = self.MainWindow.ManagerViewEditEvent.listWidget.selectedItems()
+        Description = self.MainWindow.ManagerViewEditEvent.textBrowser.toPlainText()
         LowDailyVisit = self.MainWindow.ManagerViewEditEvent.lineEdit.text()
         HighDailyVisit = self.MainWindow.ManagerViewEditEvent.lineEdit_2.text()
         LowDailyRevenue = self.MainWindow.ManagerViewEditEvent.lineEdit_3.text()
         HighDailyRevenue = self.MainWindow.ManagerViewEditEvent.lineEdit_4.text()
         selectedStaff = self.MainWindow.ManagerViewEditEvent.listWidget.selectedItems()
+        DataBaseManager.DeleteAllAssignedStaffsForEvent(EventName, SiteName, startDate)
+        for staff in staffAssigned:
+            DataBaseManager.AddAssignedStaffForEvent(staff.text(), SiteName, EventName, startDate)
+        DataBaseManager.UpdateDescriptionForEvent(Description, SiteName, EventName, startDate)
 
     def showManagerCreateEvent(self):
         self.MainWindow.close()

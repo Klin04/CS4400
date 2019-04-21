@@ -256,28 +256,68 @@ def GetManagersNotAssignedSite():
         return mycursor.fetchall()
 
 
-def GetEmployeeInformation():
-    # TODO: this
+def GetEmployeeInformationForManageProfile(username):
+    """
+    Fetch information for screen 17
+    :param username:
+    :return:
+    """
     with mydb as mycursor:
-        # mycursor.execute("select fname, lname from users where username in "
-        #                  "(select distinct username from employees where employee_id not in (select sitemanager_id from sites))")
+        mycursor.execute("select fname, lname, is_visitor from users where username = %s", username)
+        dict_fname_lname_IsVisitor = mycursor.fetchone()
+        mycursor.execute("select employee_id, phone, address from employees where username = %s", username)
+        dict_empId_phone_addr = mycursor.fetchone()
+        mycursor.execute("select sitename from sites where sitemanager_id in (select employee_id from employees where username = %s)", username)
+        dict_sitename = mycursor.fetchone()
+        return (dict_fname_lname_IsVisitor, dict_empId_phone_addr, dict_sitename)
+
+
+def GetAllEmailsOfUser(username):
+    """
+    Fetch all emails for screen 17
+    :param username:
+    :return:
+    """
+    with mydb as mycursor:
+        mycursor.execute("select email from emails where username = %s", username)
         return mycursor.fetchall()
 
 
 def UpdateUserInformation(username, fname, lname, is_visitor, phone, employee_id):
+    """
+    update informaiton for screen 17
+    :param username:
+    :param fname:
+    :param lname:
+    :param is_visitor:
+    :param phone:
+    :param employee_id:
+    :return:
+    """
     with mydb as mycursor:
         mycursor.execute("update users set fname = %s, lname = %s, is_visitor = %s where username = %s",
                          (fname, lname, is_visitor, username))
-        mycursor.execute("update employee set phone = %s where employee_id = %s", (phone, employee_id))
+        mycursor.execute("update employees set phone = %s where employee_id = %s", (phone, employee_id))
 
 
 def AddAllEmailsOfAUser(emails, username):
+    """
+    add all the emails of screen 17
+    :param emails:
+    :param username:
+    :return:
+    """
     with mydb as mycursor:
         for email in emails:
             mycursor.execute("insert into emails(username, email) values (%s, %s)", (username, email))
 
 
 def RemoveAllEmailsOfAUser(username):
+    """
+    remove all the emails of a user
+    :param username:
+    :return:
+    """
     with mydb as mycursor:
         mycursor.execute("delete from emails where username = %s)", username)
 
@@ -408,11 +448,13 @@ def DeleteTransit(transit_type, transit_route):
         mycursor.execute("delete from transits where transit_type = %s and transit_route = %s",
                          (transit_type, transit_route))
 
+
 def Intify(stringInt):
     if stringInt is not None:
         return int(stringInt)
     else:
         return stringInt
+
 
 def GetAllEventFilteredByEventName_DescripKeyword_StartDate_EndDate_DurationRange_VisitRange_RevenueRange(
         event_name, keyword, start_date, end_date, duration_range_low, duration_range_high, visit_range_low,
@@ -631,7 +673,7 @@ def StaffAssignedAndAvailibleStaffForEvent(event_name, sitename, start_date, end
         mycursor.execute(
             "select distinct (fname, lname) from ((select fname, lname from users where username in "
             "(select username from employee where employee_id in (select employee_id from assign_to "
-            "where event_name = %s and sitename = %s and startdate = %s))) "
+            "where event_name = %s and sitename = %s and startdate = %s))) as temp"
             "union (select fname, lname from users where username in (select username from employees "
             "where employee_id not in (select employee_id, site_events.startdate, site_events.endate "
             "from assign_to, site_events where assign_to.sitename = site_events.sitename "
@@ -640,6 +682,23 @@ def StaffAssignedAndAvailibleStaffForEvent(event_name, sitename, start_date, end
             (event_name, sitename, start_date, sitename, event_name, start_date, end_date,))
         all_result = mycursor.fetchall()
         return all_result
+
+def GetAssignedStaffsForEvent(event_name, sitename, start_date):
+    """
+    Get all the assigned staffs for event for
+    screen 26
+    :param event_name:
+    :param sitename:
+    :param start_date:
+    :return:
+    """
+    with mydb as mycursor:
+        mycursor.execute(
+            "select distinct (fname, lname) from users where username in (select username from employee "
+            "where employee_id in (select employee_id from assign_to WHERE event_name = %s and sitename = %s "
+            "and startdate = %s))",
+            (event_name, sitename, start_date,))
+        return mycursor.fetchall()
 
 
 def DeleteAllAssignedStaffsForEvent(event_name, sitename, start_date):
@@ -672,6 +731,7 @@ def AddAssignedStaffForEvent(employee_id, sitename, event_name, startdate):
             "insert into assign_to (employee_id, sitename, event_name, startdate) values (%s, %s, %s, %s)",
             (employee_id, sitename, event_name, startdate,))
 
+
 def UpdateDescriptionForEvent(event_description, sitename, event_name, startdate):
     """
     This updates the description for an event for
@@ -688,6 +748,7 @@ def UpdateDescriptionForEvent(event_description, sitename, event_name, startdate
             "and event_name = %s and startdate = %s",
             (event_description, sitename, event_name, startdate,))
 
+
 def GetDescriptionForEvent(sitename, event_name, startdate):
     """
     Gets the description for an event for
@@ -703,3 +764,66 @@ def GetDescriptionForEvent(sitename, event_name, startdate):
             "and event_name = %s and startdate = %s",
             (sitename, event_name, startdate,))
         return mycursor.fetchone()
+
+
+def GetUserTransitHistoryFilteredByTransportType_Route_StartDate_EndDate_ContainSite(usernames, transport_type,
+                                                                                     route, start_date, end_date,
+                                                                                     sitename):
+    """
+    User Transit History table for
+    screen 16
+    :param usernames:
+    :param transport_type:
+    :param route:
+    :param start_date:
+    :param end_date:
+    :param sitename:
+    :return:
+    """
+    with mydb as mycursor:
+        # first get ALL result
+        mycursor.execute(
+            "select take_date, take_route, take_type, price from transits, (select take_date, take_route, take_type "
+            "from take where take_username = %s) as temp where transits.transit_type = take_type "
+            "and transits.transit_route = take_route", (usernames,))
+        all_result = mycursor.fetchall()
+
+        # Start filtering if this filtering type is applied
+        if transport_type is not None:
+            mycursor.execute(
+                "select take_date, take_route, take_type, price from (select take_date, take_route, take_type, price "
+                "from transits, (select take_date, take_route, take_type from take where take_username = %s) "
+                "as temp where transits.transit_type = take_type and transits.transit_route = take_route) as temps "
+                "where take_type = %s",
+                (usernames, transport_type,))
+            filtered_result = mycursor.fetchall()
+            all_result = [i for n, i in enumerate(all_result) if i in filtered_result]
+        if route is not None:
+            mycursor.execute(
+                "select take_date, take_route, take_type, price from (select take_date, take_route, take_type, price "
+                "from transits, (select take_date, take_route, take_type from take where take_username = %s) "
+                "as temp where transits.transit_type = take_type and transits.transit_route = take_route) as temps "
+                "where take_route = %s",
+                (usernames, route,))
+            filtered_result = mycursor.fetchall()
+            all_result = [i for n, i in enumerate(all_result) if i in filtered_result]
+        if start_date is not None and end_date is not None:
+            mycursor.execute(
+                "select take_date, take_route, take_type, price from (select take_date, take_route, take_type, price "
+                "from transits, (select take_date, take_route, take_type from take where take_username = %s) "
+                "as temp where transits.transit_type = take_type and transits.transit_route = take_route) as temps "
+                "where take_date BETWEEN %s and %s",
+                (usernames, start_date, end_date,))
+            filtered_result = mycursor.fetchall()
+            all_result = [i for n, i in enumerate(all_result) if i in filtered_result]
+        if sitename is not None:
+            mycursor.execute(
+                "select take_date, take_route, take_type, price from (select take_date, take_route, take_type, price "
+                "from transits, (select take_date, take_route, take_type from take where take_username = %s) "
+                "as temp where transits.transit_type = take_type and transits.transit_route = take_route) as temps "
+                "where temps.take_type in (select connect_type from connect where connect_name = %s) "
+                "and temps.take_route in (select connect_route from connect where connect_name = %s)",
+                (usernames, sitename, sitename,))
+            filtered_result = mycursor.fetchall()
+            all_result = [i for n, i in enumerate(all_result) if i in filtered_result]
+        return all_result
