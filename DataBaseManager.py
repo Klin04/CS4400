@@ -256,15 +256,41 @@ def GetManagersNotAssignedSite():
         return mycursor.fetchall()
 
 
-def GetEmployeeInformation():
-    # TODO: this
+def GetEmployeeInformationForManageProfile(usernames):
+    """
+    Fetch information for screen 17
+    :param usernames:
+    :return:
+    """
     with mydb as mycursor:
-        # mycursor.execute("select fname, lname from users where username in "
-        #                  "(select distinct username from employees where employee_id not in (select sitemanager_id from sites))")
+        mycursor.execute("select fname, lname, is_visitor, sitename, e2.employee_id as employee_id, e2.phone as phone, "
+                         "e2.address as address from users as u, sites, employees as e2 where sitemanager_id in "
+                         "(select employee_id from employees as e where e.username = %s) "
+                         "and e2.username = %s and u.username = %s", (usernames, usernames, usernames))
+        return mycursor.fetchone()
+
+def GetAllEmailsOfUser(username):
+    """
+    Fetch all emails for screen 17
+    :param username:
+    :return:
+    """
+    with mydb as mycursor:
+        mycursor.execute("select email from emails where username = %s", username)
         return mycursor.fetchall()
 
 
 def UpdateUserInformation(username, fname, lname, is_visitor, phone, employee_id):
+    """
+    update informaiton for screen 17
+    :param username:
+    :param fname:
+    :param lname:
+    :param is_visitor:
+    :param phone:
+    :param employee_id:
+    :return:
+    """
     with mydb as mycursor:
         mycursor.execute("update users set fname = %s, lname = %s, is_visitor = %s where username = %s",
                          (fname, lname, is_visitor, username))
@@ -272,12 +298,23 @@ def UpdateUserInformation(username, fname, lname, is_visitor, phone, employee_id
 
 
 def AddAllEmailsOfAUser(emails, username):
+    """
+    add all the emails of screen 17
+    :param emails:
+    :param username:
+    :return:
+    """
     with mydb as mycursor:
         for email in emails:
             mycursor.execute("insert into emails(username, email) values (%s, %s)", (username, email))
 
 
 def RemoveAllEmailsOfAUser(username):
+    """
+    remove all the emails of a user
+    :param username:
+    :return:
+    """
     with mydb as mycursor:
         mycursor.execute("delete from emails where username = %s)", username)
 
