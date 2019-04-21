@@ -145,21 +145,6 @@ def GetAllSiteNameFromConnect():
         mycursor.execute("select distinct connect_name from connect")
         return mycursor.fetchall()
 
-
-def GetAllRoutesForTakeTransit(transit_type):
-    """
-    Filters all the routes for taking transits, for Screen 15
-    :return: list of routes and their information
-    """
-    pass
-    # mycursor.execute("select transit_route, transit_type, price from `project`.`transits` where transit_type = %s",
-    #                  transit_type)
-    # mycursor.fetchall()
-
-    # finds the intersection of three lists
-    # res_list = [i for n, i in enumerate(first_filter_result) if i in second_filter_result and i in third_filter_result]
-
-
 def GetAllRoutesWithSitename(sitename):
     with mydb as mycursor:
         mycursor.execute("select transit_type, transit_route , price, count(*) as connected_sites from connect, "
@@ -167,9 +152,58 @@ def GetAllRoutesWithSitename(sitename):
                          "connect_type from connect where connect_name = %s) and transit_route in (select "
                          "connect_route from connect where connect_name =  %s)) as temp where "
                          "connect.connect_type = temp.transit_type  and connect.connect_route = temp.transit_route "
-                         "group by transit_type , transit_route order by transit_route desc", (sitename, sitename))
+                         "group by transit_type , transit_route", (sitename, sitename, ))
         return mycursor.fetchall()
 
+def GetAllRoutesWithTransportType(transit_type):
+    with mydb as mycursor:
+        mycursor.execute("select transit_type, transit_route, price, count(*) as connected_sites from connect, "
+                         "(select transit_type, transit_route , price from transits "
+                         "where transit_type = %s) as temp where connect.connect_type = temp.transit_type "
+                         "and connect.connect_route = temp.transit_route group by transit_type , transit_route",
+                         transit_type)
+        return mycursor.fetchall()
+
+def GetAllRoutesWithPriceRange(low_price, high_price):
+    with mydb as mycursor:
+        mycursor.execute("select transit_type, transit_route , price, count(*) as connected_sites from connect, "
+                         "(select transit_type, transit_route , price from transits where price "
+                         "BETWEEN %s And %s) as temp where connect.connect_type = temp.transit_type "
+                         "and connect.connect_route = temp.transit_route group by transit_type , transit_route",
+                         (low_price, high_price,))
+        return mycursor.fetchall()
+
+def GetAllRoutes():
+    with mydb as mycursor:
+        mycursor.execute("select transit_type, transit_route , price, count(*) as connected_sites from connect, "
+                         "(select transit_type, transit_route , price from transits) as temp "
+                         "where connect.connect_type = temp.transit_type "
+                         "and connect.connect_route = temp.transit_route "
+                         "group by transit_type , transit_route")
+        return mycursor.fetchall()
+
+def GetAllRoutesForTakeTransit(transit_type, sitename, low_price, high_price):
+    """
+    Filters all the routes for taking transits, for Screen 15
+    :return: list of routes and their information
+    """
+    list_of_all_routes = GetAllRoutes()
+    if transit_type is not None:
+        list_of_routes_filtered_by_transport_type = GetAllRoutesWithTransportType(transit_type)
+        # do intersection
+        list_of_all_routes = [i for n, i in enumerate(list_of_all_routes) if
+                              i in list_of_routes_filtered_by_transport_type]
+    if sitename is not None:
+        list_of_routes_filtered_by_sitename = GetAllRoutesWithSitename(sitename)
+        # do intersection
+        list_of_all_routes = [i for n, i in enumerate(list_of_all_routes) if
+                              i in list_of_routes_filtered_by_sitename]
+    if low_price is not None and high_price is not None:
+        list_of_routes_filtered_by_price_range = GetAllRoutesWithPriceRange(low_price, high_price)
+        # do intersection
+        list_of_all_routes = [i for n, i in enumerate(list_of_all_routes) if
+                              i in list_of_routes_filtered_by_price_range]
+    return list_of_all_routes
 
 def GetCurrentSiteManagerAndAllUnAssignedManagers(sitename):
     """
