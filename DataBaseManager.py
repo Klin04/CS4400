@@ -690,14 +690,14 @@ def StaffAssignedAndAvailibleStaffForEvent(event_name, sitename, start_date, end
     """
     with mydb as mycursor:
         mycursor.execute(
-            "select distinct (fname, lname) from ((select fname, lname from users where username in "
+            "select fname, lname from ((select fname, lname from users where username in "
             "(select username from employee where employee_id in (select employee_id from assign_to "
-            "where event_name = %s and sitename = %s and startdate = %s))) as temp"
-            "union (select fname, lname from users where username in (select username from employees "
-            "where employee_id not in (select employee_id, site_events.startdate, site_events.endate "
+            "where event_name = %s and sitename = %s and startdate = %s))) as temp)"
+            "union select fname, lname from users where username in (select username from employees "
+            "where employee_id not in (select employee_id "
             "from assign_to, site_events where assign_to.sitename = site_events.sitename "
             "and assign_to.event_name = site_events.event_name and assign_to.sitename <> %s "
-            "and assign_to.event_name <> %s and (site_events.endate < %s or site_events.startdate > %s)))))",
+            "and assign_to.event_name <> %s and (site_events.endate < %s or site_events.startdate > %s)))",
             (event_name, sitename, start_date, sitename, event_name, start_date, end_date,))
         all_result = mycursor.fetchall()
         return all_result
