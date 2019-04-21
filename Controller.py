@@ -45,6 +45,13 @@ import validators
 def isValidEmail(email):
     return bool(validators.email(email))
 
+def isFloat(num):
+    try:
+        val = float(num)
+    except ValueError:
+        return False
+    return True
+
 class MainWindow(QtWidgets.QMainWindow):
     def __init__(self, parent=None):
         super(MainWindow, self).__init__(parent)
@@ -612,7 +619,7 @@ class Controller():
             transportType = None
         if (len(LowRange) != 0 and len(HighRange) == 0) or (len(LowRange) != 0 and len(HighRange) == 0):
             return QtWidgets.QMessageBox.warning(self.MainWindow, "Range not valid", "Please enter both ranges", QtWidgets.QMessageBox.Ok)
-        if ((len(LowRange) != 0) and not LowRange.isdecimal()) or ((len(HighRange) != 0) and not HighRange.isdecimal()):
+        if ((len(LowRange) != 0) and not isFloat(LowRange)) or ((len(HighRange) != 0) and not isFloat(HighRange)):
             return QtWidgets.QMessageBox.warning(self.MainWindow, "Range not valid", "You could only enter digits", QtWidgets.QMessageBox.Ok)
         tableData = None
         if len(LowRange) == 0 and len(HighRange) == 0:
@@ -904,7 +911,11 @@ class Controller():
         self.MainWindow.AdministratorManageTransit.tableWidget.setSelectionBehavior(QtWidgets.QAbstractItemView.SelectRows)
 
     def deleteTransit(self):
-        print("Deleted")
+        Route = self.MainWindow.AdministratorManageTransit.tableWidget.selectionModel().selectedRows()[0]
+        TakeType = self.MainWindow.AdministratorManageTransit.tableWidget.item(Route.row(), 1).text()
+        TakeRoute = self.MainWindow.AdministratorManageTransit.tableWidget.item(Route.row(), 0).text()
+        Price = self.MainWindow.AdministratorManageTransit.tableWidget.item(Route.row(), 2).text()
+        DataBaseManager.DeleteTransit(TakeType, TakeRoute)
 
     def filterAdminTransit(self):
         self.MainWindow.AdministratorManageTransit.tableWidget.setRowCount(0)
@@ -919,7 +930,7 @@ class Controller():
         if (len(LowRange) != 0 and len(HighRange) == 0) or (len(LowRange) != 0 and len(HighRange) == 0):
             return QtWidgets.QMessageBox.warning(self.MainWindow, "Range not valid", "Please enter both ranges",
                                                  QtWidgets.QMessageBox.Ok)
-        if ((len(LowRange) != 0) and not LowRange.isdecimal()) or ((len(HighRange) != 0) and not HighRange.isdecimal()):
+        if ((len(LowRange) != 0) and not isFloat(LowRange)) or ((len(HighRange) != 0) and not isFloat(HighRange)):
             return QtWidgets.QMessageBox.warning(self.MainWindow, "Range not valid", "You could only enter digits",
                                                  QtWidgets.QMessageBox.Ok)
         tableData = None
@@ -941,14 +952,14 @@ class Controller():
 
     def showAdministratorEditTransit(self):
         Route = self.MainWindow.AdministratorManageTransit.tableWidget.selectionModel().selectedRows()[0]
-        TakeType = self.MainWindow.AdministratorManageTransit.tableWidget.item(Route.row(), 0).text()
-        TakeRoute = self.MainWindow.AdministratorManageTransit.tableWidget.item(Route.row(), 1).text()
+        TakeType = self.MainWindow.AdministratorManageTransit.tableWidget.item(Route.row(), 1).text()
+        TakeRoute = self.MainWindow.AdministratorManageTransit.tableWidget.item(Route.row(), 0).text()
         Price = self.MainWindow.AdministratorManageTransit.tableWidget.item(Route.row(), 2).text()
         self.MainWindow.close()
         self.MainWindow = MainWindow()
         self.MainWindow.startAdministratorEditTransit()
         self.MainWindow.AdministratorEditTransit.pushButton.clicked.connect(self.showAdministratorManageTransit)
-        self.MainWindow.AdministratorEditTransit.pushButton_2.clicked.connect(self.updateTransit)
+        self.MainWindow.AdministratorEditTransit.pushButton_2.clicked.connect(lambda: self.updateTransit(TakeRoute))
         self.MainWindow.AdministratorEditTransit.label_2.setText(TakeType)
         self.MainWindow.AdministratorEditTransit.lineEdit.setText(TakeRoute)
         self.MainWindow.AdministratorEditTransit.lineEdit_2.setText(Price)
@@ -981,9 +992,15 @@ class Controller():
         # elif self.user == 'Visitor':
         #     self.MainWindow.AdministratorEditTransit.pushButton.clicked.connect(self.showVisitorFunctionality)
 
-    def updateTransit(self):
+    def updateTransit(self, oldRoute):
         Route = self.MainWindow.AdministratorEditTransit.lineEdit.text()
         Price = self.MainWindow.AdministratorEditTransit.lineEdit_2.text()
+        TransitType = self.MainWindow.AdministratorEditTransit.label_2.setText.text()
+        if not isFloat(Price):
+            return QtWidgets.QMessageBox.warning(self.MainWindow, "Price not valid", "Price must be a float",
+                                                 QtWidgets.QMessageBox.Ok)
+        DataBaseManager.UpdateTransitPriceAndRoute(float(Price), TransitType, oldRoute, Route)
+
 
     def showAdministratorCreateTransit(self):
 
@@ -1021,7 +1038,7 @@ class Controller():
         Route = self.MainWindow.AdministratorCreateTransit.lineEdit.text()
         Price = self.MainWindow.AdministratorCreateTransit.lineEdit_2.text()
         Sites = self.MainWindow.AdministratorCreateTransit.listWidget.selectedItems()
-        if not Price.isdecimal():
+        if not isFloat(Price):
             return QtWidgets.QMessageBox.warning(self.MainWindow, "price not valid", "Please enter a valid price",
                                                  QtWidgets.QMessageBox.Ok)
             if float(Price) < 0:
