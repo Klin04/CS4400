@@ -160,7 +160,7 @@ class Ui_Form(object):
         self.label_6.setText(_translate("Form", "Username"))
         self.label_10.setText(_translate("Form", "Address"))
         self.label_8.setText(_translate("Form", "Confirm Password"))
-        self.label.setText(_translate("Form", "Register Eemployee-Visitor"))
+        self.label.setText(_translate("Form", "Register Employee-Visitor"))
         self.pushButton_2.setText(_translate("Form", "Back"))
         self.label_2.setText(_translate("Form", "User Type"))
         self.pushButton_4.setText(_translate("Form", "Add"))
