@@ -940,16 +940,30 @@ class Controller():
         self.MainWindow.AdministratorManageTransit.tableWidget.setSortingEnabled(True)
 
     def showAdministratorEditTransit(self):
+        Route = self.MainWindow.AdministratorManageTransit.tableWidget.selectionModel().selectedRows()[0]
+        TakeType = self.MainWindow.AdministratorManageTransit.tableWidget.item(Route.row(), 1).text()
+        TakeRoute = self.MainWindow.AdministratorManageTransit.tableWidget.item(Route.row(), 0).text()
+        Price = self.MainWindow.AdministratorManageTransit.tableWidget.item(Route.row(), 0).text()
         self.MainWindow.close()
         self.MainWindow = MainWindow()
         self.MainWindow.startAdministratorEditTransit()
         self.MainWindow.AdministratorEditTransit.pushButton.clicked.connect(self.showAdministratorManageTransit)
         self.MainWindow.AdministratorEditTransit.pushButton_2.clicked.connect(self.updateTransit)
+        self.MainWindow.AdministratorEditTransit.label_2.setText(TakeType)
+        self.MainWindow.AdministratorEditTransit.lineEdit.setText(TakeRoute)
+        self.MainWindow.AdministratorEditTransit.lineEdit_2.setText(Price)
+        ConnectedSites = DataBaseManager.GetTransitConnectedSites(TakeType, TakeRoute)
+        ConnectedSitenames = [each['connect_name'] for each in ConnectedSites]
         allSites = DataBaseManager.GetAllSites()
         allSitenames = []
         for site in allSites:
             allSitenames.append(site['sitename'])
         self.MainWindow.AdministratorEditTransit.listWidget.addItems(allSitenames)
+        self.MainWindow.AdministratorEditTransit.listWidget.setSelectionMode(QtWidgets.QAbstractItemView.ExtendedSelection)
+        self.MainWindow.AdministratorEditTransit.listWidget.setSelectionBehavior(QtWidgets.QAbstractItemView.SelectRows)
+        for i in range(self.MainWindow.AdministratorEditTransit.listWidget.count()):
+            if self.MainWindow.AdministratorEditTransit.listWidget.item(i) in ConnectedSitenames:
+                self.MainWindow.AdministratorEditTransit.listWidget.item(i).setSelected(True)
         # if self.user == 'User':
         #     self.MainWindow.AdministratorEditTransit.pushButton.clicked.connect(self.showUserFunctionality)
         # elif self.user == "Staff":
@@ -972,6 +986,7 @@ class Controller():
         Price = self.MainWindow.AdministratorEditTransit.lineEdit_2.text()
 
     def showAdministratorCreateTransit(self):
+
         self.MainWindow.close()
         self.MainWindow = MainWindow()
         self.MainWindow.startAdministratorCreateTransit()
