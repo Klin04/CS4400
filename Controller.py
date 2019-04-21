@@ -596,13 +596,13 @@ class Controller():
         self.MainWindow.UserTakeTransit.comboBox.addItems(allSites)
         self.MainWindow.UserTakeTransit.tableWidget.setSelectionMode(QtWidgets.QAbstractItemView.SingleSelection)
         self.MainWindow.UserTakeTransit.tableWidget.setSelectionBehavior(QtWidgets.QAbstractItemView.SelectRows)
+        self.MainWindow.UserTakeTransit.pushButton_3.clicked.connect(self.LogUserTransit)
 
     def filterUserTransit(self):
         containSite = self.MainWindow.UserTakeTransit.comboBox.currentText()
         transportType = self.MainWindow.UserTakeTransit.comboBox_2.currentText()
         LowRange = self.MainWindow.UserTakeTransit.lineEdit.text()
         HighRange = self.MainWindow.UserTakeTransit.lineEdit.text()
-        TransitDate = self.MainWindow.UserTakeTransit.dateEdit.date()
         if containSite == 'All':
             containSite = None
         if transportType == 'All':
@@ -618,12 +618,18 @@ class Controller():
             tableData = DataBaseManager.GetAllRoutesForTakeTransit(transportType, containSite, LowRange, HighRange)
         else:
             tableData = DataBaseManager.GetAllRoutesForTakeTransit(transportType, containSite, float(LowRange), float(HighRange))
+        self.MainWindow.UserTakeTransit.tableWidget.setSortingEnabled(False)
         for i in range(len(tableData)):
             self.MainWindow.UserTakeTransit.tableWidget.insertRow(i)
             for column, key in enumerate(tableData[i].keys()):
                 newItem = QtWidgets.QTableWidgetItem()
                 newItem.setText(str(tableData[i][key]))
                 self.MainWindow.UserTakeTransit.tableWidget.setItem(i, column, newItem)
+        self.MainWindow.UserTakeTransit.tableWidget.setSortingEnabled(False)
+
+    def LogUserTransit(self):
+        Route = self.MainWindow.UserTakeTransit.tableWidget.selectedItems()[0]
+        TransitDate = self.MainWindow.UserTakeTransit.dateEdit.date()
 
     def showUserTransitHistory(self):
         self.MainWindow.close()
@@ -839,8 +845,14 @@ class Controller():
         Address = self.MainWindow.AdministratorCreateSite.lineEdit_3.text()
         if len(Address) == 0:
             Address = None
+        if not Zipcode.isdigit():
+            return QtWidgets.QMessageBox.warning(self.MainWindow, "Zipcode not valid", "Please confirm your zipcode",
+                                                 QtWidgets.QMessageBox.Ok)
         Manager = self.MainWindow.AdministratorCreateSite.comboBox.currentText()
         openEveryday = self.MainWindow.AdministratorCreateSite.checkBox.isChecked()
+        if not DataBaseManager.IsSitenameUnique(Name):
+            return QtWidgets.QMessageBox.warning(self.MainWindow, "Sitename not valid", "Sitename is not unique",
+                                                 QtWidgets.QMessageBox.Ok)
         DataBaseManager.AddNewSites(Name, int(Zipcode), Address, openEveryday, Manager)
 
     def showAdministratorManageTransit(self):
@@ -916,9 +928,12 @@ class Controller():
         self.MainWindow.startAdministratorCreateTransit()
         self.MainWindow.AdministratorCreateTransit.pushButton_5.clicked.connect(self.showAdministratorManageTransit)
         self.MainWindow.AdministratorCreateTransit.pushButton_6.clicked.connect(self.createTransit)
-        allSites = []
-        self.MainWindow.AdministratorCreateTransit.listWidget.addItems(allSites)
-        self.MainWindow.AdministratorCreateTransit.comboBox.addItems(["All", "MARTA", "Bus", "Bike"])
+        allSites = DataBaseManager.GetAllSites()
+        allSitenames = []
+        for site in allSites:
+            allSitenames.append(site['sitename'])
+        self.MainWindow.AdministratorCreateTransit.listWidget.addItems(allSitenames)
+        self.MainWindow.AdministratorCreateTransit.comboBox.addItems(["MARTA", "Bus", "Bike"])
         # if self.user == 'User':
         #     self.MainWindow.AdministratorCreateTransit.pushButton_5.clicked.connect(self.showUserFunctionality)
         # elif self.user == "Staff":
@@ -941,6 +956,19 @@ class Controller():
         Route = self.MainWindow.AdministratorCreateTransit.lineEdit.text()
         Price = self.MainWindow.AdministratorCreateTransit.lineEdit_2.text()
         Sites = self.MainWindow.AdministratorCreateTransit.listWidget.selectedItems()
+        if not Price.isdecimal():
+            return QtWidgets.QMessageBox.warning(self.MainWindow, "price not valid", "Please enter a valid price",
+                                                 QtWidgets.QMessageBox.Ok)
+            if float(Price) < 0:
+                return QtWidgets.QMessageBox.warning(self.MainWindow, "price not valid", "Please enter a valid price",
+                                                     QtWidgets.QMessageBox.Ok)
+        if len(Route) == 0:
+            return QtWidgets.QMessageBox.warning(self.MainWindow, "Route not valid", "Please enter a valid route",
+                                                 QtWidgets.QMessageBox.Ok)
+        if len(Sites) == 0:
+            return QtWidgets.QMessageBox.warning(self.MainWindow, "Sites not valid", "Please select at least one site",
+                                                 QtWidgets.QMessageBox.Ok)
+        DataBaseManager.AddTransit(TransportType, Route, float(Price))
 
     def showManagerManageEvent(self):
         self.MainWindow.close()
