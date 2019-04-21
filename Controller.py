@@ -268,7 +268,7 @@ class Controller():
         password = self.MainWindow.LoginPage.lineEdit_2.text()
         if len(email) == 0:
             return QtWidgets.QMessageBox.warning(self.MainWindow, "Email not entered", "Email not entered.", QtWidgets.QMessageBox.Ok)
-        if len(password) == 0:
+        if len(password) < 8:
             return QtWidgets.QMessageBox.warning(self.MainWindow, "Password not entered", "Password not entered", QtWidgets.QMessageBox.Ok)
         found = DataBaseManager.Login(email, password)
         if found:
@@ -361,7 +361,7 @@ class Controller():
             Emails.append(email.text())
         if len(Fname) == 0 or len(Lname) == 0 or len(Username) == 0 or len(Password) == 0 or len(Emails) == 0:
             return QtWidgets.QMessageBox.warning(self.MainWindow, "Missing Field", "There are missing fields", QtWidgets.QMessageBox.Ok)
-        if Password != CPassword:
+        if Password != CPassword or len(Password) < 8:
             return QtWidgets.QMessageBox.warning(self.MainWindow, "Password not match", "Please confirm your password", QtWidgets.QMessageBox.Ok)
         for email in Emails:
             if not isValidEmail(email):
@@ -410,7 +410,7 @@ class Controller():
             Emails.append(email.text())
         if len(Fname) == 0 or len(Lname) == 0 or len(Username) == 0 or len(Password) == 0 or len(Emails) == 0:
             return QtWidgets.QMessageBox.warning(self.MainWindow, "Missing Field", "There are missing fields", QtWidgets.QMessageBox.Ok)
-        if Password != CPassword:
+        if len(Password) < 8 and Password != CPassword:
             return QtWidgets.QMessageBox.warning(self.MainWindow, "Password not match", "Please confirm your password", QtWidgets.QMessageBox.Ok)
         for email in Emails:
             if not isValidEmail(email):
@@ -459,7 +459,7 @@ class Controller():
             Emails.append(email.text())
         if len(Fname) == 0 or len(Lname) == 0 or len(Username) == 0 or len(Password) == 0 or len(Emails) == 0:
             return QtWidgets.QMessageBox.warning(self.MainWindow, "Missing Field", "There are missing fields", QtWidgets.QMessageBox.Ok)
-        if Password != CPassword:
+        if len(Password) < 8 and Password != CPassword:
             return QtWidgets.QMessageBox.warning(self.MainWindow, "Password not match", "Please confirm your password", QtWidgets.QMessageBox.Ok)
         for email in Emails:
             if not isValidEmail(email):
@@ -721,6 +721,29 @@ class Controller():
         elif self.user == 'Visitor':
             self.MainWindow.EmployeeManageProfile.pushButton_3.clicked.connect(self.showVisitorFunctionality)
         self.MainWindow.EmployeeManageProfile.pushButton_2.clicked.connect(self.updateEmployeeProfile)
+        tableData = DataBaseManager.GetEmployeeInformationForManageProfile(self.username)
+        self.MainWindow.EmployeeManageProfile.lineEdit.setText(tableData['fname'])
+        self.MainWindow.EmployeeManageProfile.lineEdit_2.setText(tableData['lname'])
+        self.MainWindow.EmployeeManageProfile.lineEdit_3.setText(str(tableData['phone']))
+        self.MainWindow.EmployeeManageProfile.label_6.setText(tableData['username'])
+        self.MainWindow.EmployeeManageProfile.label_10.setText(str(tableData['employee_id']))
+        self.MainWindow.EmployeeManageProfile.label_7.setText(tableData['sitename'])
+        self.MainWindow.EmployeeManageProfile.label_13.setText(tableData['address'])
+        Emails = DataBaseManager.GetAllEmailsOfUser(self.username)
+        for email in Emails:
+            line_text = QtWidgets.QLineEdit(self.widget)
+            line_text.setText(email['email'])
+            self.MainWindow.EmployeeManageProfile.EditLineList.append(line_text)
+            line_text.setGeometry(QtCore.QRect(20, 10, 301, 25))
+            self.MainWindow.EmployeeManageProfile.inner.layout().addWidget(line_text)
+            new_button = QtWidgets.QPushButton(self.MainWindow.EmployeeManageProfile.widget)
+            self.MainWindow.EmployeeManageProfile.EmailRemoveButtons.append(new_button)
+            new_button.setText("Remove")
+            self.MainWindow.EmployeeManageProfile.inner.layout().addWidget(new_button)
+            # since we can't pass arguments into .connect, we pass in the lambda as a func
+            new_button.clicked.connect(lambda: self.MainWindow.EmployeeManageProfile.removeEmail(new_button))
+        if tableData['is_visitor']:
+            self.MainWindow.EmployeeManageProfile.checkBox.setChecked(True);
 
     def updateEmployeeProfile(self):
         Fname = self.MainWindow.EmployeeManageProfile.lineEdit.text()
@@ -742,7 +765,7 @@ class Controller():
             if not DataBaseManager.IsEmailUnique(email):
                 return QtWidgets.QMessageBox.warning(self.MainWindow, "Email already registered",
                                                      "Please use a new email", QtWidgets.QMessageBox.Ok)
-    
+
     def showAdministratorManagerUser(self):
         self.MainWindow.close()
         self.MainWindow = MainWindow()
