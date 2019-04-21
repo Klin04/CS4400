@@ -359,3 +359,10 @@ def AddTransit(transit_type, transit_route, price):
             "insert into transits(transit_type, transit_route, price) values (%s, %s, %s)",
             (transit_type, transit_route, price))
 
+def IsSitenameUnique(sitename):
+    with mydb as mycursor:
+        mycursor.execute("select * from sites where sitename = %s", sitename)
+        if mycursor.fetchone():
+            return True
+        else:
+            return False
