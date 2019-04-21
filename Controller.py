@@ -1084,8 +1084,11 @@ class Controller():
         self.MainWindow.ManagerManageEvent.pushButton_4.clicked.connect(self.deleteEvent)
         self.MainWindow.ManagerManageEvent.dateEdit.setDate(QtCore.QDate.currentDate())
         self.MainWindow.ManagerManageEvent.dateEdit_2.setDate(QtCore.QDate.currentDate())
+        self.MainWindow.ManagerManageEvent.tableWidget.setSelectionBehavior(QtWidgets.QAbstractItemView.SelectRows)
+        self.MainWindow.ManagerManageEvent.tableWidget.setSelectionMode(QtWidgets.QAbstractItemView.SingleSelection)
 
     def filterManageEvents(self):
+        self.MainWindow.ManagerManageEvent.tableWidget.setRowCount(0)
         Name = self.MainWindow.ManagerManageEvent.lineEdit.text()
         DescriptionKeyword = self.MainWindow.ManagerManageEvent.lineEdit_2.text()
         LowDurationRange = self.MainWindow.ManagerManageEvent.lineEdit_3.text()
@@ -1098,7 +1101,6 @@ class Controller():
         EndDate = self.MainWindow.ManagerManageEvent.dateEdit_2.date().toPyDate()
         Name = setNone(Name)
         DescriptionKeyword = setNone(DescriptionKeyword)
-        print(Name, DescriptionKeyword, LowDurationRange, HighDurationRange)
         tableData = None
         if len(LowDurationRange) == 0 and len(HighDurationRange) == 0:
             LowDurationRange = None
@@ -1125,11 +1127,11 @@ class Controller():
             for column, key in enumerate(["event_name", 'staff_count','duration', 'total_visit']):
                 newItem = QtWidgets.QTableWidgetItem()
                 newItem.setText(str(tableData[i][key]))
-                self.MainWindow.AdministratorManageTransit.tableWidget.setItem(i, column, newItem)
+                self.MainWindow.ManagerManageEvent.tableWidget.setItem(i, column, newItem)
             newItem = QtWidgets.QTableWidgetItem()
-            newItem.setText(str(tableData['revenue'] * tableData['total_visit']))
-            self.MainWindow.AdministratorManageTransit.tableWidget.setItem(i, 4, newItem)
-        self.MainWindow.AdministratorManageTransit.tableWidget.setSortingEnabled(True)
+            newItem.setText(str(tableData[i]['revenue'] * tableData[i]['total_visit']))
+            self.MainWindow.ManagerManageEvent.tableWidget.setItem(i, 4, newItem)
+        self.MainWindow.ManagerManageEvent.tableWidget.setSortingEnabled(True)
 
     def deleteEvent(self):
         print("deleted")
