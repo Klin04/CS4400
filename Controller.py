@@ -863,18 +863,27 @@ class Controller():
         self.MainWindow.AdministratorManageSite.pushButton.clicked.connect(self.filterSites)
         allSites = ['All']
         allSitesDB = DataBaseManager.GetAllSites()
+        for site in allSites:
+            allSites.append(site['sitename'])
         self.MainWindow.AdministratorManageSite.comboBox.addItems(allSites)
         allManagers = ['All']
+        allManagersDB = DataBaseManager.GetManagerDropdownMenuForAdminManageSite()
+        print(allManagersDB)
         self.MainWindow.AdministratorManageSite.comboBox_2.addItems(allManagers)
         self.MainWindow.AdministratorManageSite.comboBox_3.addItems(["Yes", "No"])
         self.MainWindow.AdministratorManageSite.pushButton_2.clicked.connect(self.showAdministratorCreateSite)
         self.MainWindow.AdministratorManageSite.pushButton_3.clicked.connect(self.showAdministratorEditSite)
         self.MainWindow.AdministratorManageSite.pushButton_4.clicked.connect(self.deleteSite)
+        self.MainWindow.AdministratorManageSite.tableWidget.setSelectionMode(QtWidgets.QAbstractItemView.SingleSelection)
+        self.MainWindow.AdministratorManageSite.tableWidget.setSelectionBehavior(QtWidgets.QAbstractItemView.SelectRows)
 
     def filterSites(self):
         Site = self.MainWindow.AdministratorManageSite.comboBox.currentText()
         Manager = self.MainWindow.AdministratorManageSite.comboBox_2.currentText()
         OpenEveryday = self.MainWindow.AdministratorManageSite.comboBox_3.currentText()
+        self.MainWindow.AdministratorManageSite.tableWidget.setRowCount(0)
+        tableData = DataBaseManager.GetManagerDropdownMenuForAdminManageSite()
+
 
     def deleteSite(self):
         print("Delete a site")
