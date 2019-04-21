@@ -679,10 +679,11 @@ class Controller():
         self.MainWindow.UserTransitHistory.dateEdit_2.setDate(QtCore.QDate.currentDate())
 
     def filterTransitHistory(self):
+        self.MainWindow.UserTransitHistory.tableWidget.setRowCount(0)
         containSite = self.MainWindow.UserTransitHistory.comboBox.currentText()
         transportType = self.MainWindow.UserTransitHistory.comboBox_2.currentText()
         startDate = self.MainWindow.UserTransitHistory.dateEdit.date().toPyDate()
-        endDate = self.MainWindow.UserTransitHistory.dateEdit.date().toPyDate()
+        endDate = self.MainWindow.UserTransitHistory.dateEdit_2.date().toPyDate()
         Route = self.MainWindow.UserTransitHistory.lineEdit.text()
         if transportType == 'All':
             transportType = None
@@ -691,7 +692,7 @@ class Controller():
         if len(Route) == 0:
             Route = None
         tableData = DataBaseManager.GetUserTransitHistoryFilteredByTransportType_Route_StartDate_EndDate_ContainSite(self.username, transportType, Route, startDate, endDate, containSite)
-        self.MainWindow.ManagerManageEvent.tableWidget.setSortingEnabled(False)
+        self.MainWindow.UserTransitHistory.tableWidget.setSortingEnabled(False)
         for i in range(len(tableData)):
             self.MainWindow.UserTransitHistory.tableWidget.insertRow(i)
             for column, key in enumerate(tableData[i].keys()):
