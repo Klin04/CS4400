@@ -830,7 +830,7 @@ class Controller():
         if len(Username) == 0:
             Username = None
         tableData = DataBaseManager.GetAllAdministratorManageUserInformationFilterByStatus_EmpType_Username(
-            self.username, Type, Status)
+            Username, Type, Status)
         self.MainWindow.AdministratorManageUser.tableWidget.setSortingEnabled(False)
         for i in range(len(tableData)):
             self.MainWindow.AdministratorManageUser.tableWidget.insertRow(i)
