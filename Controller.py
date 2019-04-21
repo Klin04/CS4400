@@ -236,7 +236,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.show()
 
     def startVisitorVisitHistory(self):
-        self.VisitorSiteDetail.setupUi(self)
+        self.VisitorVisitHistory.setupUi(self)
         self.show()
 
 
@@ -937,7 +937,7 @@ class Controller():
             self.MainWindow.ManagerManageEvent.pushButton_5.clicked.connect(self.showAdminVisitorFunctionality)
         elif self.user == 'Visitor':
             self.MainWindow.ManagerManageEvent.pushButton_5.clicked.connect(self.showVisitorFunctionality)
-        self.MainWindow.ManagerManageEvent.pushButton.clicked.connect(self.filterEvents)
+        self.MainWindow.ManagerManageEvent.pushButton.clicked.connect(self.filterManageEvents)
         self.MainWindow.ManagerManageEvent.pushButton_2.clicked.connect(self.showManagerCreateEvent)
         self.MainWindow.ManagerManageEvent.pushButton_3.clicked.connect(self.showManagerViewEditEvent)
         self.MainWindow.ManagerManageEvent.pushButton_4.clicked.connect(self.deleteEvent)
@@ -1223,7 +1223,7 @@ class Controller():
         self.MainWindow.close()
         self.MainWindow = MainWindow()
         self.MainWindow.startVisitorExploreSite()
-        self.MainWindow.VisitorExploreSite.pushButton(self.filterVisitorSites)
+        self.MainWindow.VisitorExploreSite.pushButton.clicked.connect(self.filterVisitorSites)
         allSites = ['All']
         self.MainWindow.VisitorExploreSite.comboBox.addItems(allSites)
         self.MainWindow.VisitorExploreSite.comboBox_2.addItems(['All', 'Yes', 'No'])
@@ -1317,7 +1317,7 @@ class Controller():
         self.MainWindow.close()
         self.MainWindow = MainWindow()
         self.MainWindow.startVisitorVisitHistory()
-        self.MainWindow.VisitorVisitHistory.pushButton_2.clicked.connect(self.FilterVisitorVisitHistory)
+        self.MainWindow.VisitorVisitHistory.pushButton.clicked.connect(self.FilterVisitorVisitHistory)
         allSites = ['All']
         self.MainWindow.VisitorVisitHistory.comboxBox.addItems(allSites)
         if self.user == 'User':

@@ -20,7 +20,7 @@ class Ui_Form(object):
         self.label_2.setGeometry(QtCore.QRect(30, 70, 111, 17))
         self.label_2.setObjectName("label_2")
         self.comboBox = QtWidgets.QComboBox(Form)
-        self.comboBox.setGeometry(QtCore.QRect(130, 70, 86, 25))
+        self.comboBox.setGeometry(QtCore.QRect(130, 70, 180, 25))
         self.comboBox.setObjectName("comboBox")
         self.label_3 = QtWidgets.QLabel(Form)
         self.label_3.setGeometry(QtCore.QRect(310, 70, 111, 17))
