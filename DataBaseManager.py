@@ -94,6 +94,15 @@ def IsUsernameUnique(username):
         else:
             return True
 
+def IsEmployeeIdUnique(username):
+    with mydb as mycursor:
+        mycursor.execute("select * from employee where username = %s", username)
+        any_user = mycursor.fetchone()
+        if any_user:
+            return False
+        else:
+            return True
+
 def AddEmailForUsername(email, username):
     with mydb as mycursor:
         mycursor.execute("insert into emails(username, email) values (%s, %s)", (username, email))
