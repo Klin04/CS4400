@@ -922,6 +922,8 @@ class Controller():
         Route = self.MainWindow.AdministratorEditTransit.lineEdit.text()
         Price = self.MainWindow.AdministratorEditTransit.lineEdit_2.text()
 
+    def deleteTransit(self):
+
     def showAdministratorCreateTransit(self):
         self.MainWindow.close()
         self.MainWindow = MainWindow()
