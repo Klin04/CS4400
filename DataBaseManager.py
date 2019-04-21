@@ -9,102 +9,112 @@ mydb = pymysql.connect(
   cursorclass=pymysql.cursors.DictCursor
 )
 
-mycursor = mydb.cursor()
-
 def Login(Email, Password):
+    with mydb as mycursor:
     # encrypted_password = str(base64.b64encode(Password.encode()))
-    mycursor.execute("Select * from emails where email = %s",(Email, ))
-    myResult = mycursor.fetchone()
-    if not myResult:
+        mycursor.execute("Select * from emails where email = %s",(Email, ))
+        myResult = mycursor.fetchone()
+        if not myResult:
+            return None
+        mycursor.execute("Select * from users where username = %s and pass_word = %s", (myResult['username'], Password, ))
+        myFinalResult = mycursor.fetchone()
+        if myFinalResult:
+            return myFinalResult
         return None
-    mycursor.execute("Select * from users where username = %s and pass_word = %s", (myResult['username'], Password, ))
-    myFinalResult = mycursor.fetchone()
-    if myFinalResult:
-        return myFinalResult
-    return None
 
 def SearchEmployeeType(Username):
-    mycursor.execute("Select * from employees where username = %s", (Username, ))
-    myresult = mycursor.fetchone()
-    return myresult
+    with mydb as mycursor:
+        mycursor.execute("Select * from employees where username = %s", (Username, ))
+        myresult = mycursor.fetchone()
+        return myresult
 
 def RegisterUser(Fname, Lname, Username, Password, Emails):
-    arguments = (Username, Password, 'pending', Fname, Lname, 0, 0, )
-    mycursor.execute("insert into users (username, pass_word, user_status, fname, lname, is_employee, is_visitor) values (%s, %s, %s, %s, %s, %d, %d)", arguments)
-    for email in Emails:
-        mycursor.execute("insert into emails(username, email) values (%s, $s)", (Username, email))
+    with mydb as mycursor:
+        arguments = (Username, Password, 'pending', Fname, Lname, 0, 0, )
+        mycursor.execute("insert into users (username, pass_word, user_status, fname, lname, is_employee, is_visitor) values (%s, %s, %s, %s, %s, %s, %s)", arguments)
+        for email in Emails:
+            print(mycursor.execute("insert into emails(username, email) values (%s, %s)", (Username, email)))
 
 def RegisterVisitor(Fname, Lname, Username, Password, Emails):
-    arguments = (Username, Password, 'pending', Fname, Lname, 0, 1, )
-    mycursor.execute(
-        "insert into users (username, pass_word, user_status, fname, lname, is_employee, is_visitor) values (%s, %s, %s, %s, %s, %d, %d)", arguments)
-    for email in Emails:
-        mycursor.execute("insert into emails(username, email) values (%s, $s)", (Username, email))
+    with mydb as mycursor:
+        arguments = (Username, Password, 'pending', Fname, Lname, 0, 1, )
+        mycursor.execute(
+            "insert into users (username, pass_word, user_status, fname, lname, is_employee, is_visitor) values (%s, %s, %s, %s, %s, %s, %s)", arguments)
+        for email in Emails:
+            mycursor.execute("insert into emails(username, email) values (%s, %s)", (Username, email))
 
 def RegisterEmployee(Fname, Lname, Username, Password, Emails, EmployeeId, Phone, Address, City, State, Zipcode, Erole):
-    arguments = (Username, Password, 'pending', Fname, Lname, 1, 0,)
-    mycursor.execute(
-        "insert into users (username, pass_word, user_status, fname, lname, is_employee, is_visitor) values (%s, %s, %s, %s, %s, %d, %d)",
-        arguments)
-    for email in Emails:
-        mycursor.execute("insert into emails(username, email) values (%s, $s)", (Username, email))
-    arguments = (Username, EmployeeId, Phone, Address, City, State, Zipcode, Erole,)
-    mycursor.execute("insert into employee(username, employee_id, phone, address, city, state, zipcode, erole) values (%s, %s, %d, %s, %s, %s, %d, $s)",
-                     arguments)
+    with mydb as mycursor:
+        arguments = (Username, Password, 'pending', Fname, Lname, 1, 0,)
+        mycursor.execute(
+            "insert into users (username, pass_word, user_status, fname, lname, is_employee, is_visitor) values (%s, %s, %s, %s, %s, %s, %s)",
+            arguments)
+        for email in Emails:
+            mycursor.execute("insert into emails(username, email) values (%s, %s)", (Username, email))
+        arguments = (Username, EmployeeId, Phone, Address, City, State, Zipcode, Erole,)
+        mycursor.execute("insert into employee(username, employee_id, phone, address, city, state, zipcode, erole) values (%s, %s, %s, %s, %s, %s, %s, %s)",
+                         arguments)
 
 def RegisterEmployeeVisitor(Fname, Lname, Username, Password, Emails, EmployeeId, Phone, Address, City, State, Zipcode, Erole):
-    arguments = (Username, Password, 'pending', Fname, Lname, 1, 1,)
-    mycursor.execute(
-        "insert into users (username, pass_word, user_status, fname, lname, is_employee, is_visitor) values (%s, %s, %s, %s, %s, %d, %d)",
-        arguments)
-    for email in Emails:
-        mycursor.execute("insert into emails(username, email) values (%s, $s)", (Username, email))
-    arguments = (Username, EmployeeId, Phone, Address, City, State, Zipcode, Erole,)
-    mycursor.execute("insert into employee(username, employee_id, phone, address, city, state, zipcode, erole) values (%s, %s, %d, %s, %s, %s, %d, $s)",
-                     arguments)
+    with mydb as mycursor:
+        arguments = (Username, Password, 'pending', Fname, Lname, 1, 1,)
+        mycursor.execute(
+            "insert into users (username, pass_word, user_status, fname, lname, is_employee, is_visitor) values (%s, %s, %s, %s, %s, %s, %s)",
+            arguments)
+        for email in Emails:
+            mycursor.execute("insert into emails(username, email) values (%s, %s)", (Username, email))
+        arguments = (Username, EmployeeId, Phone, Address, City, State, Zipcode, Erole,)
+        mycursor.execute("insert into employee(username, employee_id, phone, address, city, state, zipcode, erole) values (%s, %s, %s, %s, %s, %s, %s, %s)",
+                         arguments)
 
 def IsEmailUnique(email):
-    mycursor.execute("select * from emails where email = %s", email)
-    some_email = mycursor.fetchone()
-    if some_email:
-        return False
-    else:
-        return True
+    with mydb as mycursor:
+        mycursor.execute("select * from emails where email = %s", email)
+        some_email = mycursor.fetchone()
+        if some_email:
+            return False
+        else:
+            return True
 
 def IsPhoneUnique(phone):
-    mycursor.execute("select * from employees where phone = %d", phone)
-    any_phone = mycursor.fetchone()
-    if any_phone:
-        return False
-    else:
-        return True
+    with mydb as mycursor:
+        mycursor.execute("select * from employees where phone = %s", phone)
+        any_phone = mycursor.fetchone()
+        if any_phone:
+            return False
+        else:
+            return True
 
 def IsUsernameUnique(username):
-    mycursor.execute("select * from users where username = %s", username)
-    any_user = mycursor.fetchone()
-    if any_user:
-        return False
-    else:
-        return True
+    with mydb as mycursor:
+        mycursor.execute("select * from users where username = %s", username)
+        any_user = mycursor.fetchone()
+        if any_user:
+            return False
+        else:
+            return True
 
 def AddEmailForUsername(email, username):
-    mycursor.execute("insert into emails(username, email) values (%s, %s)", (username, email))
+    with mydb as mycursor:
+        mycursor.execute("insert into emails(username, email) values (%s, %s)", (username, email))
 
 def GetAllTransportTypeFromTransits():
     """
     For Screen 15/22 drop down menu for Transport Type
     :return: list of transport
     """
-    mycursor.execute("select transit_type from transits")
-    return mycursor.fetchall()
+    with mydb as mycursor:
+        mycursor.execute("select transit_type from transits")
+        return mycursor.fetchall()
 
 def GetAllSiteNameFromConnect():
     """
     For Screen 15/22 drop down menu for Contain Site
     :return: list
     """
-    mycursor.execute("select connect_name from connect")
-    return mycursor.fetchall()
+    with mydb as mycursor:
+        mycursor.execute("select connect_name from connect")
+        return mycursor.fetchall()
 
 def GetAllRoutesForTakeTransit(transit_type):
     """
@@ -126,9 +136,10 @@ def GetCurrentSiteManagerAndAllUnAssignedManagers(sitename):
     :param sitename: the current site name
     :return:
     """
-    mycursor.execute("(select username from employees where employee_id in (select sitemanager_id from sites where sitename = %s)) "
-                     "union (select username from employees where employee_id not in (select sitemanager_id from sites))", sitename)
-    return mycursor.fetchall()
+    with mydb as mycursor:
+        mycursor.execute("(select username from employees where employee_id in (select sitemanager_id from sites where sitename = %s)) "
+                         "union (select username from employees where employee_id not in (select sitemanager_id from sites))", sitename)
+        return mycursor.fetchall()
 
 def UpdateSiteInformation(sitename, zipcode, address, openeveryday, sitemanager_id, new_sitename):
     """
@@ -140,29 +151,34 @@ def UpdateSiteInformation(sitename, zipcode, address, openeveryday, sitemanager_
     :param sitemanager_id:
     :return:
     """
-    arguments = (zipcode, address, openeveryday, sitemanager_id, sitename, )
-    mycursor.execute("update sites SET zipcode = %d, address = %s, openeveryday = %d, sitemanager_id = %s WHERE sitename = %s",
-                     arguments)
-    mycursor.execute("update sites set sitename = %s where sitename = %s", (new_sitename, sitename))
+    with mydb as mycursor:
+        arguments = (zipcode, address, openeveryday, sitemanager_id, sitename, )
+        mycursor.execute("update sites SET zipcode = %s, address = %s, openeveryday = %s, sitemanager_id = %s WHERE sitename = %s",
+                         arguments)
+        mycursor.execute("update sites set sitename = %s where sitename = %s", (new_sitename, sitename))
 
 def GetManagersNotAssignedSite():
     """
     For screen 21, where we need a drop down list of all the managers not assigned to a site
     :return: list
     """
-    mycursor.execute("select username from employees where employee_id not in (select sitemanager_id from sites)")
-    return mycursor.fetchall()
+    with mydb as mycursor:
+        mycursor.execute("select username from employees where employee_id not in (select sitemanager_id from sites)")
+        return mycursor.fetchall()
 
 def UpdateUserInformation(username, fname, lname, is_visitor, phone, employee_id):
-    mycursor.execute("update users set fname = %s, lname = %s, is_visitor = %d where username = %s", (fname, lname, is_visitor, username))
-    mycursor.execute("update employee set phone = %d where employee_id = %s", (phone, employee_id))
+    with mydb as mycursor:
+        mycursor.execute("update users set fname = %s, lname = %s, is_visitor = %s where username = %s", (fname, lname, is_visitor, username))
+        mycursor.execute("update employee set phone = %s where employee_id = %s", (phone, employee_id))
 
 def AddAllEmailsOfAUser(emails, username):
-    for email in emails:
-        mycursor.execute("insert into emails(username, email) values (%s, $s)", (username, email))
+    with mydb as mycursor:
+        for email in emails:
+            mycursor.execute("insert into emails(username, email) values (%s, %s)", (username, email))
 
 def RemoveAllEmailsOfAUser(username):
-    mycursor.execute("delete from emails where username = %s)", username)
+    with mydb as mycursor:
+        mycursor.execute("delete from emails where username = %s)", username)
 
 def AddNewSites(sitename, zipcode, address, openeveryday, sitemanager_id):
     """
@@ -174,4 +190,5 @@ def AddNewSites(sitename, zipcode, address, openeveryday, sitemanager_id):
     :param sitemanager_id:
     :return:
     """
-    mycursor.execute("insert into sites(sitename, zipcode, address, openeveryday, sitemanager_id) values (%s, %d, %s, %d, %s)")
+    with mydb as mycursor:
+        mycursor.execute("insert into sites(sitename, zipcode, address, openeveryday, sitemanager_id) values (%s, %s, %s, %s, %s)")
