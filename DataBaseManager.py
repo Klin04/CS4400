@@ -1145,3 +1145,18 @@ def GetAllStaffByFilterBySite_Fname_Lname_StartDate_EndDate(sitename, fname, lna
             filtered_result = mycursor.fetchall()
             all_result = [i for n, i in enumerate(all_result) if i in filtered_result]
         return all_result
+
+def fetchVisitorTransitDetail(sitename, TransportType):
+    """
+    Screen 36
+    """
+    pass
+
+
+def fetchVisitorSiteDetail(sitename):
+    """
+    Screen 37
+    """
+    with mydb as mycursor:
+        mycursor.execute("select sitename, zipcode, openeverday from sites where sitename = %s", sitename)
+        return mycursor.fetchall()

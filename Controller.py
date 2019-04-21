@@ -1429,7 +1429,6 @@ class Controller():
                                                  "Please change date",
                                                  QtWidgets.QMessageBox.Ok)
 
-
     def showManagerManageStaff(self):
         self.MainWindow.close()
         self.MainWindow = MainWindow()
