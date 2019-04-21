@@ -690,14 +690,18 @@ def StaffAssignedAndAvailibleStaffForEvent(event_name, sitename, start_date, end
     """
     with mydb as mycursor:
         mycursor.execute(
-            "select fname, lname from ((select fname, lname from users where username in "
-            "(select username from employee where employee_id in (select employee_id from assign_to "
-            "where event_name = %s and sitename = %s and startdate = %s))) as temp)"
-            "union select fname, lname from users where username in (select username from employees "
-            "where employee_id not in (select employee_id "
-            "from assign_to, site_events where assign_to.sitename = site_events.sitename "
-            "and assign_to.event_name = site_events.event_name and assign_to.sitename <> %s "
-            "and assign_to.event_name <> %s and (site_events.endate < %s or site_events.startdate > %s)))",
+            "SELECT fname, lname FROM ((SELECT fname, lname FROM users WHERE username IN (SELECT username "
+            "FROM employees WHERE employee_id IN (SELECT employee_id FROM assign_to WHERE event_name = %s "
+            "AND sitename = %s AND startdate = %s))) AS temp) "
+            "UNION SELECT fname, lname"
+            "FROM users"
+            "WHERE username IN (SELECT username FROM employees WHERE employee_id NOT IN (SELECT employee_id"
+            "FROM assign_to, site_events WHERE assign_to.sitename = site_events.sitename"
+            "AND assign_to.event_name = site_events.event_name"
+            "AND assign_to.sitename <> %s"
+            "AND assign_to.event_name <> %s"
+            "AND (site_events.endate < %s"
+            "OR site_events.startdate > %s)));",
             (event_name, sitename, start_date, sitename, event_name, start_date, end_date,))
         all_result = mycursor.fetchall()
         return all_result
