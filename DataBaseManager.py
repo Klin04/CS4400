@@ -297,7 +297,7 @@ def UpdateUserInformation(username, fname, lname, is_visitor, phone, employee_id
     with mydb as mycursor:
         mycursor.execute("update users set fname = %s, lname = %s, is_visitor = %s where username = %s",
                          (fname, lname, is_visitor, username))
-        mycursor.execute("update employee set phone = %s where employee_id = %s", (phone, employee_id))
+        mycursor.execute("update employees set phone = %s where employee_id = %s", (phone, employee_id))
 
 
 def AddAllEmailsOfAUser(emails, username):
