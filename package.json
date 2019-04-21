@@ -1,0 +1,19 @@
+{
+  "name": "cs4400",
+  "version": "1.0.0",
+  "description": "Heavy Weight",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Klin04/CS4400.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Klin04/CS4400/issues"
+  },
+  "homepage": "https://github.com/Klin04/CS4400#readme"
+}
