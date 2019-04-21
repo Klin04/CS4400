@@ -448,3 +448,15 @@ def GetTransitConnectedSites(transit_type, transit_route):
     with mydb as mycursor:
         mycursor.execute("select connect_name from connect where connect_type = %s and connect_route = %s", (transit_type, transit_route))
         return mycursor.fetchall()
+
+def UserTakeTransitLogNewTransit(take_username, take_type, take_route, take_date):
+    """
+    Screen 15 log new transit for users for a specific route
+    :param take_username:
+    :param take_type:
+    :param take_route:
+    :param take_date:
+    :return:
+    """
+    with mydb as mycursor:
+        mycursor.execute("insert into take (take_username, take_type, take_route, take_date) values(%s, %s, %s, %s)", (take_username, take_type, take_route, take_date, ))
