@@ -109,6 +109,9 @@ class Ui_Form(object):
         self.pushButton.setObjectName("pushButton")
         self.pushButton.clicked.connect(self.addEmail)
 
+        self.lineEdit_7.setEchoMode(QtWidgets.QLineEdit.Password)
+        self.lineEdit_4.setEchoMode(QtWidgets.QLineEdit.Password)
+
         # use scroll to dynamically expand
         self.widget = QtWidgets.QScrollArea(Form)
         self.widget.setGeometry(QtCore.QRect(160, 320, 521, 101))
@@ -156,7 +159,7 @@ class Ui_Form(object):
     def retranslateUi(self, Form):
         _translate = QtCore.QCoreApplication.translate
         Form.setWindowTitle(_translate("Form", "Form"))
-        self.label.setText(_translate("Form", "Register Eemployee"))
+        self.label.setText(_translate("Form", "Register Employee"))
         self.label_3.setText(_translate("Form", "First Name"))
         self.label_4.setText(_translate("Form", "Last Name"))
         self.label_5.setText(_translate("Form", "Password"))

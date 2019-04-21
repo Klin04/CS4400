@@ -100,6 +100,9 @@ class Ui_Form(object):
         self.pushButton_4.setObjectName("pushButton_4")
         self.pushButton_4.clicked.connect(self.addEmail)
 
+        self.lineEdit_7.setEchoMode(QtWidgets.QLineEdit.Password)
+        self.lineEdit_4.setEchoMode(QtWidgets.QLineEdit.Password)
+
         self.widget = QtWidgets.QScrollArea(Form)
         self.widget.setGeometry(QtCore.QRect(250, 300, 521, 101))
         self.widget.setObjectName("widget")
@@ -157,7 +160,7 @@ class Ui_Form(object):
         self.label_6.setText(_translate("Form", "Username"))
         self.label_10.setText(_translate("Form", "Address"))
         self.label_8.setText(_translate("Form", "Confirm Password"))
-        self.label.setText(_translate("Form", "Register Eemployee-Visitor"))
+        self.label.setText(_translate("Form", "Register Employee-Visitor"))
         self.pushButton_2.setText(_translate("Form", "Back"))
         self.label_2.setText(_translate("Form", "User Type"))
         self.pushButton_4.setText(_translate("Form", "Add"))
