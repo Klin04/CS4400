@@ -4,7 +4,7 @@ import base64
 mydb = pymysql.connect(
     host="localhost",
     user="root",
-    passwd="joseph1",
+    passwd="Lkj!19990424",
     database="project3",
     cursorclass=pymysql.cursors.DictCursor
 )
@@ -409,6 +409,7 @@ def UpdateTransitDeleteAllSites(connect_type, connect_route):
 def GetAllSites():
     """
     returns all the distinct sitenames
+    also for screen 28
     :return:
     """
     with mydb as mycursor:
@@ -1073,3 +1074,58 @@ def ManagerCreateEvent(sitename, event_name, startdate, minstaffReq, event_descr
                          "(%s, select sitename from sites where sitemanager_id = (select employee_id "
                          "from employees where username = manager_username), %s, %s)",
                          (employee_id, event_name, startdate))
+
+def GetAllStaffByFilterBySite_Fname_Lname_StartDate_EndDate(sitename, fname, lname, startdate, endate):
+    """
+    screen 28 table
+    :param sitename:
+    :param fname:
+    :param lname:
+    :param startdate:
+    :param endate:
+    :return:
+    """
+    with mydb as mycursor:
+        # first get ALL result
+        mycursor.execute(
+            "SELECT fname, lname, event_shifts FROM alluser JOIN (SELECT COUNT(*) as event_shifts, employee_id "
+            "FROM assign_to where employee_id in (select employee_id from assign_to) "
+            "GROUP BY employee_id) emp ON emp.employee_id = alluser.employee_id")
+        all_result = mycursor.fetchall()
+        # Start filtering if this filtering type is applied
+        if sitename is not None:
+            mycursor.execute(
+                "SELECT fname, lname, event_shifts FROM alluser JOIN (SELECT COUNT(*) as event_shifts, employee_id "
+                "FROM assign_to where employee_id in (select employee_id from assign_to where sitename = %s) "
+                "GROUP BY employee_id) emp ON emp.employee_id = alluser.employee_id", sitename)
+            filtered_result = mycursor.fetchall()
+            all_result = [i for n, i in enumerate(all_result) if i in filtered_result]
+        if fname is not None:
+            mycursor.execute(
+                "SELECT fname, lname, event_shifts FROM alluser JOIN (SELECT COUNT(*) as event_shifts, employee_id "
+                "FROM assign_to where employee_id in (select employee_id from assign_to where fname = %s) "
+                "GROUP BY employee_id) emp ON emp.employee_id = alluser.employee_id", fname)
+            filtered_result = mycursor.fetchall()
+            all_result = [i for n, i in enumerate(all_result) if i in filtered_result]
+        if lname is not None:
+            mycursor.execute(
+                "SELECT fname, lname, event_shifts FROM alluser JOIN (SELECT COUNT(*) as event_shifts, employee_id "
+                "FROM assign_to where employee_id in (select employee_id from assign_to where lname = %s) "
+                "GROUP BY employee_id) emp ON emp.employee_id = alluser.employee_id", lname)
+            filtered_result = mycursor.fetchall()
+            all_result = [i for n, i in enumerate(all_result) if i in filtered_result]
+        if startdate is not None:
+            mycursor.execute(
+                "SELECT fname, lname, event_shifts FROM alluser JOIN (SELECT COUNT(*) as event_shifts, employee_id "
+                "FROM assign_to where employee_id in (select employee_id from assign_to where startdate >= %s) "
+                "GROUP BY employee_id) emp ON emp.employee_id = alluser.employee_id", startdate)
+            filtered_result = mycursor.fetchall()
+            all_result = [i for n, i in enumerate(all_result) if i in filtered_result]
+        if endate is not None:
+            mycursor.execute(
+                "SELECT fname, lname, event_shifts FROM alluser JOIN (SELECT COUNT(*) as event_shifts, employee_id "
+                "FROM assign_to where employee_id in (select employee_id from assign_to where endate <= %s) "
+                "GROUP BY employee_id) emp ON emp.employee_id = alluser.employee_id", endate)
+            filtered_result = mycursor.fetchall()
+            all_result = [i for n, i in enumerate(all_result) if i in filtered_result]
+        return all_result
