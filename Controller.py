@@ -1132,7 +1132,7 @@ class Controller():
             newItem.setText(str(tableData[i]['revenue'] * tableData[i]['total_visit']))
             self.MainWindow.ManagerManageEvent.tableWidget.setItem(i, 4, newItem)
         self.MainWindow.ManagerManageEvent.tableWidget.setSortingEnabled(True)
-        self.MainWindow.ManagerManageEvent.tableData = tableData;
+        self.MainWindow.ManagerManageEvent.tableData = tableData
 
     def deleteEvent(self):
         Event =  self.MainWindow.ManagerManageEvent.tableWidget.selectionModel().selectedRows()[0]
@@ -1168,10 +1168,15 @@ class Controller():
         self.MainWindow.ManagerViewEditEvent.label_6.setText(str(startDate))
         self.MainWindow.ManagerViewEditEvent.label_8.setText(str(EndDate))
         allStaff = DataBaseManager.StaffAssignedAndAvailibleStaffForEvent(EventName, siteName, startDate, EndDate)
+        allAssignedStaff = DataBaseManager.GetAssignedStaffsForEvent(EventName, SiteName, startDate)
         allStaffNames = []
+        allAssignedStaffNames = [each['fname'] + ' ' + each['lname'] for each in allAssignedStaff]
         for staff in allStaff:
             allStaffNames.append(allStaff['fname'] + ' ' + allStaff['lname'])
         self.MainWindow.ManagerViewEditEvent.listWidget.addItems(allStaffNames)
+        for i in range(self.MainWindow.ManagerViewEditEvent.listWidget.count()):
+            if self.MainWindow.ManagerViewEditEvent.listWidget.item(i).text() in allAssignedStaffNames:
+                self.MainWindow.AdministratorEditTransit.listWidget.item(i).setSelected(True)
         # if self.user == 'User':
         #     self.MainWindow.ManagerViewEditEvent.pushButton_3.clicked.connect(self.showUserFunctionality)
         # elif self.user == "Staff":
@@ -1188,26 +1193,47 @@ class Controller():
         #     self.MainWindow.ManagerViewEditEvent.pushButton_3.clicked.connect(self.showAdminVisitorFunctionality)
         # elif self.user == 'Visitor':
         #     self.MainWindow.ManagerViewEditEvent.pushButton_3.clicked.connect(self.showVisitorFunctionality)
-        self.MainWindow.ManagerViewEditEvent.pushButton.clicked.connect(self.filterViewEditEvents)
-        self.MainWindow.ManagerViewEditEvent.pushButton_2.clicked.connect(self.updateEvent)
-        Descrption = DataBaseManager.GetDescriptionForEvent(SiteName, EventName, startDate)
+        self.MainWindow.ManagerViewEditEvent.pushButton.clicked.connect(lambda: self.filterViewEditEvents(EventName))
+        self.MainWindow.ManagerViewEditEvent.pushButton_2.clicked.connect(lambda: self.updateEvent(EventName, SiteName, startDate))
+        Description = DataBaseManager.GetDescriptionForEvent(SiteName, EventName, startDate)
         self.MainWindow.ManagerViewEditEvent.textBrowser.setText(Description['event_description'])
+        self.MainWindow.ManagerViewEditEvent.listWidget.setSelectionMode(QtWidgets.QAbstractItemView.ExtendedSelection)
 
 
-    def filterViewEditEvents(self):
+    def filterViewEditEvents(self, EventName):
         staffAssigned = self.MainWindow.ManagerViewEditEvent.listWidget.selectedItems()
         LowDailyVisit = self.MainWindow.ManagerViewEditEvent.lineEdit.text()
         HighDailyVisit = self.MainWindow.ManagerViewEditEvent.lineEdit_2.text()
         LowDailyRevenue = self.MainWindow.ManagerViewEditEvent.lineEdit_3.text()
         HighDailyRevenue = self.MainWindow.ManagerViewEditEvent.lineEdit_4.text()
+        Price = self.MainWindow.ManagerViewEditEvent.label_4.text()
+        if len(LowDailyVisit) == 0 and len(HighDailyVisit) == 0:
+            LowTotalRevenueRange = None
+            HighTotalRevenueRange = None
+        elif len(LowDailyVisit) * len(HighDailyVisit) == 0:
+            return QtWidgets.QMessageBox.warning(self.MainWindow, "Range not valid", "Please enter both ranges",
+                                                 QtWidgets.QMessageBox.Ok)
+        if len(LowDailyRevenue) == 0 and len(HighDailyRevenue) == 0:
+            LowTotalRevenueRange = None
+            HighTotalRevenueRange = None
+        elif len(LowDailyRevenue) * len(HighDailyRevenue) == 0:
+            return QtWidgets.QMessageBox.warning(self.MainWindow, "Range not valid", "Please enter both ranges",
+                                                 QtWidgets.QMessageBox.Ok)
+        tableData = DataBaseManager.GetEventViewEditEventByFilterByVisitRange_RevenueRange(EventName, Price, LowDailyVisit, HighDailyVisit, LowDailyRevenue, HighDailyRevenue)
+        print (tableData)
 
-    def updateEvent(self):
+    def updateEvent(self, EventName, SiteName, startDate):
         staffAssigned = self.MainWindow.ManagerViewEditEvent.listWidget.selectedItems()
+        Description = self.MainWindow.ManagerViewEditEvent.textBrowser.toPlainText()
         LowDailyVisit = self.MainWindow.ManagerViewEditEvent.lineEdit.text()
         HighDailyVisit = self.MainWindow.ManagerViewEditEvent.lineEdit_2.text()
         LowDailyRevenue = self.MainWindow.ManagerViewEditEvent.lineEdit_3.text()
         HighDailyRevenue = self.MainWindow.ManagerViewEditEvent.lineEdit_4.text()
         selectedStaff = self.MainWindow.ManagerViewEditEvent.listWidget.selectedItems()
+        DataBaseManager.DeleteAllAssignedStaffsForEvent(EventName, SiteName, startDate)
+        for staff in staffAssigned:
+            DataBaseManager.AddAssignedStaffForEvent(staff.text(), SiteName, EventName, startDate)
+        DataBaseManager.UpdateDescriptionForEvent(Description, SiteName, EventName, startDate)
 
     def showManagerCreateEvent(self):
         self.MainWindow.close()
