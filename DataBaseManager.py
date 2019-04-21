@@ -286,4 +286,76 @@ def AddNewSites(sitename, zipcode, address, openeveryday, sitemanager_id):
     """
     with mydb as mycursor:
         mycursor.execute(
-            "insert into sites(sitename, zipcode, address, openeveryday, sitemanager_id) values (%s, %s, %s, %s, %s)")
+            "insert into sites(sitename, zipcode, address, openeveryday, sitemanager_id) values (%s, %s, %s, %s, %s)",
+            (sitename, zipcode, address, openeveryday, sitemanager_id, ))
+
+def UpdateTransitPriceAndRoute(price, transit_type, old_transit_route, new_transit_route):
+    """
+    For screen 23, editing the price and the transit route
+    :param price:
+    :param transit_type:
+    :param old_transit_route:
+    :param new_transit_route:
+    :return:
+    """
+    with mydb as mycursor:
+        # first update price
+        mycursor.execute(
+            "UPDATE transits SET price = %s WHERE transit_type = %s and transit_route = %s",
+            (price, transit_type, old_transit_route))
+        # update route
+        mycursor.execute(
+            "update transits set transit_route = %s where transit_type = %s, transit_route = %s",
+            (new_transit_route, transit_type, old_transit_route))
+
+def UpdateTransitAddSites(connect_type, connect_route, connect_name):
+    """
+    add new sites to the transit (connected sites)
+    :param connect_type:
+    :param connect_route:
+    :param connect_name:
+    :return:
+    """
+    with mydb as mycursor:
+        # add new sites to this transit
+        mycursor.execute(
+            "insert into connect (connect_type, connect_route, connect_name) values (%s, %s, %s)",
+            (connect_type, connect_route, connect_name))
+
+def UpdateTransitDeleteAllSites(connect_type, connect_route):
+    """
+    delete ALL sites from a transit (PK-> transit_type:connect_type, transit_route:connect_route)
+    :param connect_type:
+    :param connect_route:
+    :return:
+    """
+    with mydb as mycursor:
+        # add new sites to this transit
+        mycursor.execute(
+            "delete from connect where connect_type = %s and connect_route = %s",
+            (connect_type, connect_route))
+
+def GetAllSites():
+    """
+    returns all the distinct sitenames
+    :return:
+    """
+    with mydb as mycursor:
+        mycursor.execute("select distinct sitename from sites")
+        return mycursor.fetchall()
+
+def AddTransit(transit_type, transit_route, price):
+    """
+    IMPORTANT BEFORE YOU USE THIS METHOD, price is NONE negative and also REMEMBER to call AddNewSites for all the sites
+    for this transit!!!
+    for screen 24, administrator creates new transit
+    :param transit_type:
+    :param transit_route:
+    :param price:
+    :return:
+    """
+    with mydb as mycursor:
+        mycursor.execute(
+            "insert into transits(transit_type, transit_route, price) values (%s, %s, %s)",
+            (transit_type, transit_route, price))
+
