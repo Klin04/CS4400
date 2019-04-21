@@ -941,9 +941,9 @@ class Controller():
 
     def showAdministratorEditTransit(self):
         Route = self.MainWindow.AdministratorManageTransit.tableWidget.selectionModel().selectedRows()[0]
-        TakeType = self.MainWindow.AdministratorManageTransit.tableWidget.item(Route.row(), 1).text()
-        TakeRoute = self.MainWindow.AdministratorManageTransit.tableWidget.item(Route.row(), 0).text()
-        Price = self.MainWindow.AdministratorManageTransit.tableWidget.item(Route.row(), 0).text()
+        TakeType = self.MainWindow.AdministratorManageTransit.tableWidget.item(Route.row(), 0).text()
+        TakeRoute = self.MainWindow.AdministratorManageTransit.tableWidget.item(Route.row(), 1).text()
+        Price = self.MainWindow.AdministratorManageTransit.tableWidget.item(Route.row(), 2).text()
         self.MainWindow.close()
         self.MainWindow = MainWindow()
         self.MainWindow.startAdministratorEditTransit()
@@ -962,7 +962,7 @@ class Controller():
         self.MainWindow.AdministratorEditTransit.listWidget.setSelectionMode(QtWidgets.QAbstractItemView.ExtendedSelection)
         self.MainWindow.AdministratorEditTransit.listWidget.setSelectionBehavior(QtWidgets.QAbstractItemView.SelectRows)
         for i in range(self.MainWindow.AdministratorEditTransit.listWidget.count()):
-            if self.MainWindow.AdministratorEditTransit.listWidget.item(i) in ConnectedSitenames:
+            if self.MainWindow.AdministratorEditTransit.listWidget.item(i).text() in ConnectedSitenames:
                 self.MainWindow.AdministratorEditTransit.listWidget.item(i).setSelected(True)
         # if self.user == 'User':
         #     self.MainWindow.AdministratorEditTransit.pushButton.clicked.connect(self.showUserFunctionality)
