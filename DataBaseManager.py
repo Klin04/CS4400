@@ -1036,10 +1036,40 @@ def GetEventWithSameNameAndDateAtSameSiteToCheckIfIsOverlapEvent(event_name, sit
                          "where event_name = %s and sitename = %s", (event_name, sitename))
         return mycursor.fetchall()
 
-# def GetAllAvailibleStaffForNewEvent(start_date, end_date):
-#     with mydb as mycursor:
-#         mycursor.execute("select fname, lname from users where username in (select username from employee "
-#                          "where employee_id in (select distinct employee_id from assign_to where event_name in "
-#                          "(select event_name from staff_visitor_revenue where (startdate > %s or endate < %s))))",
-#                          (end_date, start_date))
-#         return mycursor.fetchall()
+def GetAllAvailibleStaffForNewEvent(start_date, end_date):
+    """
+    The Assigned Staff Table, 'staffs who are not assigned to any other events during this event’s time period'
+    screen 27
+    :param start_date:
+    :param end_date:
+    :return:
+    """
+    with mydb as mycursor:
+        mycursor.execute("select fname, lname from users where username in (select username from employee "
+                         "where employee_id in (select distinct employee_id from assign_to where event_name in "
+                         "(select event_name from staff_visitor_revenue where (startdate > %s or endate < %s))))",
+                         (end_date, start_date))
+        return mycursor.fetchall()
+
+def ManagerCreateEvent(sitename, event_name, startdate, minstaffReq, event_description, capacity, price, endate, employee_id):
+    """
+    screen 27
+    :param sitename:
+    :param event_name:
+    :param startdate:
+    :param minstaffReq:
+    :param event_description:
+    :param capacity:
+    :param price:
+    :param endate:
+    :param employee_id:
+    :return:
+    """
+    with mydb as mycursor:
+        mycursor.execute("INSERT INTO site_events(sitename, event_name, startdate, minstaffReq, event_description, "
+                         "capacity, price, endate) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)",
+                         (sitename, event_name, startdate, minstaffReq, event_description, capacity, price, endate))
+        mycursor.execute("INSERT INTO assign_to(employee_id, sitename, event_name, startdate) VALUES "
+                         "(%s, select sitename from sites where sitemanager_id = (select employee_id "
+                         "from employees where username = manager_username), %s, %s)",
+                         (employee_id, event_name, startdate))
