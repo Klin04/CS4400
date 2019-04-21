@@ -4,7 +4,7 @@ import base64
 mydb = pymysql.connect(
     host="localhost",
     user="root",
-    passwd="Lkj!19990424",
+    passwd="joseph1",
     database="project3",
     cursorclass=pymysql.cursors.DictCursor
 )
@@ -132,7 +132,7 @@ def GetAllTransportTypeFromTransits():
     :return: list of transport
     """
     with mydb as mycursor:
-        mycursor.execute("select transit_type from transits")
+        mycursor.execute("select distinct transit_type from transits")
         return mycursor.fetchall()
 
 
@@ -142,7 +142,7 @@ def GetAllSiteNameFromConnect():
     :return: list
     """
     with mydb as mycursor:
-        mycursor.execute("select connect_name from connect")
+        mycursor.execute("select distinct connect_name from connect")
         return mycursor.fetchall()
 
 
@@ -180,7 +180,7 @@ def GetCurrentSiteManagerAndAllUnAssignedManagers(sitename):
     """
     with mydb as mycursor:
         mycursor.execute(
-            "(select username from employees where employee_id in (select sitemanager_id from sites where sitename = %s)) "
+            "(select distinct username from employees where employee_id in (select sitemanager_id from sites where sitename = %s)) "
             "union (select username from employees where employee_id not in (select sitemanager_id from sites))",
             sitename)
         return mycursor.fetchall()
@@ -210,7 +210,7 @@ def GetManagersNotAssignedSite():
     :return: list
     """
     with mydb as mycursor:
-        mycursor.execute("select username from employees where employee_id not in (select sitemanager_id from sites)")
+        mycursor.execute("select distinct username from employees where employee_id not in (select sitemanager_id from sites)")
         return mycursor.fetchall()
 
 
