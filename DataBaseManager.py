@@ -673,7 +673,7 @@ def StaffAssignedAndAvailibleStaffForEvent(event_name, sitename, start_date, end
         mycursor.execute(
             "select distinct (fname, lname) from ((select fname, lname from users where username in "
             "(select username from employee where employee_id in (select employee_id from assign_to "
-            "where event_name = %s and sitename = %s and startdate = %s))) "
+            "where event_name = %s and sitename = %s and startdate = %s))) as temp"
             "union (select fname, lname from users where username in (select username from employees "
             "where employee_id not in (select employee_id, site_events.startdate, site_events.endate "
             "from assign_to, site_events where assign_to.sitename = site_events.sitename "
