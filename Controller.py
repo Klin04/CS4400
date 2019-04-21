@@ -923,14 +923,12 @@ class Controller():
         self.MainWindow.startAdministratorEditSite()
         self.MainWindow.AdministratorEditSite.pushButton.clicked.connect(self.showAdministratorManageSite)
         self.MainWindow.AdministratorEditSite.pushButton_2.clicked.connect(self.editSite)
-        print(Sitename)
         allManagers = DataBaseManager.GetCurrentSiteManagerAndAllUnAssignedManagers(Sitename)
         managerNames = []
         for manager in allManagers:
-            managerNames.append(manager['name'])
+            managerNames.append(manager['fname'] + ' ' + manager['lname'])
         self.MainWindow.AdministratorEditSite.comboBox.addItems(managerNames)
         tableData = DataBaseManager.GetSiteInformationForEditSite(Sitename)
-        print(tableData)
         # if self.user == 'User':
         #     self.MainWindow.AdministratorEditSite.pushButton.clicked.connect(self.showUserFunctionality)
         # elif self.user == "Staff":
