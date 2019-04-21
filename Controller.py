@@ -594,6 +594,8 @@ class Controller():
         for site in allSitesFromDB:
             allSites.append(site['connect_name'])
         self.MainWindow.UserTakeTransit.comboBox.addItems(allSites)
+        self.MainWindow.UserTakeTransit.tableWidget.setSelectionMode(QtWidgets.QAbstractItemView.SingleSelection)
+        self.MainWindow.UserTakeTransit.tableWidget.setSelectionBehavior(QtWidgets.QAbstractItemView.SelectRows)
 
     def filterUserTransit(self):
         containSite = self.MainWindow.UserTakeTransit.comboBox.currentText()
@@ -601,8 +603,27 @@ class Controller():
         LowRange = self.MainWindow.UserTakeTransit.lineEdit.text()
         HighRange = self.MainWindow.UserTakeTransit.lineEdit.text()
         TransitDate = self.MainWindow.UserTakeTransit.dateEdit.date()
-        if not LowRange.isdecimal() or not HighRange.isdecimal():
+        if containSite == 'All':
+            containSite = None
+        if transportType == 'All':
+            transportType = None
+        if (len(LowRange) != 0 and len(HighRange) == 0) or (len(LowRange) != 0 and len(HighRange) == 0):
+            return QtWidgets.QMessageBox.warning(self.MainWindow, "Range not valid", "Please enter both ranges", QtWidgets.QMessageBox.Ok)
+        if ((len(LowRange) != 0) and not LowRange.isdecimal()) or ((len(HighRange) != 0) and not HighRange.isdecimal()):
             return QtWidgets.QMessageBox.warning(self.MainWindow, "Range not valid", "You could only enter digits", QtWidgets.QMessageBox.Ok)
+        tableData = None
+        if len(LowRange) == 0 and len(HighRange) == 0:
+            LowRange = None
+            HighRange = None
+            tableData = DataBaseManager.GetAllRoutesForTakeTransit(transportType, containSite, LowRange, HighRange)
+        else:
+            tableData = DataBaseManager.GetAllRoutesForTakeTransit(transportType, containSite, float(LowRange), float(HighRange))
+        for i in range(len(tableData)):
+            self.MainWindow.UserTakeTransit.tableWidget.insertRow(i)
+            for column, key in enumerate(tableData[i].keys()):
+                newItem = QtWidgets.QTableWidgetItem()
+                newItem.setText(str(tableData[i][key]))
+                self.MainWindow.UserTakeTransit.tableWidget.setItem(i, column, newItem)
 
     def showUserTransitHistory(self):
         self.MainWindow.close()
