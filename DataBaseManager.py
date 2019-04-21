@@ -494,7 +494,7 @@ def GetTransitByFilterByTransportType_Route_ContainSite_PriceRange(transit_type,
     with mydb as mycursor:
         # first get ALL result
         mycursor.execute(
-            "select transit_type, transit_route, price, connected_sites, visitors_logged from sites_logged")
+            "select transit_route, transit_type, price, connected_sites, visitors_logged from sites_logged")
         all_result = mycursor.fetchall()
 
         # Start filtering if this filtering type is applied
@@ -566,20 +566,20 @@ def GetEventViewEditEventByFilterByVisitRange_RevenueRange(event_name, price, vi
     # with mydb as mycursor:
     #     # first get ALL result
     #     mycursor.execute(
-    #         "select visit_event_date as date, count(*) as daily_visits, count(*) * price as daily_revenue "
+    #         "select visit_event_date as date, count(*) as daily_visits, count(*) * %s as daily_revenue "
     #         "from visit_event join site_events on visit_event_name = site_events.event_name "
-    #         "and site_events.startdate = visit_event_startdate where visit_event_name = eventname "
-    #         "group by visit_event_date")
+    #         "and site_events.startdate = visit_event_startdate where visit_event_name = %s "
+    #         "group by visit_event_date", (price, event_name, ))
     #     all_result = mycursor.fetchall()
     #
     #     # Start filtering if this filtering type is applied
     #     if visit_range_high is not None and visit_range_low is not None:
     #         mycursor.execute(
-    #             "select visit_event_date as date, count(*) as daily_visits, count(*) * price as daily_revenue "
+    #             "select visit_event_date as date, count(*) as daily_visits, count(*) * %s as daily_revenue "
     #             "from visit_event join site_events on visit_event_name = site_events.event_name "
-    #             "and site_events.startdate = visit_event_startdate where visit_event_name = eventname "
+    #             "and site_events.startdate = visit_event_startdate where visit_event_name = %s "
     #             "group by visit_event_date having daily_visits between %s and %s",
-    #             (visit_range_high, visit_range_low))
+    #             (price, event_name, visit_range_high, visit_range_low))
     #         filtered_result = mycursor.fetchall()
     #         all_result = [i for n, i in enumerate(all_result) if i in filtered_result]
     #     if revenue_range_low is not None and revenue_range_high is not None:
