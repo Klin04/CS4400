@@ -416,6 +416,7 @@ class Controller():
                   "SD", "TN", "TX", "UT", "VT", "VA", "WA", "WV", "WI", "WY"]
         self.MainWindow.RegisterEmployeeVisitorPage.comboBox_2.addItems(states)
         self.MainWindow.RegisterEmployeeVisitorPage.comboBox.addItems(["Manager", "Staff"])
+        self.MainWindow.RegisterEmployeeVisitorPage.pushButton_3.clicked.connect(self.RegisterEmployeeVisitor)
 
     def RegisterEmployeeVisitor(self):
         Fname = self.MainWindow.RegisterEmployeeVisitorPage.lineEdit_2.text()
@@ -575,9 +576,10 @@ class Controller():
         allSites = ['All']
         self.MainWindow.UserTakeTransit.pushButton.clicked.connect(self.filterUserTransit)
         self.MainWindow.UserTakeTransit.comboBox_2.addItems(["All", "MARTA", "Bus", "Bike"])
-        self.MainWindow.UserTakeTransit.comboBox.addItems(allSites)
         allSitesFromDB = DataBaseManager.GetAllSiteNameFromConnect()
-        print(allSitesFromDB)
+        for site in allSitesFromDB:
+            allSites.append(site['connect_name'])
+        self.MainWindow.UserTakeTransit.comboBox.addItems(allSites)
 
     def filterUserTransit(self):
         containSite = self.MainWindow.UserTakeTransit.comboBox.currentText()
@@ -587,6 +589,7 @@ class Controller():
         TransitDate = self.MainWindow.UserTakeTransit.dateEdit.date()
         if not LowRange.isdecimal() or not HighRange.isdecimal():
             return QtWidgets.QMessageBox.warning(self.MainWindow, "Range not valid", "You could only enter digits", QtWidgets.QMessageBox.Ok)
+        
 
 
     def showUserTransitHistory(self):
@@ -610,6 +613,9 @@ class Controller():
         elif self.user == 'Visitor':
             self.MainWindow.UserTransitHistory.pushButton_2.clicked.connect(self.showVisitorFunctionality)
         allSites = ['All']
+        allSitesFromDB = DataBaseManager.GetAllSiteNameFromConnect()
+        for site in allSitesFromDB:
+            allSites.append(site['connect_name'])
         self.MainWindow.UserTransitHistory.comboBox.addItems(allSites)
         self.MainWindow.UserTransitHistory.comboBox_2.addItems(["All", "MARTA", "Bus", "Bike"])
         self.MainWindow.UserTransitHistory.pushButton.clicked.connect(self.filterTransitHistory)
