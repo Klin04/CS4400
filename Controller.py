@@ -792,7 +792,8 @@ class Controller():
         self.MainWindow.startAdministratorCreateSite()
         self.MainWindow.AdministratorCreateSite.pushButton.clicked.connect(self.showAdministratorManageSite)
         self.MainWindow.AdministratorCreateSite.pushButton_2.clicked.connect(self.createSite)
-        allManagers = []
+        allManagers = DataBaseManager.GetManagersNotAssignedSite()
+        print(allManagers)
         self.MainWindow.AdministratorCreateSite.comboBox.addItems(allManagers)
         # if self.user == 'User':
         #     self.MainWindow.AdministratorCreateSite.pushButton.clicked.connect(self.showUserFunctionality)
@@ -815,8 +816,11 @@ class Controller():
         Name = self.MainWindow.AdministratorCreateSite.lineEdit.text()
         Zipcode = self.MainWindow.AdministratorCreateSite.lineEdit_2.text()
         Address = self.MainWindow.AdministratorCreateSite.lineEdit_3.text()
+        if len(Address) == 0:
+            Address = None
         Manager = self.MainWindow.AdministratorCreateSite.comboBox.currentText()
         openEveryday = self.MainWindow.AdministratorCreateSite.checkBox.isChecked()
+        DataBaseManager.AddNewSites(Name, int(Zipcode), Address, openEveryday, Manager)
 
     def showAdministratorManageTransit(self):
         self.MainWindow.close()
