@@ -684,6 +684,21 @@ class Controller():
         startDate = self.MainWindow.UserTransitHistory.dateEdit.date()
         endDate = self.MainWindow.UserTransitHistory.dateEdit.date()
         Route = self.MainWindow.UserTransitHistory.lineEdit.text()
+        if transportType == 'All':
+            transportType = None
+        if containSite == 'All':
+            containSite = None
+        if len(Route) == 0:
+            Route = None
+        tableData = DataBaseManager.GetUserTransitHistoryFilteredByTransportType_Route_StartDate_EndDate_ContainSite(self.username, transportType, Route, startDate, endDate, containSite)
+        self.MainWindow.ManagerManageEvent.tableWidget.setSortingEnabled(False)
+        for i in range(len(tableData)):
+            self.MainWindow.UserTransitHistory.tableWidget.insertRow(i)
+            for column, key in enumerate(tableData[i].keys()):
+                newItem = QtWidgets.QTableWidgetItem()
+                newItem.setText(str(tableData[i][key]))
+                self.MainWindow.UserTransitHistory.tableWidget.setItem(i, column, newItem)
+        self.MainWindow.UserTransitHistory.tableWidget.setSortingEnabled(True)
 
     def showEmployeeManageProfile(self):
         self.MainWindow.close()
