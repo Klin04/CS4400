@@ -868,7 +868,8 @@ class Controller():
         self.MainWindow.AdministratorManageSite.comboBox.addItems(allSites)
         allManagers = ['All']
         allManagersDB = DataBaseManager.GetManagerDropdownMenuForAdminManageSite()
-        print(allManagersDB)
+        for manager in allManagersDB:
+            allManagers.append(manager[manager.keys()[0]])
         self.MainWindow.AdministratorManageSite.comboBox_2.addItems(allManagers)
         self.MainWindow.AdministratorManageSite.comboBox_3.addItems(["Yes", "No"])
         self.MainWindow.AdministratorManageSite.pushButton_2.clicked.connect(self.showAdministratorCreateSite)
@@ -883,10 +884,20 @@ class Controller():
         OpenEveryday = self.MainWindow.AdministratorManageSite.comboBox_3.currentText()
         self.MainWindow.AdministratorManageSite.tableWidget.setRowCount(0)
         tableData = DataBaseManager.GetManagerDropdownMenuForAdminManageSite()
+        self.MainWindow.AdministratorManageSite.tableWidget.setSortingEnabled(False)
+        for i in range(len(tableData)):
+            self.MainWindow.AdministratorManageSite.tableWidget.insertRow(i)
+            for column, key in enumerate(tableData[i].keys()):
+                newItem = QtWidgets.QTableWidgetItem()
+                newItem.setText(str(tableData[i][key]))
+                self.MainWindow.AdministratorManageSite.tableWidget.setItem(i, column, newItem)
+        self.MainWindow.AdministratorManageSite.tableWidget.setSortingEnabled(True)
 
 
     def deleteSite(self):
-        print("Delete a site")
+        Site = self.MainWindow.AdministratorManageTransit.tableWidget.selectionModel().selectedRows()[0]
+        Sitename = self.MainWindow.AdministratorManageTransit.tableWidget.item(Site.row(), 0).text()
+        DataBaseManager.AdminDeletesSite(Sitename)
 
     def showAdministratorEditSite(self):
         self.MainWindow.close()
