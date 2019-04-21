@@ -916,18 +916,21 @@ class Controller():
         self.filterSites()
 
     def showAdministratorEditSite(self):
-        Site = self.MainWindow.AdministratorManageTransit.tableWidget.selectionModel().selectedRows()[0]
-        Sitename = self.MainWindow.AdministratorManageTransit.tableWidget.item(Site.row(), 0).text()
+        Site = self.MainWindow.AdministratorManageSite.tableWidget.selectionModel().selectedRows()[0]
+        Sitename = self.MainWindow.AdministratorManageSite.tableWidget.item(Site.row(), 0).text()
         self.MainWindow.close()
         self.MainWindow = MainWindow()
         self.MainWindow.startAdministratorEditSite()
         self.MainWindow.AdministratorEditSite.pushButton.clicked.connect(self.showAdministratorManageSite)
         self.MainWindow.AdministratorEditSite.pushButton_2.clicked.connect(self.editSite)
-        allManagers = DataBaseManager.GetCurrentSiteManagerAndAllUnAssignedManagers()
+        print(Sitename)
+        allManagers = DataBaseManager.GetCurrentSiteManagerAndAllUnAssignedManagers(Sitename)
         managerNames = []
         for manager in allManagers:
             managerNames.append(manager['name'])
         self.MainWindow.AdministratorEditSite.comboBox.addItems(managerNames)
+        tableData = DataBaseManager.GetSiteInformationForEditSite(Sitename)
+        print(tableData)
         # if self.user == 'User':
         #     self.MainWindow.AdministratorEditSite.pushButton.clicked.connect(self.showUserFunctionality)
         # elif self.user == "Staff":
