@@ -681,8 +681,8 @@ class Controller():
     def filterTransitHistory(self):
         containSite = self.MainWindow.UserTransitHistory.comboBox.currentText()
         transportType = self.MainWindow.UserTransitHistory.comboBox_2.currentText()
-        startDate = self.MainWindow.UserTransitHistory.dateEdit.date()
-        endDate = self.MainWindow.UserTransitHistory.dateEdit.date()
+        startDate = self.MainWindow.UserTransitHistory.dateEdit.date().toPyDate()
+        endDate = self.MainWindow.UserTransitHistory.dateEdit.date().toPyDate()
         Route = self.MainWindow.UserTransitHistory.lineEdit.text()
         if transportType == 'All':
             transportType = None
