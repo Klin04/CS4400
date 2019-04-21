@@ -628,7 +628,6 @@ def StaffAssignedAndAvailibleStaffForEvent(event_name, sitename, start_date, end
     :return:
     """
     with mydb as mycursor:
-        # first get ALL result
         mycursor.execute(
             "select distinct (fname, lname) from ((select fname, lname from users where username in "
             "(select username from employee where employee_id in (select employee_id from assign_to "
@@ -653,7 +652,6 @@ def DeleteAllAssignedStaffsForEvent(event_name, sitename, start_date):
     :return:
     """
     with mydb as mycursor:
-        # first get ALL result
         mycursor.execute(
             "DELETE FROM assign_to WHERE event_name = %s and sitename = %s and startdate = %s",
             (event_name, sitename, start_date,))
@@ -670,14 +668,21 @@ def AddAssignedStaffForEvent(employee_id, sitename, event_name, startdate):
     :return:
     """
     with mydb as mycursor:
-        # first get ALL result
         mycursor.execute(
             "insert into assign_to (employee_id, sitename, event_name, startdate) values (%s, %s, %s, %s)",
             (employee_id, sitename, event_name, startdate,))
 
-# def UpdateDescriptionForEvent():
-#     with mydb as mycursor:
-#         # first get ALL result
-#         mycursor.execute(
-#             "insert into assign_to (employee_id, sitename, event_name, startdate) values (%s, %s, %s, %s)",
-#             (employee_id, sitename, event_name, startdate,))
+def UpdateDescriptionForEvent(employee_id, sitename, event_name, startdate):
+    """
+    This updates the description for an event for
+    screen 26
+    :param employee_id:
+    :param sitename:
+    :param event_name:
+    :param startdate:
+    :return:
+    """
+    with mydb as mycursor:
+        mycursor.execute(
+            "insert into assign_to (employee_id, sitename, event_name, startdate) values (%s, %s, %s, %s)",
+            (employee_id, sitename, event_name, startdate,))
