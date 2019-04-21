@@ -724,16 +724,19 @@ class Controller():
         tableData = DataBaseManager.GetEmployeeInformationForManageProfile(self.username)
         print(self.username)
         print(tableData)
-        self.MainWindow.EmployeeManageProfile.lineEdit.setText(tableData['fname'])
-        self.MainWindow.EmployeeManageProfile.lineEdit_2.setText(tableData['lname'])
-        self.MainWindow.EmployeeManageProfile.lineEdit_3.setText(str(tableData['phone']))
-        self.MainWindow.EmployeeManageProfile.label_6.setText(tableData['username'])
-        self.MainWindow.EmployeeManageProfile.label_10.setText(str(tableData['employee_id']))
-        self.MainWindow.EmployeeManageProfile.label_7.setText(tableData['sitename'])
-        self.MainWindow.EmployeeManageProfile.label_13.setText(tableData['address'])
+        self.MainWindow.EmployeeManageProfile.lineEdit.setText(tableData[0]['fname'])
+        self.MainWindow.EmployeeManageProfile.lineEdit_2.setText(tableData[0]['lname'])
+        self.MainWindow.EmployeeManageProfile.lineEdit_3.setText(str(tableData[1]['phone']))
+        self.MainWindow.EmployeeManageProfile.label_6.setText(self.username)
+        self.MainWindow.EmployeeManageProfile.label_10.setText(str(tableData[1]['employee_id']))
+        if tableData[2]:
+            self.MainWindow.EmployeeManageProfile.label_7.setText(tableData[2]['sitename'])
+        else:
+            self.MainWindow.EmployeeManageProfile.label_7.setText("")
+        self.MainWindow.EmployeeManageProfile.label_13.setText(tableData[1]['address'])
         Emails = DataBaseManager.GetAllEmailsOfUser(self.username)
         for email in Emails:
-            line_text = QtWidgets.QLineEdit(self.widget)
+            line_text = QtWidgets.QLineEdit(self.MainWindow.EmployeeManageProfile.widget)
             line_text.setText(email['email'])
             self.MainWindow.EmployeeManageProfile.EditLineList.append(line_text)
             line_text.setGeometry(QtCore.QRect(20, 10, 301, 25))
@@ -744,14 +747,17 @@ class Controller():
             self.MainWindow.EmployeeManageProfile.inner.layout().addWidget(new_button)
             # since we can't pass arguments into .connect, we pass in the lambda as a func
             new_button.clicked.connect(lambda: self.MainWindow.EmployeeManageProfile.removeEmail(new_button))
-        if tableData['is_visitor']:
-            self.MainWindow.EmployeeManageProfile.checkBox.setChecked(True);
+        if tableData[0]['is_visitor']:
+            self.MainWindow.EmployeeManageProfile.checkBox.setChecked(True)
+        else:
+            self.MainWindow.EmployeeManageProfile.checkBox.setChecked(False)
 
     def updateEmployeeProfile(self):
         Fname = self.MainWindow.EmployeeManageProfile.lineEdit.text()
         Lname = self.MainWindow.EmployeeManageProfile.lineEdit_2.text()
         Phone = self.MainWindow.EmployeeManageProfile.lineEdit_3.text()
         Emails = []
+        Employee_id = self.MainWindow.EmployeeManageProfile.label_10.text()
         for email in self.MainWindow.RegisterUserPage.EditLineList:
             Emails.append(email.text())
         if self.MainWindow.EmployeeManageProfile.lineEdit_3.isModified() and not Phone.isdigit():
@@ -767,6 +773,7 @@ class Controller():
             if not DataBaseManager.IsEmailUnique(email):
                 return QtWidgets.QMessageBox.warning(self.MainWindow, "Email already registered",
                                                      "Please use a new email", QtWidgets.QMessageBox.Ok)
+        DataBaseManager.UpdateUserInformation(self.username, Fname, Lname, self.MainWindow.EmployeeManageProfile.checkBox.isChecked(), int(Phone), Employee_id)
 
     def showAdministratorManagerUser(self):
         self.MainWindow.close()
