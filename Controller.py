@@ -905,12 +905,19 @@ class Controller():
 
 
     def deleteSite(self):
-        Site = self.MainWindow.AdministratorManageTransit.tableWidget.selectionModel().selectedRows()[0]
+        Site = None
+        try:
+            Site = self.MainWindow.AdministratorManageTransit.tableWidget.selectionModel().selectedRows()[0]
+        except:
+            return QtWidgets.QMessageBox.warning(self.MainWindow, "Haven't selected a site",
+                                                 "Please select a site first", QtWidgets.QMessageBox.Ok)
         Sitename = self.MainWindow.AdministratorManageTransit.tableWidget.item(Site.row(), 0).text()
         DataBaseManager.AdminDeletesSite(Sitename)
         self.filterSites()
 
     def showAdministratorEditSite(self):
+        Site = self.MainWindow.AdministratorManageTransit.tableWidget.selectionModel().selectedRows()[0]
+        Sitename = self.MainWindow.AdministratorManageTransit.tableWidget.item(Site.row(), 0).text()
         self.MainWindow.close()
         self.MainWindow = MainWindow()
         self.MainWindow.startAdministratorEditSite()
