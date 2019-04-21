@@ -337,13 +337,13 @@ class Controller():
         self.MainWindow.RegisterVisitorOnlyPage.pushButton_3.clicked.connect(self.RegisterVisitor)
 
     def RegisterVisitor(self):
-        Fname = self.MainWindow.RegisterUserPage.lineEdit.text()
-        Lname = self.MainWindow.RegisterUserPage.lineEdit_2.text()
-        Username = self.MainWindow.RegisterUserPage.lineEdit_3.text()
-        Password = self.MainWindow.RegisterUserPage.lineEdit_4.text()
-        CPassword = self.MainWindow.RegisterUserPage.lineEdit_5.text()
+        Fname = self.MainWindow.RegisterVisitorOnlyPage.lineEdit.text()
+        Lname = self.MainWindow.RegisterVisitorOnlyPage.lineEdit_2.text()
+        Username = self.MainWindow.RegisterVistorOnlyPage.lineEdit_3.text()
+        Password = self.MainWindow.RegisterVisitorOnlyPage.lineEdit_4.text()
+        CPassword = self.MainWindow.RegisterVisitorOnlyPage.lineEdit_5.text()
         Emails = []
-        for email in self.MainWindow.RegisterUserPage.EditLineList:
+        for email in self.MainWindow.RegisterVisitorOnlyPage.EditLineList:
             Emails.append(email.text())
         if len(Fname) == 0 or len(Lname) == 0 or len(Username) == 0 or len(Password) == 0 or len(Emails) == 0:
             return QtWidgets.QMessageBox.warning(self.MainWindow, "Missing Field", "There are missing fields", QtWidgets.QMessageBox.Ok)
@@ -427,10 +427,10 @@ class Controller():
         Address = self.MainWindow.RegisterEmployeeVisitorPage.lineEdit_9.text()
         Zipcode = self.MainWindow.RegisterEmployeeVisitorPage.lineEdit_11.text()
         City = self.MainWindow.RegisterEmployeeVisitorPage.lineEdit_10.text()
-        State = self.MainWindow.RegisterEmployeePage.comboBox_2.currentText()
-        Erole = self.MainWindow.RegisterEmployeePage.comboBox.currentText()
+        State = self.MainWindow.RegisterEmployeeVisitorPage.comboBox_2.currentText()
+        Erole = self.MainWindow.RegisterEmployeeVisitorPage.comboBox.currentText()
         Emails = []
-        for email in self.MainWindow.RegisterUserPage.EditLineList:
+        for email in self.MainWindow.RegisterEmployeeVisitorPage.EditLineList:
             Emails.append(email.text())
         if len(Fname) == 0 or len(Lname) == 0 or len(Username) == 0 or len(Password) == 0 or len(Emails) == 0:
             return QtWidgets.QMessageBox.warning(self.MainWindow, "Missing Field", "There are missing fields", QtWidgets.QMessageBox.Ok)
@@ -1320,7 +1320,7 @@ class Controller():
         StartDate = self.MainWindow.VisitorVisitHistory.dateEdit.date()
         EndDate = self.MainWindow.VisitorVisitHistory.dateEdit_2.date()
         Site = self.MainWindow.VisitorVisitHistory.comboxBox.currentText()
-        
+
 
 
 if __name__ == '__main__':
