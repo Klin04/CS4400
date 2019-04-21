@@ -810,9 +810,9 @@ def GetUserTransitHistoryFilteredByTransportType_Route_StartDate_EndDate_Contain
         if start_date is not None and end_date is not None:
             mycursor.execute(
                 "select take_date, take_route, take_type, price from (select take_date, take_route, take_type, price "
-                "from transits, (select take_date, take_route, take_type from take where take_username = usernames) "
-                "as temp where transits.transit_type = take_type and transits.transit_route = take_route) as temps "
-                "where take_date BETWEEN startdates and enddates",
+                "from transits, (select take_date, take_route, take_type from take where take_username = %s) "
+                "as temp where transits.transit_type = %s and transits.transit_route = %s) as temps "
+                "where take_date BETWEEN %s and %s",
                 (usernames, transport_type, route, start_date, end_date,))
             filtered_result = mycursor.fetchall()
             all_result = [i for n, i in enumerate(all_result) if i in filtered_result]
