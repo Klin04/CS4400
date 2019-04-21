@@ -708,18 +708,6 @@ class Controller():
             if not DataBaseManager.IsEmailUnique(email):
                 return QtWidgets.QMessageBox.warning(self.MainWindow, "Email already registered",
                                                      "Please use a new email", QtWidgets.QMessageBox.Ok)
-
-    # Todo in backend
-    def approveUsers(self):
-        print("Approved")
-
-    def declineUsers(self):
-        print("Declined")
-
-    def filterUsers(self):
-        Username = self.MainWindow.AdministratorManageUser.lineEdit.text()
-        Type = self.MainWindow.AdministratorManageUser.comboBox.currentText()
-        Status = self.MainWindow.AdministratorManageUser.comboBox_2.currentText()
     
     def showAdministratorManagerUser(self):
         self.MainWindow.close()
@@ -747,6 +735,17 @@ class Controller():
         self.MainWindow.AdministratorManageUser.pushButton_2.clicked.connect(self.approveUsers)
         self.MainWindow.AdministratorManageUser.pushButton_3.clicked.connect(self.declineUsers)
 
+    def approveUsers(self):
+        print("Approved")
+
+    def declineUsers(self):
+        print("Declined")
+
+    def filterUsers(self):
+        Username = self.MainWindow.AdministratorManageUser.lineEdit.text()
+        Type = self.MainWindow.AdministratorManageUser.comboBox.currentText()
+        Status = self.MainWindow.AdministratorManageUser.comboBox_2.currentText()
+
     def showAdministratorManageSite(self):
         self.MainWindow.close()
         self.MainWindow = MainWindow()
@@ -769,6 +768,7 @@ class Controller():
             self.MainWindow.AdministratorManageSite.pushButton_5.clicked.connect(self.showVisitorFunctionality)
         self.MainWindow.AdministratorManageSite.pushButton.clicked.connect(self.filterSites)
         allSites = ['All']
+        allSitesDB = DataBaseManager.GetAllSites()
         self.MainWindow.AdministratorManageSite.comboBox.addItems(allSites)
         allManagers = ['All']
         self.MainWindow.AdministratorManageSite.comboBox_2.addItems(allManagers)
@@ -791,6 +791,11 @@ class Controller():
         self.MainWindow.startAdministratorEditSite()
         self.MainWindow.AdministratorEditSite.pushButton.clicked.connect(self.showAdministratorManageSite)
         self.MainWindow.AdministratorEditSite.pushButton_2.clicked.connect(self.editSite)
+        allManagers = DataBaseManager.GetCurrentSiteManagerAndAllUnAssignedManagers()
+        managerNames = []
+        for manager in allManagers:
+            managerNames.append(manager['name'])
+        self.MainWindow.AdministratorEditSite.comboBox.addItems(managerNames)
         # if self.user == 'User':
         #     self.MainWindow.AdministratorEditSite.pushButton.clicked.connect(self.showUserFunctionality)
         # elif self.user == "Staff":
@@ -809,7 +814,11 @@ class Controller():
         #     self.MainWindow.AdministratorEditSite.pushButton.clicked.connect(self.showVisitorFunctionality)
 
     def editSite(self):
-        print("update a site")
+        Name = self.MainWindow.AdministratorEditSite.lineEdit.text()
+        Zipcode = self.MainWindow.AdministratorEditSite.lineEdit_2.text()
+        Address = self.MainWindow.AdministratorEditSite.lineEdit_3.text()
+        Manager = self.MainWindow.AdministratorEditSite.comboBox.currentText()
+        OpenEveryday = self.MainWindow.AdministratorEditSite.checkBox.isChecked()
 
     def showAdministratorCreateSite(self):
         self.MainWindow.close()
@@ -877,21 +886,44 @@ class Controller():
             self.MainWindow.AdministratorManageTransit.pushButton_5.clicked.connect(self.showVisitorFunctionality)
         self.MainWindow.AdministratorManageTransit.comboBox.addItems(["All", "MARTA", "Bus", "Bike"])
         allSites = ['All']
+        allSitesDB = DataBaseManager.GetAllSites()
+        for site in allSitesDB:
+            allSites.append(site['sitename'])
         self.MainWindow.AdministratorManageTransit.comboBox_2.addItems(allSites)
         self.MainWindow.AdministratorManageTransit.pushButton.clicked.connect(self.filterAdminTransit)
         self.MainWindow.AdministratorManageTransit.pushButton_2.clicked.connect(self.showAdministratorCreateTransit)
         self.MainWindow.AdministratorManageTransit.pushButton_3.clicked.connect(self.showAdministratorEditTransit)
         self.MainWindow.AdministratorManageTransit.pushButton_4.clicked.connect(self.deleteTransit)
+        self.MainWindow.AdministratorManageTransit.tableWidget.setSelectionMode(QtWidgets.QAbstractItemView.SingleSelection)
+        self.MainWindow.AdministratorManageTransit.tableWidget.setSelectionBehavior(QtWidgets.QAbstractItemView.SelectRows)
 
     def deleteTransit(self):
         print("Deleted")
 
     def filterAdminTransit(self):
         TransportType = self.MainWindow.AdministratorManageTransit.comboBox.currentText()
+        if TransportType == 'All':
+            TransportType = None
         Route = self.MainWindow.AdministratorManageTransit.lineEdit.text()
+        if len(Route) == 0:
+            Route = None
         LowRange = self.MainWindow.AdministratorManageTransit.lineEdit_2.text()
         HighRange = self.MainWindow.AdministratorManageTransit.lineEdit_3.text()
-
+        if (len(LowRange) != 0 and len(HighRange) == 0) or (len(LowRange) != 0 and len(HighRange) == 0):
+            return QtWidgets.QMessageBox.warning(self.MainWindow, "Range not valid", "Please enter both ranges",
+                                                 QtWidgets.QMessageBox.Ok)
+        if ((len(LowRange) != 0) and not LowRange.isdecimal()) or ((len(HighRange) != 0) and not HighRange.isdecimal()):
+            return QtWidgets.QMessageBox.warning(self.MainWindow, "Range not valid", "You could only enter digits",
+                                                 QtWidgets.QMessageBox.Ok)
+        tableData = None
+        if len(LowRange) == 0 and len(HighRange) == 0:
+            LowRange = None
+            HighRange = None
+            tableData = DataBaseManager.GetTransitByFilterByTransportType_Route_ContainSite_PriceRange(TransportType, Route, LowRange, HighRange)
+        else:
+            tableData = DataBaseManager.GetTransitByFilterByTransportType_Route_ContainSite_PriceRange(TransportType, Route, float(LowRange),
+                                                                   float(HighRange))
+        print(tableData)
 
     def showAdministratorEditTransit(self):
         self.MainWindow.close()
@@ -899,8 +931,11 @@ class Controller():
         self.MainWindow.startAdministratorEditTransit()
         self.MainWindow.AdministratorEditTransit.pushButton.clicked.connect(self.showAdministratorManageTransit)
         self.MainWindow.AdministratorEditTransit.pushButton_2.clicked.connect(self.updateTransit)
-        allSites = []
-        self.MainWindow.AdministratorEditTransit.listWidget.addItems(allSites)
+        allSites = DataBaseManager.GetAllSites()
+        allSitenames = []
+        for site in allSites:
+            allSitenames.append(site['sitename'])
+        self.MainWindow.AdministratorEditTransit.listWidget.addItems(allSitenames)
         # if self.user == 'User':
         #     self.MainWindow.AdministratorEditTransit.pushButton.clicked.connect(self.showUserFunctionality)
         # elif self.user == "Staff":
@@ -921,8 +956,6 @@ class Controller():
     def updateTransit(self):
         Route = self.MainWindow.AdministratorEditTransit.lineEdit.text()
         Price = self.MainWindow.AdministratorEditTransit.lineEdit_2.text()
-
-    def deleteTransit(self):
 
     def showAdministratorCreateTransit(self):
         self.MainWindow.close()
@@ -999,7 +1032,14 @@ class Controller():
         self.MainWindow.ManagerManageEvent.pushButton_4.clicked.connect(self.deleteEvent)
 
     def filterManageEvents(self):
-        print("filter events")
+        Name = self.MainWindow.ManagerManageEvent.lineEdit.text()
+        DescriptionKeyword = self.MainWindow.ManagerManageEvent.lineEdit_2.text()
+        LowDurationRange = self.MainWindow.ManagerManageEvent.lineEdit_3.text()
+        HighDurationRange = self.MainWindow.ManagerManageEvent.lineEdit_4.text()
+        LowTotalVisitRange = self.MainWindow.ManagerManageEvent.lineEdit_5.text()
+        HighTotalVisitRange = self.MainWindow.ManagerManageEvent.lineEdit_6.text()
+        LowTotalRevenueRange = self.MainWindow.ManagerManageEvent.lineEdit_7.text()
+        HighTotalRevenueRange = self.MainWindow.ManagerManageEvent.lineEdit_8.text()
 
     def deleteEvent(self):
         print("deleted")
@@ -1041,6 +1081,7 @@ class Controller():
         HighDailyVisit = self.MainWindow.ManagerViewEditEvent.lineEdit_2.text()
         LowDailyRevenue = self.MainWindow.ManagerViewEditEvent.lineEdit_3.text()
         HighDailyRevenue = self.MainWindow.ManagerViewEditEvent.lineEdit_4.text()
+        selectedStaff = self.MainWindow.ManagerViewEditEvent.listWidget.selectedItems()
 
     def showManagerCreateEvent(self):
         self.MainWindow.close()
