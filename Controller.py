@@ -482,9 +482,9 @@ class Controller():
         self.MainWindow.AdministratorFunctionality.pushButton_2.clicked.connect(self.showUserTakeTransit)
         self.MainWindow.AdministratorFunctionality.pushButton_3.clicked.connect(self.showAdministratorManagerUser)
         self.MainWindow.AdministratorFunctionality.pushButton_4.clicked.connect(self.showUserTransitHistory)
-        self.MainWindow.AdministratorFunctionality.pushButton_5.clicked.connect(self.showAdministratorManageSite)
+        self.MainWindow.AdministratorFunctionality.pushButton_5.clicked.connect(self.showAdministratorManageTransit)
         self.MainWindow.AdministratorFunctionality.pushButton_6.clicked.connect(self.showLogin)
-        self.MainWindow.AdministratorFunctionality.pushButton_7.clicked.connect(self.showAdministratorEditSite)
+        self.MainWindow.AdministratorFunctionality.pushButton_7.clicked.connect(self.showAdministratorManageSite)
 
     def showAdminVisitorFunctionality(self):
         self.MainWindow.close()
@@ -603,8 +603,6 @@ class Controller():
         TransitDate = self.MainWindow.UserTakeTransit.dateEdit.date()
         if not LowRange.isdecimal() or not HighRange.isdecimal():
             return QtWidgets.QMessageBox.warning(self.MainWindow, "Range not valid", "You could only enter digits", QtWidgets.QMessageBox.Ok)
-        
-
 
     def showUserTransitHistory(self):
         self.MainWindow.close()
@@ -684,6 +682,18 @@ class Controller():
                 return QtWidgets.QMessageBox.warning(self.MainWindow, "Email already registered",
                                                      "Please use a new email", QtWidgets.QMessageBox.Ok)
 
+    # Todo in backend
+    def approveUsers(self):
+        print("Approved")
+
+    def declineUsers(self):
+        print("Declined")
+
+    def filterUsers(self):
+        Username = self.MainWindow.AdministratorManageUser.lineEdit.text()
+        Type = self.MainWindow.AdministratorManageUser.comboBox.currentText()
+        Status = self.MainWindow.AdministratorManageUser.comboBox_2.currentText()
+    
     def showAdministratorManagerUser(self):
         self.MainWindow.close()
         self.MainWindow = MainWindow()
@@ -709,18 +719,6 @@ class Controller():
         self.MainWindow.AdministratorManageUser.pushButton.clicked.connect(self.filterUsers)
         self.MainWindow.AdministratorManageUser.pushButton_2.clicked.connect(self.approveUsers)
         self.MainWindow.AdministratorManageUser.pushButton_3.clicked.connect(self.declineUsers)
-
-    def filterUsers(self):
-        Username = self.MainWindow.AdministratorManageUser.lineEdit.text()
-        Type = self.MainWindow.AdministratorManageUser.comboBox.currentText()
-        Status = self.MainWindow.AdministratorManageUser.comboBox_2.currentText()
-
-    # Todo in backend
-    def approveUsers(self):
-        print("Approved")
-
-    def declineUsers(self):
-        print("Declined")
 
     def showAdministratorManageSite(self):
         self.MainWindow.close()
@@ -793,8 +791,10 @@ class Controller():
         self.MainWindow.AdministratorCreateSite.pushButton.clicked.connect(self.showAdministratorManageSite)
         self.MainWindow.AdministratorCreateSite.pushButton_2.clicked.connect(self.createSite)
         allManagers = DataBaseManager.GetManagersNotAssignedSite()
-        print(allManagers)
-        self.MainWindow.AdministratorCreateSite.comboBox.addItems(allManagers)
+        allFnameLname = []
+        for manager in allManagers:
+            allFnameLname.append(manager['fname'] + ' ' + manager['lname'])
+        self.MainWindow.AdministratorCreateSite.comboBox.addItems(allFnameLname)
         # if self.user == 'User':
         #     self.MainWindow.AdministratorCreateSite.pushButton.clicked.connect(self.showUserFunctionality)
         # elif self.user == "Staff":

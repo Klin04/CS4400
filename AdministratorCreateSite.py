@@ -32,7 +32,7 @@ class Ui_Form(object):
         self.label_5.setGeometry(QtCore.QRect(70, 180, 67, 17))
         self.label_5.setObjectName("label_5")
         self.comboBox = QtWidgets.QComboBox(Form)
-        self.comboBox.setGeometry(QtCore.QRect(170, 180, 86, 25))
+        self.comboBox.setGeometry(QtCore.QRect(170, 180, 140, 25))
         self.comboBox.setObjectName("comboBox")
         self.lineEdit_3 = QtWidgets.QLineEdit(Form)
         self.lineEdit_3.setGeometry(QtCore.QRect(160, 130, 321, 25))
