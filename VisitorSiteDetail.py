@@ -60,5 +60,3 @@ class Ui_Form(object):
         self.pushButton.setText(_translate("Form", "Back"))
         self.label_5.setText(_translate("Form", "Visit Date"))
         self.pushButton_2.setText(_translate("Form", "Log Visit"))
-
-

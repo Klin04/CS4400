@@ -52,6 +52,9 @@ def isFloat(num):
         return False
     return True
 
+def setNone(element):
+    return None if len(element) == 0 else element
+
 class MainWindow(QtWidgets.QMainWindow):
     def __init__(self, parent=None):
         super(MainWindow, self).__init__(parent)
@@ -606,6 +609,7 @@ class Controller():
         self.MainWindow.UserTakeTransit.tableWidget.setSelectionMode(QtWidgets.QAbstractItemView.SingleSelection)
         self.MainWindow.UserTakeTransit.tableWidget.setSelectionBehavior(QtWidgets.QAbstractItemView.SelectRows)
         self.MainWindow.UserTakeTransit.pushButton_3.clicked.connect(self.LogUserTransit)
+        self.MainWindow.UserTakeTransit.dateEdit.setDate(QtCore.QDate.currentDate())
 
     def filterUserTransit(self):
         self.MainWindow.UserTakeTransit.tableWidget.setRowCount(0)
@@ -671,6 +675,8 @@ class Controller():
         self.MainWindow.UserTransitHistory.comboBox.addItems(allSites)
         self.MainWindow.UserTransitHistory.comboBox_2.addItems(["All", "MARTA", "Bus", "Bike"])
         self.MainWindow.UserTransitHistory.pushButton.clicked.connect(self.filterTransitHistory)
+        self.MainWindow.UserTransitHistory.dateEdit.setDate(QtCore.QDate.currentDate())
+        self.MainWindow.UserTransitHistory.dateEdit_2.setDate(QtCore.QDate.currentDate())
 
     def filterTransitHistory(self):
         containSite = self.MainWindow.UserTransitHistory.comboBox.currentText()
@@ -1076,6 +1082,8 @@ class Controller():
         self.MainWindow.ManagerManageEvent.pushButton_2.clicked.connect(self.showManagerCreateEvent)
         self.MainWindow.ManagerManageEvent.pushButton_3.clicked.connect(self.showManagerViewEditEvent)
         self.MainWindow.ManagerManageEvent.pushButton_4.clicked.connect(self.deleteEvent)
+        self.MainWindow.ManagerManageEvent.dateEdit.setDate(QtCore.QDate.currentDate())
+        self.MainWindow.ManagerManageEvent.dateEdit_2.setDate(QtCore.QDate.currentDate())
 
     def filterManageEvents(self):
         Name = self.MainWindow.ManagerManageEvent.lineEdit.text()
@@ -1086,6 +1094,31 @@ class Controller():
         HighTotalVisitRange = self.MainWindow.ManagerManageEvent.lineEdit_6.text()
         LowTotalRevenueRange = self.MainWindow.ManagerManageEvent.lineEdit_7.text()
         HighTotalRevenueRange = self.MainWindow.ManagerManageEvent.lineEdit_8.text()
+        StartDate = self.MainWindow.ManagerManageEvent.dateEdit.date()
+        EndDate = self.MainWindow.ManagerManageEvent.dateEdit_2.date()
+        Name = setNone(Name)
+        DescriptionKeyword = setNone(DescriptionKeyword)
+        if len(LowDurationRange) == 0 and len(HighDurationRange) == 0:
+            LowDurationRange = None
+            HighDurationRange = None
+        elif len(LowDurationRange) * len(HighDurationRange) == 0:
+            return QtWidgets.QMessageBox.warning(self.MainWindow, "Range not valid", "Please enter both ranges",
+                                                 QtWidgets.QMessageBox.Ok)
+        if len(LowTotalVisitRange) == 0 and len(HighTotalVisitRange) == 0:
+            LowTotalVisitRange = None
+            HighTotalVisitRange = None
+        elif len(LowTotalVisitRange) * len(HighTotalRevenueRange) == 0:
+            return QtWidgets.QMessageBox.warning(self.MainWindow, "Range not valid", "Please enter both ranges",
+                                                 QtWidgets.QMessageBox.Ok)
+        if len(LowTotalRevenueRange) == 0 and len(HighTotalRevenueRange) == 0:
+            LowTotalRevenueRange = None
+            HighTotalRevenueRange = None
+        elif len(LowTotalRevenueRange) * len(HighTotalRevenueRange) == 0:
+            return QtWidgets.QMessageBox.warning(self.MainWindow, "Range not valid", "Please enter both ranges",
+                                                 QtWidgets.QMessageBox.Ok)
+        tableData = None
+        tableData = DataBaseManager.GetAllEventFilteredByEventName_DescripKeyword_StartDate_EndDate_DurationRange_VisitRange_RevenueRange(Name, DescriptionKeyword, StartDate, EndDate, int(LowDurationRange), int(HighDurationRange), int(LowTotalVisitRange), int(HighTotalVisitRange), int(LowTotalRevenueRange), int(HighTotalRevenueRange))
+        print(tableData)
 
     def deleteEvent(self):
         print("deleted")
