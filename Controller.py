@@ -1403,6 +1403,7 @@ class Controller():
         Capacity = self.MainWindow.ManagerCreateEvent.lineEdit_3.text()
         MinStaffRequired = self.MainWindow.ManagerCreateEvent.lineEdit_4.text()
         Description = self.MainWindow.ManagerCreateEvent.textEdit.toPlainText()
+        SelectedStaff = self.MainWindow.ManagerCreateEvent.listWidget.selectedItems()[0]
         if not isFloat(Price) or float(Price) <  0:
             return QtWidgets.QMessageBox.warning(self.MainWindow, "Price not valid", "Please enter a non-negative float",
                                                  QtWidgets.QMessageBox.Ok)
@@ -1420,7 +1421,7 @@ class Controller():
                                                  QtWidgets.QMessageBox.Ok)
         sitename = DataBaseManager.GetSitenameWithManagerUsername(self.username)['sitename']
         checkForOverlap = DataBaseManager.GetEventWithSameNameAndDateAtSameSiteToCheckIfIsOverlapEvent(Name, sitename)
-        employeeID = DataBaseManager.GetEmployeeIdWithUsername(self.username)['employee_id']
+        employeeID = DataBaseManager.GetEmployeeIdWithUsername(SelectedStaff.split()[0])['employee_id']
         if not checkForOverlap:
             DataBaseManager.ManagerCreateEvent(sitename, Name, startDate, int(MinStaffRequired), Description, float(Price), endDate, employeeID)
         else:
