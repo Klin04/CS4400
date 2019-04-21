@@ -922,13 +922,18 @@ class Controller():
         self.MainWindow = MainWindow()
         self.MainWindow.startAdministratorEditSite()
         self.MainWindow.AdministratorEditSite.pushButton.clicked.connect(self.showAdministratorManageSite)
-        self.MainWindow.AdministratorEditSite.pushButton_2.clicked.connect(self.editSite)
+        self.MainWindow.AdministratorEditSite.pushButton_2.clicked.connect(lambda : self.editSite(Sitename))
         allManagers = DataBaseManager.GetCurrentSiteManagerAndAllUnAssignedManagers(Sitename)
         managerNames = []
         for manager in allManagers:
             managerNames.append(manager['fname'] + ' ' + manager['lname'])
         self.MainWindow.AdministratorEditSite.comboBox.addItems(managerNames)
+        self.MainWindow.AdministratorEditSite.pushButton_2.clicked.connect(lambda: self.editSite(Sitename, manager['fname'], manager['lname']))
         tableData = DataBaseManager.GetSiteInformationForEditSite(Sitename)
+        self.MainWindow.AdministratorEditSite.lineEdit.setText(Sitename)
+        self.MainWindow.AdministratorEditSite.lineEdit_2.setText(str(tableData['zipcode']))
+        self.MainWindow.AdministratorEditSite.lineEdit_3.setText(tableData['address'])
+        self.MainWindow.AdministratorEditSite.checkBox.setChecked(bool(tableData['openeveryday']))
         # if self.user == 'User':
         #     self.MainWindow.AdministratorEditSite.pushButton.clicked.connect(self.showUserFunctionality)
         # elif self.user == "Staff":
@@ -946,12 +951,14 @@ class Controller():
         # elif self.user == 'Visitor':
         #     self.MainWindow.AdministratorEditSite.pushButton.clicked.connect(self.showVisitorFunctionality)
 
-    def editSite(self):
+    def editSite(self, oldName, fname, lname):
         Name = self.MainWindow.AdministratorEditSite.lineEdit.text()
         Zipcode = self.MainWindow.AdministratorEditSite.lineEdit_2.text()
         Address = self.MainWindow.AdministratorEditSite.lineEdit_3.text()
         Manager = self.MainWindow.AdministratorEditSite.comboBox.currentText()
         OpenEveryday = self.MainWindow.AdministratorEditSite.checkBox.isChecked()
+        Manager_id = DataBaseManager.GetSiteManagerIdFromFname_Lname(fname, lname)
+        DataBaseManager.UpdateSiteInformation(oldName, int(Zipcode), Address, OpenEveryday, Manager_id, Name)
 
     def showAdministratorCreateSite(self):
         self.MainWindow.close()
