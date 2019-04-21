@@ -244,6 +244,7 @@ class Controller():
     def __init__(self):
         self.MainWindow = MainWindow()
         self.user = None
+        self.username = None
     
     def showLogin(self):
         self.MainWindow.close()
@@ -261,6 +262,7 @@ class Controller():
             return QtWidgets.QMessageBox.warning(self.MainWindow, "Password not entered", "Password not entered", QtWidgets.QMessageBox.Ok)
         found = DataBaseManager.Login(email, password)
         if found:
+            self.username = found['username']
             if found['user_status'] != 'Approved':
                 return QtWidgets.QMessageBox.warning(self.MainWindow, "User not Approved", "User not Approved", QtWidgets.QMessageBox.Ok)
             if not found['is_employee'] and not found['is_visitor']:
@@ -629,8 +631,11 @@ class Controller():
         self.MainWindow.UserTakeTransit.tableWidget.setSortingEnabled(True)
 
     def LogUserTransit(self):
-        Route = self.MainWindow.UserTakeTransit.tableWidget.selectedItems()[0]
+        Route = self.MainWindow.UserTakeTransit.tableWidget.selectionModel().selectedRows()[0]
         TransitDate = self.MainWindow.UserTakeTransit.dateEdit.date()
+        TakeType = self.MainWindow.UserTakeTransit.tableWidget.item(Route.row(), 1).text()
+        TakeRoute = self.MainWindow.UserTakeTransit.tableWidget.item(Route.row(), 0).text()
+        DataBaseManager.UserTakeTransitLogNewTransit(username, TakeType, TakeRoute, TransitDate)
 
     def showUserTransitHistory(self):
         self.MainWindow.close()
