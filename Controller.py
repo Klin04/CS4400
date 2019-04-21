@@ -908,6 +908,7 @@ class Controller():
         Site = self.MainWindow.AdministratorManageTransit.tableWidget.selectionModel().selectedRows()[0]
         Sitename = self.MainWindow.AdministratorManageTransit.tableWidget.item(Site.row(), 0).text()
         DataBaseManager.AdminDeletesSite(Sitename)
+        self.filterSites()
 
     def showAdministratorEditSite(self):
         self.MainWindow.close()
@@ -1027,6 +1028,7 @@ class Controller():
         TakeRoute = self.MainWindow.AdministratorManageTransit.tableWidget.item(Route.row(), 0).text()
         Price = self.MainWindow.AdministratorManageTransit.tableWidget.item(Route.row(), 2).text()
         DataBaseManager.DeleteTransit(TakeType, TakeRoute)
+        self.filterAdminTransit()
 
     def filterAdminTransit(self):
         self.MainWindow.AdministratorManageTransit.tableWidget.setRowCount(0)
