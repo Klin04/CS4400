@@ -1094,10 +1094,12 @@ class Controller():
         HighTotalVisitRange = self.MainWindow.ManagerManageEvent.lineEdit_6.text()
         LowTotalRevenueRange = self.MainWindow.ManagerManageEvent.lineEdit_7.text()
         HighTotalRevenueRange = self.MainWindow.ManagerManageEvent.lineEdit_8.text()
-        StartDate = self.MainWindow.ManagerManageEvent.dateEdit.date()
-        EndDate = self.MainWindow.ManagerManageEvent.dateEdit_2.date()
+        StartDate = self.MainWindow.ManagerManageEvent.dateEdit.date().toPyDate()
+        EndDate = self.MainWindow.ManagerManageEvent.dateEdit_2.date().toPyDate()
         Name = setNone(Name)
         DescriptionKeyword = setNone(DescriptionKeyword)
+        print(Name, DescriptionKeyword, LowDurationRange, HighDurationRange)
+        tableData = None
         if len(LowDurationRange) == 0 and len(HighDurationRange) == 0:
             LowDurationRange = None
             HighDurationRange = None
@@ -1116,8 +1118,7 @@ class Controller():
         elif len(LowTotalRevenueRange) * len(HighTotalRevenueRange) == 0:
             return QtWidgets.QMessageBox.warning(self.MainWindow, "Range not valid", "Please enter both ranges",
                                                  QtWidgets.QMessageBox.Ok)
-        tableData = None
-        tableData = DataBaseManager.GetAllEventFilteredByEventName_DescripKeyword_StartDate_EndDate_DurationRange_VisitRange_RevenueRange(Name, DescriptionKeyword, StartDate, EndDate, int(LowDurationRange), int(HighDurationRange), int(LowTotalVisitRange), int(HighTotalVisitRange), int(LowTotalRevenueRange), int(HighTotalRevenueRange))
+        tableData = DataBaseManager.GetAllEventFilteredByEventName_DescripKeyword_StartDate_EndDate_DurationRange_VisitRange_RevenueRange(Name, DescriptionKeyword, StartDate, EndDate, LowDurationRange, HighDurationRange, LowTotalVisitRange, HighTotalVisitRange, LowTotalRevenueRange, HighTotalRevenueRange)
         print(tableData)
 
     def deleteEvent(self):
