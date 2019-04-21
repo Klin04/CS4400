@@ -459,13 +459,13 @@ def GetAllEventFilteredByEventName_DescripKeyword_StartDate_EndDate_DurationRang
         if start_date is not None:
             mycursor.execute(
                 "SELECT event_name, sitename, startdate, endate, duration, staff_count, total_visit, revenue "
-                "FROM staff_visitor_revenue WHERE startdate = %s", start_date)
+                "FROM staff_visitor_revenue WHERE startdate >= %s", start_date)
             filtered_result = mycursor.fetchall()
             all_result = [i for n, i in enumerate(all_result) if i in filtered_result]
         if end_date is not None:
             mycursor.execute(
                 "SELECT event_name, sitename, startdate, endate, duration, staff_count, total_visit, revenue "
-                "FROM staff_visitor_revenue WHERE endate = %s", end_date)
+                "FROM staff_visitor_revenue WHERE endate <= %s", end_date)
             filtered_result = mycursor.fetchall()
             all_result = [i for n, i in enumerate(all_result) if i in filtered_result]
         if duration_range_low is not None and duration_range_high is not None:
