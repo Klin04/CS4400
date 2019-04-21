@@ -799,6 +799,10 @@ class Controller():
         self.MainWindow.AdministratorManageUser.pushButton.clicked.connect(self.filterUsers)
         self.MainWindow.AdministratorManageUser.pushButton_2.clicked.connect(self.approveUsers)
         self.MainWindow.AdministratorManageUser.pushButton_3.clicked.connect(self.declineUsers)
+        self.MainWindow.AdministratorManageUser.tableWidget.setSelectionMode(
+            QtWidgets.QAbstractItemView.SingleSelection)
+        self.MainWindow.AdministratorManageUser.tableWidget.setSelectionBehavior(
+            QtWidgets.QAbstractItemView.SelectRows)
 
     def approveUsers(self):
         print("Approved")
@@ -807,9 +811,24 @@ class Controller():
         print("Declined")
 
     def filterUsers(self):
+        self.MainWindow.AdministratorManageUser.tableWidget.setRowCount(0)
         Username = self.MainWindow.AdministratorManageUser.lineEdit.text()
         Type = self.MainWindow.AdministratorManageUser.comboBox.currentText()
         Status = self.MainWindow.AdministratorManageUser.comboBox_2.currentText()
+        if Type == 'All':
+            Type = None
+        if Status == 'All':
+            Status = None
+        tableData = DataBaseManager.GetAllAdministratorManageUserInformationFilterByStatus_EmpType_Username(
+            self.username, Type, Status)
+        self.MainWindow.AdministratorManageUser.tableWidget.setSortingEnabled(False)
+        for i in range(len(tableData)):
+            self.MainWindow.AdministratorManageUser.tableWidget.insertRow(i)
+            for column, key in enumerate(tableData[i].keys()):
+                newItem = QtWidgets.QTableWidgetItem()
+                newItem.setText(str(tableData[i][key]))
+                self.MainWindow.AdministratorManageUser.tableWidget.setItem(i, column, newItem)
+        self.MainWindow.AdministratorManageUser.tableWidget.setSortingEnabled(True)
 
     def showAdministratorManageSite(self):
         self.MainWindow.close()
