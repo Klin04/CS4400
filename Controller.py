@@ -1277,7 +1277,7 @@ class Controller():
         EndDate = None
         for data in self.MainWindow.ManagerManageEvent.tableData:
             if data['event_name'] == EventName:
-                siteName = data['sitename']
+                SiteName = data['sitename']
                 startDate = data['startdate']
                 Price = data['revenue']
                 EndDate = data['endate']
@@ -1285,11 +1285,11 @@ class Controller():
         self.MainWindow = MainWindow()
         self.MainWindow.startManagerViewEditEvent()
         self.MainWindow.ManagerViewEditEvent.pushButton_3.clicked.connect(self.showManagerManageEvent)
-        self.MainWindow.ManagerViewEditEvent.label_2.setText(EventName)
-        self.MainWindow.ManagerViewEditEvent.label_4.setText(str(Price))
-        self.MainWindow.ManagerViewEditEvent.label_6.setText(str(startDate))
-        self.MainWindow.ManagerViewEditEvent.label_8.setText(str(EndDate))
-        allStaff = DataBaseManager.StaffAssignedAndAvailibleStaffForEvent(EventName, siteName, startDate, EndDate)
+        self.MainWindow.ManagerViewEditEvent.label_3.setText(EventName)
+        self.MainWindow.ManagerViewEditEvent.label_5.setText(str(Price))
+        self.MainWindow.ManagerViewEditEvent.label_7.setText(str(startDate))
+        self.MainWindow.ManagerViewEditEvent.label_9.setText(str(EndDate))
+        allStaff = DataBaseManager.StaffAssignedAndAvailibleStaffForEvent(EventName, SiteName, startDate, EndDate)
         allAssignedStaff = DataBaseManager.GetAssignedStaffsForEvent(EventName, SiteName, startDate)
         allStaffNames = []
         allAssignedStaffNames = [each['fname'] + ' ' + each['lname'] for each in allAssignedStaff]
@@ -1298,7 +1298,7 @@ class Controller():
         self.MainWindow.ManagerViewEditEvent.listWidget.addItems(allStaffNames)
         for i in range(self.MainWindow.ManagerViewEditEvent.listWidget.count()):
             if self.MainWindow.ManagerViewEditEvent.listWidget.item(i).text() in allAssignedStaffNames:
-                self.MainWindow.AdministratorEditTransit.listWidget.item(i).setSelected(True)
+                self.MainWindow.ManagerViewEditEvent.listWidget.item(i).setSelected(True)
         # if self.user == 'User':
         #     self.MainWindow.ManagerViewEditEvent.pushButton_3.clicked.connect(self.showUserFunctionality)
         # elif self.user == "Staff":
