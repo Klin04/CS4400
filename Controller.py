@@ -1762,6 +1762,7 @@ class Controller():
         self.MainWindow.startVisitorEventDetail()
         self.MainWindow.VisitorEventDetail.pushButton.clicked.connect(self.showVisitorExploreEvent)
         self.MainWindow.VisitorEventDetail.pushButton_2.clicked.connect(self.LogVisit)
+        self.MainWindow.VisitorEventDetail.startDate = EventDate
         VisitorEventDetailDB = DataBaseManager.VisitorEventDetail(SiteName, EventName, EventDate)
         print(VisitorEventDetailDB)
         # if self.user == 'User':
@@ -1785,7 +1786,9 @@ class Controller():
         visitDate = self.MainWindow.VisitorEventDetail.dateEdit.date().toPyDate()
         EventName = self.MainWindow.VisitorEventDetail.textBrowser.toPlainText()
         Sitename = self.MainWindow.VisitorEventDetail.textBrowser_2.toPlainText()
-
+        StartDate = self.MainWindow.VisitorEventDetail.textBrowser_3.toPlainText()
+        EndDate = self.MainWindow.VisitorEventDetail.textBrowser_4.toPlainText()
+        DataBaseManager.VisitorEventLogVisit(visitDate, EventName, Sitename, StartDate, EndDate, self.username)
 
 
     def showVisitorExploreSite(self):
