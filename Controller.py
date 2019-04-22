@@ -1900,7 +1900,7 @@ class Controller():
         self.MainWindow.VisitorTransitDetail.dateEdit.setDate(QtCore.QDate.currentDate())
         self.MainWindow.VisitorTransitDetail.tableWidget.setSelectionMode(QtWidgets.QAbstractItemView.SingleSelection)
         self.MainWindow.VisitorTransitDetail.tableWidget.setSelectionBehavior(QtWidgets.QAbstractItemView.SelectRows)
-        self.MainWindow.VisitorTransitDetail.comboxBox.currentTextChanged.connect(self.GetVisitorTransitDetail)
+        self.MainWindow.VisitorTransitDetail.comboBox.currentTextChanged.connect(self.GetVisitorTransitDetail)
         tableData = DataBaseManager.fetchVisitorTransitDetail()
         # if self.user == 'User':
         #     self.MainWindow.VisitorTransitDetail.pushButton.clicked.connect(self.showUserFunctionality)
