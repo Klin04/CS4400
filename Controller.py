@@ -1837,6 +1837,11 @@ class Controller():
         LowEventCount = self.MainWindow.VisitorExploreSite.lineEdit_3.text()
         HighEventCount = self.MainWindow.VisitorExploreSite.lineEdit_4.text()
         IncludeVisited = self.MainWindow.VisitorExploreSite.checkBox_2.isChecked()
+        Name = setNone(Name)
+        if len(OpenEveryday) == 0:
+            OpenEveryday = None
+        else:
+            OpenEveryday = False if OpenEveryday == 'No' else 'Yes'
         if len(LowTotalVisitRange) == 0 and len(HighTotalVisitRange) == 0:
             LowTotalVisitRange = None
             HighTotalVisitRange = None
@@ -1849,7 +1854,8 @@ class Controller():
         elif len(LowEventCount) * len(HighEventCount) == 0:
             return QtWidgets.QMessageBox.warning(self.MainWindow, "Range not valid", "Please enter both ranges",
                                                  QtWidgets.QMessageBox.Ok)
-        
+        tableData = DataBaseManager.VisitorExploreSite(self.username, Name, OpenEveryday, StartDate, EndDate, LowTotalVisitRange, HighTotalVisitRange, LowEventCount, HighEventCount)
+        print (tableData)
 
 
     def showVisitorTransitDetail(self):
