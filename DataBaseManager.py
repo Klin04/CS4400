@@ -670,7 +670,7 @@ def GetEventViewEditEventByFilterByVisitRange_RevenueRange(event_name, price, vi
     with mydb as mycursor:
         # first get ALL result
         mycursor.execute(
-            "select visit_event_date as date, count(*) as daily_visits, count(*) * %s as daily_revenue "
+            "select visit_event_date as date, count(*) as daily_visits, count(*) * %s as daily_revenue, minstaffReq, capacity "
             "from visit_event join site_events on visit_event_name = site_events.event_name "
             "and site_events.startdate = visit_event_startdate where visit_event_name = %s "
             "group by visit_event_date", (price, event_name,))
@@ -679,7 +679,7 @@ def GetEventViewEditEventByFilterByVisitRange_RevenueRange(event_name, price, vi
         # Start filtering if this filtering type is applied
         if visit_range_high is not None and visit_range_low is not None:
             mycursor.execute(
-                "select visit_event_date as date, count(*) as daily_visits, count(*) * %s as daily_revenue "
+                "select visit_event_date as date, count(*) as daily_visits, count(*) * %s as daily_revenue, minstaffReq, capacity  "
                 "from visit_event join site_events on visit_event_name = site_events.event_name "
                 "and site_events.startdate = visit_event_startdate where visit_event_name = %s "
                 "group by visit_event_date having daily_visits between %s and %s",
@@ -688,7 +688,7 @@ def GetEventViewEditEventByFilterByVisitRange_RevenueRange(event_name, price, vi
             all_result = [i for n, i in enumerate(all_result) if i in filtered_result]
         if revenue_range_low is not None and revenue_range_high is not None:
             mycursor.execute(
-                "select visit_event_date as date, count(*) as daily_visits, count(*) * %s as daily_revenue "
+                "select visit_event_date as date, count(*) as daily_visits, count(*) * %s as daily_revenue, minstaffReq, capacity  "
                 "from visit_event join site_events on visit_event_name = site_events.event_name "
                 "and site_events.startdate = visit_event_startdate where visit_event_name = %s "
                 "group by visit_event_date having daily_revenue between %s and %s", (price, event_name,
