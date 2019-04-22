@@ -1824,16 +1824,33 @@ class Controller():
             self.MainWindow.VisitorExploreSite.pushButton_4.clicked.connect(self.showAdminVisitorFunctionality)
         elif self.user == 'Visitor':
             self.MainWindow.VisitorExploreSite.pushButton_4.clicked.connect(self.showVisitorFunctionality)
+        self.MainWindow.VisitorExploreSite.dateEdit.setDate(QtCore.QDate.currentDate())
+        self.MainWindow.VisitorExploreSite.dateEdit_2.setDate(QtCore.QDate.currentDate())
 
     def filterVisitorSites(self):
         Name = self.MainWindow.VisitorExploreSite.comboBox.currentText()
         OpenEveryday = self.MainWindow.VisitorExploreSite.comboBox_2.currentText()
-        StartDate = self.MainWindow.VisitorExploreSite.dateEdit.date()
-        EndDate = self.MainWindow.VisitorExploreSite.dateEdit_2.date()
+        StartDate = self.MainWindow.VisitorExploreSite.dateEdit.date().toPyDate()
+        EndDate = self.MainWindow.VisitorExploreSite.dateEdit_2.date().toPyDate()
         LowTotalVisitRange = self.MainWindow.VisitorExploreSite.lineEdit.text()
         HighTotalVisitRange = self.MainWindow.VisitorExploreSite.lineEdit_2.text()
         LowEventCount = self.MainWindow.VisitorExploreSite.lineEdit_3.text()
         HighEventCount = self.MainWindow.VisitorExploreSite.lineEdit_4.text()
+        IncludeVisited = self.MainWindow.VisitorExploreSite.checkBox_2.isChecked()
+        if len(LowTotalVisitRange) == 0 and len(HighTotalVisitRange) == 0:
+            LowTotalVisitRange = None
+            HighTotalVisitRange = None
+        elif len(LowTotalVisitRange) * len(HighTotalVisitRange) == 0:
+            return QtWidgets.QMessageBox.warning(self.MainWindow, "Range not valid", "Please enter both ranges",
+                                                 QtWidgets.QMessageBox.Ok)
+        if len(LowEventCount) == 0 and len(HighEventCount) == 0:
+            LowEventCount = None
+            HighEventCount = None
+        elif len(LowEventCount) * len(HighEventCount) == 0:
+            return QtWidgets.QMessageBox.warning(self.MainWindow, "Range not valid", "Please enter both ranges",
+                                                 QtWidgets.QMessageBox.Ok)
+        
+
 
     def showVisitorTransitDetail(self):
         self.MainWindow.close()
