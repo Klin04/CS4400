@@ -1484,7 +1484,7 @@ def VisitorExploreSite(username, sitename, open_everyday, startdates, enddates, 
     with mydb as mycursor:
         # first get ALL result
         mycursor.execute(
-            "select visit_site_name, temps.event_count, temps.total_visits, case when count(visit_site_username) is null then 0 else count(visit_site_username) end as my_visit "
+            "select temps.sitename, temps.event_count, temps.total_visits, case when count(visit_site_username) is null then 0 else count(visit_site_username) end as my_visit "
             "from visit_site right join (select sitename, count(site_events.event_name) as event_count, "
             "temp.total_visit as total_visits from site_events, (select visit_site_name , count(visit_site_username) "
             "as total_visit from visit_site group by visit_site_name) as temp where sitename = visit_site_name "
@@ -1494,7 +1494,7 @@ def VisitorExploreSite(username, sitename, open_everyday, startdates, enddates, 
         # Start filtering if this filtering type is applied
         if sitename is not None:
             mycursor.execute(
-                "select visit_site_name, temps.event_count, temps.total_visits, case when count(visit_site_username) is null then 0 else count(visit_site_username) end as my_visit "
+                "select temps.sitename, temps.event_count, temps.total_visits, case when count(visit_site_username) is null then 0 else count(visit_site_username) end as my_visit "
                 "from visit_site right join (select sitename, count(site_events.event_name) as event_count, "
                 "temp.total_visit as total_visits from site_events, (select visit_site_name , "
                 "count(visit_site_username) as total_visit from visit_site group by visit_site_name) as temp "
@@ -1505,7 +1505,7 @@ def VisitorExploreSite(username, sitename, open_everyday, startdates, enddates, 
             all_result = [i for n, i in enumerate(all_result) if i in filtered_result]
         if open_everyday is not None:
             mycursor.execute(
-                "select visit_site_name, temps.event_count, temps.total_visits, case when count(visit_site_username) is null then 0 else count(visit_site_username) end "
+                "select temps.sitename, temps.event_count, temps.total_visits, case when count(visit_site_username) is null then 0 else count(visit_site_username) end "
                 "as my_visit from visit_site right join (select sitename, count(site_events.event_name) as event_count, "
                 "temp.total_visit as total_visits from site_events, (select visit_site_name , count(visit_site_username) "
                 "as total_visit from visit_site group by visit_site_name) as temp where sitename = visit_site_name "
@@ -1516,7 +1516,7 @@ def VisitorExploreSite(username, sitename, open_everyday, startdates, enddates, 
             all_result = [i for n, i in enumerate(all_result) if i in filtered_result]
         if startdates is not None and enddates is not None:
             mycursor.execute(
-                "select visit_site_name, temps.event_count, temps.total_visits, case when count(visit_site_username) is null then 0 else count(visit_site_username) end "
+                "select temps.sitename, temps.event_count, temps.total_visits, case when count(visit_site_username) is null then 0 else count(visit_site_username) end "
                 "as my_visit from visit_site right join (select sitename, count(site_events.event_name) as event_count, "
                 "temp.total_visit as total_visits from site_events, (select visit_site_name , count(visit_site_username) "
                 "as total_visit from visit_site group by visit_site_name) as temp where sitename = visit_site_name "
@@ -1528,7 +1528,7 @@ def VisitorExploreSite(username, sitename, open_everyday, startdates, enddates, 
             all_result = [i for n, i in enumerate(all_result) if i in filtered_result]
         if total_visit_low is not None and total_visit_high is not None:
             mycursor.execute(
-                "select visit_site_name, temps.event_count, temps.total_visits, case when count(visit_site_username) is null then 0 else count(visit_site_username) end "
+                "select temps.sitename, temps.event_count, temps.total_visits, case when count(visit_site_username) is null then 0 else count(visit_site_username) end "
                 "as my_visit from visit_site right join (select sitename, count(site_events.event_name) as event_count, "
                 "temp.total_visit as total_visits from site_events, (select visit_site_name , count(visit_site_username) "
                 "as total_visit from visit_site group by visit_site_name) as temp where sitename = visit_site_name "
@@ -1539,7 +1539,7 @@ def VisitorExploreSite(username, sitename, open_everyday, startdates, enddates, 
             all_result = [i for n, i in enumerate(all_result) if i in filtered_result]
         if event_count_low is not None and event_count_high is not None:
             mycursor.execute(
-                "select visit_site_name, temps.event_count, temps.total_visits, case when count(visit_site_username) is null then 0 else count(visit_site_username) end "
+                "select temps.sitename, temps.event_count, temps.total_visits, case when count(visit_site_username) is null then 0 else count(visit_site_username) end "
                 "as my_visit from visit_site right join (select sitename, count(site_events.event_name) as event_count, "
                 "temp.total_visit as total_visits from site_events, (select visit_site_name , count(visit_site_username) "
                 "as total_visit from visit_site group by visit_site_name) as temp where sitename = visit_site_name "
