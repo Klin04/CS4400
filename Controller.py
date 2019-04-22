@@ -420,7 +420,7 @@ class Controller():
                 return QtWidgets.QMessageBox.warning(self.MainWindow, "Email already registered", "Please use a new email", QtWidgets.QMessageBox.Ok)
         if not Phone.isdigit() or len(Phone) != 10:
             return QtWidgets.QMessageBox.warning(self.MainWindow, "Phone not valid", "Please confirm your phone", QtWidgets.QMessageBox.Ok)
-        if not Zipcode.isdigit():
+        if not Zipcode.isdigit() or len(Zipcode) > 5:
             return QtWidgets.QMessageBox.warning(self.MainWindow, "Zipcode not valid", "Please confirm your zipcode", QtWidgets.QMessageBox.Ok)
         if not DataBaseManager.IsPhoneUnique(int(Phone)):
             return QtWidgets.QMessageBox.warning(self.MainWindow, "Phone already used", "Please use a new phone", QtWidgets.QMessageBox.Ok)
