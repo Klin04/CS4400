@@ -1349,6 +1349,17 @@ class Controller():
             return QtWidgets.QMessageBox.warning(self.MainWindow, "Range not valid", "Please enter both ranges",
                                                  QtWidgets.QMessageBox.Ok)
         tableData = DataBaseManager.GetEventViewEditEventByFilterByVisitRange_RevenueRange(EventName, Price, LowDailyVisit, HighDailyVisit, LowDailyRevenue, HighDailyRevenue)
+        self.MainWindow.ManagerViewEditEvent.tableWidget.setSortingEnabled(False)
+        for i in range(len(tableData)):
+            self.MainWindow.ManagerViewEditEvent.tableWidget.insertRow(i)
+            for column, key in enumerate(tableData[i].keys()):
+                newItem = QtWidgets.QTableWidgetItem()
+                newItem.setText(str(tableData[i][key]))
+                self.MainWindow.ManagerViewEditEvent.tableWidget.setItem(i, column, newItem)
+                if column == 2:
+                    break
+        self.MainWindow.ManagerViewEditEvent.tableWidget.setSortingEnabled(True)
+
         print (tableData)
 
     def updateEvent(self, EventName, SiteName, startDate):
