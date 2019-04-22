@@ -1762,7 +1762,7 @@ class Controller():
         self.MainWindow.startVisitorEventDetail()
         self.MainWindow.VisitorEventDetail.pushButton.clicked.connect(self.showVisitorExploreEvent)
         self.MainWindow.VisitorEventDetail.pushButton_2.clicked.connect(self.LogVisit)
-        VisitorEventDetailDB = DataBaseManager.VisitorEventDetail(SiteName, EventName, str(EventDate))
+        VisitorEventDetailDB = DataBaseManager.VisitorEventDetail(SiteName, EventName, EventDate)
         print(VisitorEventDetailDB)
         # if self.user == 'User':
         #     self.MainWindow.VisitorEventDetail.pushButton.clicked.connect(self.showUserFunctionality)
