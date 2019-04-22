@@ -1258,7 +1258,7 @@ def GetAllSiteReportByFilter(manager_username, startdate, endate, event_count_lo
             all_result = [i for n, i in enumerate(all_result) if i in filtered_result]
         return all_result
 
-def GetDailyDetail():
+def GetDailyDetail(date):
     """
     screen 30
     :return:
@@ -1274,9 +1274,8 @@ def GetDailyDetail():
             "AND eachday <= staff.endate GROUP BY visit_event_name , eachday) derived "
             "GROUP BY visit_event_name , eachday) derived1, alluser where employee_id in "
             "(select employee_id from assign_to where sitename = derived1.sitename and event_name = "
-            "derived1.visit_event_name)")
-        all_result = mycursor.fetchall()
-        return all_result
+            "derived1.visit_event_name) where date = %s", date)
+        return mycursor.fetchone()
 
 def StaffViewScheduleTableFilter(event_name, keyword, startdate, endate):
     """
