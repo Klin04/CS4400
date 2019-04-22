@@ -1362,6 +1362,7 @@ class Controller():
         self.MainWindow.ManagerViewEditEvent.tableWidget.setSortingEnabled(True)
 
     def updateEvent(self, EventName, SiteName, startDate):
+        minstaffReq = int(self.MainWindow.ManagerViewEditEvent.label_11.text())
         staffAssigned = self.MainWindow.ManagerViewEditEvent.listWidget.selectedItems()
         Description = self.MainWindow.ManagerViewEditEvent.textBrowser.toPlainText()
         LowDailyVisit = self.MainWindow.ManagerViewEditEvent.lineEdit.text()
@@ -1369,6 +1370,10 @@ class Controller():
         LowDailyRevenue = self.MainWindow.ManagerViewEditEvent.lineEdit_3.text()
         HighDailyRevenue = self.MainWindow.ManagerViewEditEvent.lineEdit_4.text()
         selectedStaff = self.MainWindow.ManagerViewEditEvent.listWidget.selectedItems()
+        if len(staffAssigned) < minstaffReq:
+            return QtWidgets.QMessageBox.warning(self.MainWindow, "Staff not valid",
+                                                 "Chosen staffs fewer than minimum requirement",
+                                                 QtWidgets.QMessageBox.Ok)
         DataBaseManager.DeleteAllAssignedStaffsForEvent(EventName, SiteName, startDate)
         for staff in staffAssigned:
             DataBaseManager.AddAssignedStaffForEvent(staff.text(), SiteName, EventName, startDate)
