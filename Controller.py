@@ -909,21 +909,21 @@ class Controller():
 
 
     def deleteSite(self):
-        Site = self.MainWindow.AdministratorManageTransit.tableWidget.selectionModel().selectedRows()
+        Site = self.MainWindow.AdministratorManageSite.tableWidget.selectionModel().selectedRows()
         if len(Site) == 0:
             return QtWidgets.QMessageBox.warning(self.MainWindow, "Haven't selected a site",
                                                  "Please select a site first", QtWidgets.QMessageBox.Ok)
-        Site = self.MainWindow.AdministratorManageTransit.tableWidget.selectionModel().selectedRows()[0]
-        Sitename = self.MainWindow.AdministratorManageTransit.tableWidget.item(Site.row(), 0).text()
+        Site = self.MainWindow.AdministratorManageSite.tableWidget.selectionModel().selectedRows()[0]
+        Sitename = self.MainWindow.AdministratorManageSite.tableWidget.item(Site.row(), 0).text()
         DataBaseManager.AdminDeletesSite(Sitename)
         self.filterSites()
 
     def showAdministratorEditSite(self):
-        Site = self.MainWindow.AdministratorManageTransit.tableWidget.selectionModel().selectedRows()
+        Site = self.MainWindow.AdministratorManageSite.tableWidget.selectionModel().selectedRows()
         if len(Site) == 0:
             return QtWidgets.QMessageBox.warning(self.MainWindow, "Haven't selected a site",
                                                  "Please select a site first", QtWidgets.QMessageBox.Ok)
-        Site = self.MainWindow.AdministratorManageTransit.tableWidget.selectionModel().selectedRows()[0]
+        Site = self.MainWindow.AdministratorManageSite.tableWidget.selectionModel().selectedRows()[0]
         Sitename = self.MainWindow.AdministratorManageSite.tableWidget.item(Site.row(), 0).text()
         self.MainWindow.close()
         self.MainWindow = MainWindow()

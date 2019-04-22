@@ -1163,7 +1163,7 @@ def GetAllStaffByFilterBySite_Fname_Lname_StartDate_EndDate(sitename, fname, lna
             mycursor.execute(
                 "SELECT fname, lname, event_shifts FROM alluser JOIN (SELECT COUNT(*) as event_shifts, employee_id "
                 "FROM assign_to where employee_id in (select employee_id from assign_to join "
-                "(select endate, sitename, event_name, startdate from site_events) cry on cry.sitename = assign_to.sitename"
+                "(select endate, sitename, event_name, startdate from site_events) cry on cry.sitename = assign_to.sitename "
                 "and cry.event_name = assign_to.event_name and cry.startdate = assign_to.startdate where endate <= end)", startdate)
             filtered_result = mycursor.fetchall()
             all_result = [i for n, i in enumerate(all_result) if i in filtered_result]
@@ -1357,8 +1357,8 @@ def VistorExploreEvent(username, name, keyword, sitename, startdate, endate, vis
     with mydb as mycursor:
         # first get ALL result
         mycursor.execute(
-            "SELECT event_name, sitename, tickets_remainig, ticket_price, total_visit, event_description, my_visit, startdate "
-            "FROM screen_33 JOIN (select count(*) as my_visit, visit_event_startdate, visit_event_sitename, "
+            "SELECT event_name, sitename, tickets_remainig, ticket_price, total_visit, event_description, CASE WHEN my_visit IS NULL THEN 0 ELSE my_visit END as my_visit, startdate "
+            "FROM screen_33 left JOIN (select count(*) as my_visit, visit_event_startdate, visit_event_sitename, "
             "visit_event_name from visit_event where visit_event_username = %s group by visit_event_startdate, "
             "visit_event_sitename, visit_event_name) count_visit on count_visit.visit_event_startdate = "
             "screen_33.startdate and count_visit.visit_event_name = screen_33.event_name "
@@ -1367,8 +1367,8 @@ def VistorExploreEvent(username, name, keyword, sitename, startdate, endate, vis
         # Start filtering if this filtering type is applied
         if name is not None:
             mycursor.execute(
-                "SELECT event_name, sitename, tickets_remainig, ticket_price, total_visit, event_description, my_visit , startdate "
-                "FROM screen_33 JOIN (select count(*) as my_visit, visit_event_startdate, visit_event_sitename, "
+                "SELECT event_name, sitename, tickets_remainig, ticket_price, total_visit, event_description, CASE WHEN my_visit IS NULL THEN 0 ELSE my_visit END as my_visit, startdate "
+                "FROM screen_33 left JOIN (select count(*) as my_visit, visit_event_startdate, visit_event_sitename, "
                 "visit_event_name from visit_event where visit_event_username = %s group by visit_event_startdate, "
                 "visit_event_sitename, visit_event_name) count_visit on count_visit.visit_event_startdate = "
                 "screen_33.startdate and count_visit.visit_event_name = screen_33.event_name "
@@ -1377,8 +1377,8 @@ def VistorExploreEvent(username, name, keyword, sitename, startdate, endate, vis
             all_result = [i for n, i in enumerate(all_result) if i in filtered_result]
         if keyword is not None:
             mycursor.execute(
-                "SELECT event_name, sitename, tickets_remainig, ticket_price, total_visit, event_description, my_visit , startdate "
-                "FROM screen_33 JOIN (select count(*) as my_visit, visit_event_startdate, visit_event_sitename, "
+                "SELECT event_name, sitename, tickets_remainig, ticket_price, total_visit, event_description, CASE WHEN my_visit IS NULL THEN 0 ELSE my_visit END as my_visit, startdate "
+                "FROM screen_33 left JOIN (select count(*) as my_visit, visit_event_startdate, visit_event_sitename, "
                 "visit_event_name from visit_event where visit_event_username = %s group by visit_event_startdate, "
                 "visit_event_sitename, visit_event_name) count_visit on count_visit.visit_event_startdate = "
                 "screen_33.startdate and count_visit.visit_event_name = screen_33.event_name "
@@ -1387,8 +1387,8 @@ def VistorExploreEvent(username, name, keyword, sitename, startdate, endate, vis
             all_result = [i for n, i in enumerate(all_result) if i in filtered_result]
         if sitename is not None:
             mycursor.execute(
-                "SELECT event_name, sitename, tickets_remainig, ticket_price, total_visit, event_description, my_visit, startdate "
-                "FROM screen_33 JOIN (select count(*) as my_visit, visit_event_startdate, visit_event_sitename, "
+                "SELECT event_name, sitename, tickets_remainig, ticket_price, total_visit, event_description, CASE WHEN my_visit IS NULL THEN 0 ELSE my_visit END as my_visit, startdate "
+                "FROM screen_33 left JOIN (select count(*) as my_visit, visit_event_startdate, visit_event_sitename, "
                 "visit_event_name from visit_event where visit_event_username = %s group by visit_event_startdate, "
                 "visit_event_sitename, visit_event_name) count_visit on count_visit.visit_event_startdate = "
                 "screen_33.startdate and count_visit.visit_event_name = screen_33.event_name "
@@ -1397,8 +1397,8 @@ def VistorExploreEvent(username, name, keyword, sitename, startdate, endate, vis
             all_result = [i for n, i in enumerate(all_result) if i in filtered_result]
         if startdate is not None:
             mycursor.execute(
-                "SELECT event_name, sitename, tickets_remainig, ticket_price, total_visit, event_description, my_visit, startdate "
-                "FROM screen_33 JOIN (select count(*) as my_visit, visit_event_startdate, visit_event_sitename, "
+                "SELECT event_name, sitename, tickets_remainig, ticket_price, total_visit, event_description, CASE WHEN my_visit IS NULL THEN 0 ELSE my_visit END as my_visit,startdate "
+                "FROM screen_33 left JOIN (select count(*) as my_visit, visit_event_startdate, visit_event_sitename, "
                 "visit_event_name from visit_event where visit_event_username = %s group by visit_event_startdate, "
                 "visit_event_sitename, visit_event_name) count_visit on count_visit.visit_event_startdate = "
                 "screen_33.startdate and count_visit.visit_event_name = screen_33.event_name "
@@ -1407,8 +1407,8 @@ def VistorExploreEvent(username, name, keyword, sitename, startdate, endate, vis
             all_result = [i for n, i in enumerate(all_result) if i in filtered_result]
         if endate is not None:
             mycursor.execute(
-                "SELECT event_name, sitename, tickets_remainig, ticket_price, total_visit, event_description, my_visit, startdate "
-                "FROM screen_33 JOIN (select count(*) as my_visit, visit_event_startdate, visit_event_sitename, "
+                "SELECT event_name, sitename, tickets_remainig, ticket_price, total_visit, event_description, CASE WHEN my_visit IS NULL THEN 0 ELSE my_visit END as my_visit, startdate "
+                "FROM screen_33 left JOIN (select count(*) as my_visit, visit_event_startdate, visit_event_sitename, "
                 "visit_event_name from visit_event where visit_event_username = %s group by visit_event_startdate, "
                 "visit_event_sitename, visit_event_name) count_visit on count_visit.visit_event_startdate = "
                 "screen_33.startdate and count_visit.visit_event_name = screen_33.event_name "
@@ -1417,8 +1417,8 @@ def VistorExploreEvent(username, name, keyword, sitename, startdate, endate, vis
             all_result = [i for n, i in enumerate(all_result) if i in filtered_result]
         if visit_range_low is not None and visit_range_high is not None:
             mycursor.execute(
-                "SELECT event_name, sitename, tickets_remainig, ticket_price, total_visit, event_description, my_visit, startdate "
-                "FROM screen_33 JOIN (select count(*) as my_visit, visit_event_startdate, visit_event_sitename, "
+                "SELECT event_name, sitename, tickets_remainig, ticket_price, total_visit, event_description, CASE WHEN my_visit IS NULL THEN 0 ELSE my_visit END as my_visit, startdate "
+                "FROM screen_33 left JOIN (select count(*) as my_visit, visit_event_startdate, visit_event_sitename, "
                 "visit_event_name from visit_event where visit_event_username = %s group by visit_event_startdate, "
                 "visit_event_sitename, visit_event_name) count_visit on count_visit.visit_event_startdate = "
                 "screen_33.startdate and count_visit.visit_event_name = screen_33.event_name "
@@ -1427,8 +1427,8 @@ def VistorExploreEvent(username, name, keyword, sitename, startdate, endate, vis
             all_result = [i for n, i in enumerate(all_result) if i in filtered_result]
         if ticket_range_low is not None and ticket_range_high is not None:
             mycursor.execute(
-                "SELECT event_name, sitename, tickets_remainig, ticket_price, total_visit, event_description, my_visit, startdate "
-                "FROM screen_33 JOIN (select count(*) as my_visit, visit_event_startdate, visit_event_sitename, "
+                "SELECT event_name, sitename, tickets_remainig, ticket_price, total_visit, event_description, CASE WHEN my_visit IS NULL THEN 0 ELSE my_visit END as my_visit, startdate "
+                "FROM screen_33 left JOIN (select count(*) as my_visit, visit_event_startdate, visit_event_sitename, "
                 "visit_event_name from visit_event where visit_event_username = %s group by visit_event_startdate, "
                 "visit_event_sitename, visit_event_name) count_visit on count_visit.visit_event_startdate = "
                 "screen_33.startdate and count_visit.visit_event_name = screen_33.event_name "
