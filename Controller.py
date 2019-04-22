@@ -1921,7 +1921,10 @@ class Controller():
 
     def GetVisitorTransitDetail(self):
         Site = self.MainWindow.VisitorTransitDetail.label_2.text()
+        Site = setNone(Site)
         TransportType = self.MainWindow.VisitorTransitDetail.comboBox.currentText()
+        if len(TransportType) = 0:
+            TransportType = None
         tableData = DataBaseManager.fetchVisitorTransitDetail(Site, TransportType)
         self.MainWindow.VisitorTransitDetail.tableWidget.setRowCount(0)
         self.MainWindow.VisitorTransitDetail.tableWidget.setSortingEnabled(False)
