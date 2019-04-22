@@ -1332,7 +1332,7 @@ def StaffEventDetail(sitename):
             "AND cap.sitename = staff_visitor_revenue.sitename AND cap.startdate = staff_visitor_revenue.startdate "
             "JOIN (SELECT fname, lname, employee_id FROM alluser) name ON name.employee_id IN (SELECT employee_id "
             "FROM assign_to where sitename = %s) WHERE staff_visitor_revenue.sitename = %s", (sitename, sitename,))
-        return mycursor.fetchone()
+        return mycursor.fetchall()
 
 # def VistorExploreEvent():
 #     with mydb as mycursor:

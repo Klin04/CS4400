@@ -1652,6 +1652,15 @@ class Controller():
         self.MainWindow.StaffEventDetail.pushButton.clicked.connect(self.showStaffViewSchedule)
         allData = DataBaseManager.StaffEventDetail(Site)
         print(allData)
+        self.MainWindow.StaffEventDetail.textBrowser.setText(allData['event_name'])
+        self.MainWindow.StaffEventDetail.textBrowser_2.setText(allData['sitename'])
+        self.MainWindow.StaffEventDetail.textBrowser_3.setText(str(allData['startdate']))
+        self.MainWindow.StaffEventDetail.textBrowser_4.setText((allData['duration']))
+        self.MainWindow.StaffEventDetail.textBrowser_5.setText(str(allData['endate']))
+        self.MainWindow.StaffEventDetail.textBrowser_6.setText(str(allData['fname'] + ' ' + allData['lname']))
+        self.MainWindow.StaffEventDetail.textBrowser_7.setText(str(allData['capacity']))
+        self.MainWindow.StaffEventDetail.textBrowser_8.setText(str(allData['price']))
+        self.MainWindow.StaffEventDetail.textBrowser_9.setText(allData['Description'])
         # if self.user == 'User':
         #     self.MainWindow.StaffEventDetail.pushButton.clicked.connect(self.showUserFunctionality)
         # elif self.user == "Staff":
