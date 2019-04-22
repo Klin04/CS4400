@@ -1,6 +1,21 @@
 import pymysql.cursors
 import base64
 
+from passlib.context import CryptContext
+
+pwd_context = CryptContext(
+        schemes=["pbkdf2_sha256"],
+        default="pbkdf2_sha256",
+        pbkdf2_sha256__default_rounds=30000
+)
+
+def encrypt_password(password):
+    return pwd_context.encrypt(password)
+
+
+def check_encrypted_password(password, hashed):
+    return pwd_context.verify(password, hashed)
+
 mydb = pymysql.connect(
     host="localhost",
     user="root",
@@ -8,6 +23,7 @@ mydb = pymysql.connect(
     database="project3",
     cursorclass=pymysql.cursors.DictCursor
 )
+
 
 
 def Login(Email, Password):
@@ -20,7 +36,7 @@ def Login(Email, Password):
         mycursor.execute("Select * from users where username = %s and pass_word = %s",
                          (myResult['username'], Password,))
         myFinalResult = mycursor.fetchone()
-        if myFinalResult:
+        if myFinalResult and check_encrypted_password(Password, myFinalResult['pass_word']):
             return myFinalResult
         return None
 
