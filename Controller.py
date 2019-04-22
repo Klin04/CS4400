@@ -1900,8 +1900,8 @@ class Controller():
         self.MainWindow.VisitorTransitDetail.dateEdit.setDate(QtCore.QDate.currentDate())
         self.MainWindow.VisitorTransitDetail.tableWidget.setSelectionMode(QtWidgets.QAbstractItemView.SingleSelection)
         self.MainWindow.VisitorTransitDetail.tableWidget.setSelectionBehavior(QtWidgets.QAbstractItemView.SelectRows)
-        self.MainWindow.VisitorTransitDetail.comboxBox.currentTextChanged.connect(self.GetVisitorTransitDetail)
-        tableData = DataBaseManager.fetchVisitorTransitDetail()
+        self.MainWindow.VisitorTransitDetail.comboBox.currentTextChanged.connect(self.GetVisitorTransitDetail)
+        self.GetVisitorTransitDetail()
         # if self.user == 'User':
         #     self.MainWindow.VisitorTransitDetail.pushButton.clicked.connect(self.showUserFunctionality)
         # elif self.user == "Staff":
@@ -1923,7 +1923,7 @@ class Controller():
         Site = self.MainWindow.VisitorTransitDetail.label_2.text()
         Site = setNone(Site)
         TransportType = self.MainWindow.VisitorTransitDetail.comboBox.currentText()
-        if len(TransportType) = 0:
+        if len(TransportType) == 0:
             TransportType = None
         tableData = DataBaseManager.fetchVisitorTransitDetail(Site, TransportType)
         self.MainWindow.VisitorTransitDetail.tableWidget.setRowCount(0)
@@ -1945,12 +1945,12 @@ class Controller():
         TType = self.MainWindow.AdministratorManageUser.tableWidget.item(Route.row(), 1).text()
 
     def showVisitorSiteDetail(self):
-        Site = self.MainWindow.VisitorExploreSite.tableWidget.selectionModel().selectionRows()
+        Site = self.MainWindow.VisitorExploreSite.tableWidget.selectionModel().selectedRows()
         if (len(Site)) == 0:
             return QtWidgets.QMessageBox.warning(self.MainWindow, "Please select a row", "Please select a row",
                                                  QtWidgets.QMessageBox.Ok)
         Site = Site[0]
-        Sitename = self.MainWindow.VisitorExploreSite.tableWidget.item(Site.row(), 0)
+        Sitename = self.MainWindow.VisitorExploreSite.tableWidget.item(Site.row(), 0).text()
         self.MainWindow.close()
         self.MainWindow = MainWindow()
         self.MainWindow.startVisitorSiteDetail()
@@ -1958,9 +1958,10 @@ class Controller():
         self.MainWindow.VisitorSiteDetail.pushButton_2.clicked.connect(self.LogVisitorVisit)
         self.MainWindow.VisitorSiteDetail.dateEdit.setDate(QtCore.QDate.currentDate())
         tableData = DataBaseManager.fetchVisitorSiteDetail(Sitename)
-        self.MainWindow.VisitorSiteDetail.textBrowser.setText(tableData[0]['sitename'])
-        self.MainWindow.VisitorSiteDetail.textBrowser_2.setText(str(tableData[0]['openeveryday']))
-        self.MainWindow.VisitorSiteDetail.textBrowser_3.setTExt(str(tableData[0]['address']))
+        if len(tableData):
+            self.MainWindow.VisitorSiteDetail.textBrowser.setText(tableData[0]['sitename'])
+            self.MainWindow.VisitorSiteDetail.textBrowser_2.setText(str(tableData[0]['openeveryday']))
+            self.MainWindow.VisitorSiteDetail.textBrowser_3.setTExt(str(tableData[0]['address']))
         # if self.user == 'User':
         #     self.MainWindow.VisitorSiteDetail.pushButton.clicked.connect(self.showUserFunctionality)
         # elif self.user == "Staff":
@@ -1983,7 +1984,7 @@ class Controller():
         OpenEveryday = self.MainWindow.VisitorSiteDetail.textBrowser_2.toPlainText()
         Address = self.MainWindow.VisitorSiteDetail.textBrowser_3.toPlainText()
         VisitDate = self.MainWindow.VisitorSiteDetail.dateEdit.date().toPyDate()
-
+        DataBaseManager.log_visit_to_site(self.username, Site)
 
     def showVisitorVisitHistory(self):
         self.MainWindow.close()
