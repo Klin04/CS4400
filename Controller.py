@@ -1330,14 +1330,14 @@ class Controller():
         HighDailyRevenue = self.MainWindow.ManagerViewEditEvent.lineEdit_4.text()
         Price = self.MainWindow.ManagerViewEditEvent.label_4.text()
         if len(LowDailyVisit) == 0 and len(HighDailyVisit) == 0:
-            LowTotalRevenueRange = None
-            HighTotalRevenueRange = None
+            LowDailyVisit = None
+            HighDailyVisit = None
         elif len(LowDailyVisit) * len(HighDailyVisit) == 0:
             return QtWidgets.QMessageBox.warning(self.MainWindow, "Range not valid", "Please enter both ranges",
                                                  QtWidgets.QMessageBox.Ok)
         if len(LowDailyRevenue) == 0 and len(HighDailyRevenue) == 0:
-            LowTotalRevenueRange = None
-            HighTotalRevenueRange = None
+            LowDailyRevenue = None
+            HighDailyRevenue = None
         elif len(LowDailyRevenue) * len(HighDailyRevenue) == 0:
             return QtWidgets.QMessageBox.warning(self.MainWindow, "Range not valid", "Please enter both ranges",
                                                  QtWidgets.QMessageBox.Ok)
@@ -1505,6 +1505,8 @@ class Controller():
         self.MainWindow.ManagerSiteReport.pushButton.clicked.connect(self.filterSiteReport)
         self.MainWindow.ManagerSiteReport.tableWidget.setSelectionMode(QtWidgets.QAbstractItemView.SingleSelection)
         self.MainWindow.ManagerSiteReport.tableWidget.setSelectionBehavior(QtWidgets.QAbstractItemView.SelectRows)
+        self.MainWindow.ManagerSiteReport.dateEdit.setDate(QtCore.QDate.currentDate())
+        self.MainWindow.ManagerSiteReport.dateEdit_2.setDate(QtCore.QDate.currentDate())
 
     def filterSiteReport(self):
         StartDate = self.MainWindow.ManagerSiteReport.dateEdit.date().toPyDate()
@@ -1517,6 +1519,39 @@ class Controller():
         HighTotalVisitRange = self.MainWindow.ManagerSiteReport.lineEdit_6.text()
         LowTotalRevenueRange = self.MainWindow.ManagerSiteReport.lineEdit_7.text()
         HighTotalRevenueRange = self.MainWindow.ManagerSiteReport.lineEdit_8.text()
+        if len(LowEventCountRange) == 0 and len(HighEventCountRange) == 0:
+            LowEventCountRange = None
+            HighEventCountRange = None
+        elif len(LowEventCountRange) * len(HighEventCountRange) == 0:
+            return QtWidgets.QMessageBox.warning(self.MainWindow, "Range not valid", "Please enter both ranges",
+                                                 QtWidgets.QMessageBox.Ok)
+        if len(LowStaffCountRange) == 0 and len(HightStaffCountRange) == 0:
+            LowStaffCountRange = None
+            HightStaffCountRange = None
+        elif len(LowStaffCountRange) * len(HightStaffCountRange) == 0:
+            return QtWidgets.QMessageBox.warning(self.MainWindow, "Range not valid", "Please enter both ranges",
+                                                 QtWidgets.QMessageBox.Ok)
+        if len(LowTotalVisitsRange) == 0 and len(HighTotalVisitRange) == 0:
+            LowTotalVisitsRange = None
+            HighTotalVisitRange = None
+        elif len(LowTotalVisitsRange) * len(HighTotalVisitRange) == 0:
+            return QtWidgets.QMessageBox.warning(self.MainWindow, "Range not valid", "Please enter both ranges",
+                                                 QtWidgets.QMessageBox.Ok)
+        if len(LowTotalRevenueRange) == 0 and len(HighTotalRevenueRange) == 0:
+            LowTotalRevenueRange = None
+            HighTotalRevenueRange = None
+        elif len(LowTotalRevenueRange) * len(HighTotalRevenueRange) == 0:
+            return QtWidgets.QMessageBox.warning(self.MainWindow, "Range not valid", "Please enter both ranges",
+                                                 QtWidgets.QMessageBox.Ok)
+        tableData = DataBaseManager.GetAllSiteReportByFilter(self.username, StartDate, EndDate, LowEventCountRange, HighEventCountRange, LowStaffCountRange, HightStaffCountRange, LowTotalVisitsRange, HighTotalVisitRange, LowTotalRevenueRange, HighTotalRevenueRange)
+        self.MainWindow.ManagerSiteReport.tableWidget.setSortingEnabled(False)
+        for i in range(len(tableData)):
+            self.MainWindow.ManagerSiteReport.tableWidget.insertRow(i)
+            for column, key in enumerate(tableData[i].keys()):
+                newItem = QtWidgets.QTableWidgetItem()
+                newItem.setText(str(tableData[i][key]))
+                self.MainWindow.ManagerSiteReport.tableWidget.setItem(i, column, newItem)
+        self.MainWindow.ManagerSiteReport.tableWidget.setSortingEnabled(True)
 
     def showManagerDailyDetail(self):
         if len(self.MainWindow.ManagerSiteReport.tableWidget.selectionModel().selectedRows()):
