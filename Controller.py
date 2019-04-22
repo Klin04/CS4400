@@ -1640,6 +1640,9 @@ class Controller():
 
 
     def showStaffEventDetail(self):
+        if not len(self.MainWindow.StaffViewSchedule.tableWidget.selectionModel().selectedRows()):
+            return QtWidgets.QMessageBox.warning(self.MainWindow, "No row selected", "Please select a row",
+                                                 QtWidgets.QMessageBox.Ok)
         Event = self.MainWindow.StaffViewSchedule.tableWidget.selectionModel().selectedRows()[0]
         EventName = self.MainWindow.StaffViewSchedule.tableWidget.item(Event.row(), 0).text()
         Site = self.MainWindow.StaffViewSchedule.tableWidget.item(Event.row(), 1).text()
@@ -1647,6 +1650,8 @@ class Controller():
         self.MainWindow = MainWindow()
         self.MainWindow.startStaffEventDetail()
         self.MainWindow.StaffEventDetail.pushButton.clicked.connect(self.showStaffViewSchedule)
+        allData = DataBaseManager.StaffEventDetail(Site)
+        print(allData)
         # if self.user == 'User':
         #     self.MainWindow.StaffEventDetail.pushButton.clicked.connect(self.showUserFunctionality)
         # elif self.user == "Staff":
