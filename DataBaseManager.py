@@ -19,7 +19,7 @@ def check_encrypted_password(password, hashed):
 mydb = pymysql.connect(
     host="localhost",
     user="root",
-    passwd="joseph1",
+    passwd="Lkj!19990424",
     database="project3",
     cursorclass=pymysql.cursors.DictCursor
 )

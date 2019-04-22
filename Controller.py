@@ -1709,8 +1709,8 @@ class Controller():
         Name = self.MainWindow.VisitorExploreEvent.lineEdit.text()
         DescriptionKeyword = self.MainWindow.VisitorExploreEvent.lineEdit_2.text()
         SiteName = self.MainWindow.VisitorExploreEvent.comboBox.currentText()
-        StartDate = self.MainWindow.VisitorExploreEvent.dateEdit.date().toPydate()
-        EndDate = self.MainWindow.VisitorExploreEvent.dateEdit_2.date().toPydate()
+        StartDate = self.MainWindow.VisitorExploreEvent.dateEdit.date().toPyDate()
+        EndDate = self.MainWindow.VisitorExploreEvent.dateEdit_2.date().toPyDate()
         IncludeVisited = self.MainWindow.VisitorExploreEvent.checkBox.isChecked()
         IncludeSoldOut = self.MainWindow.VisitorExploreEvent.checkBox_2.isChecked()
         LowTotalVisitRange = self.MainWindow.VisitorExploreEvent.lineEdit_5.text()
@@ -1735,18 +1735,23 @@ class Controller():
         DescriptionKeyword = setNone(DescriptionKeyword)
         tableData = DataBaseManager.VistorExploreEvent(self.username, Name, DescriptionKeyword, SiteName, StartDate, EndDate, LowTotalVisitRange, HighTotalVisitRange, LowTicketPriceRange, HighTicketPriceRange)
         print(tableData)
-        self.MainWindow.UserTakeTransit.tableWidget.setSortingEnabled(False)
+        self.MainWindow.VisitorExploreEvent.tableWidget.setSortingEnabled(False)
         for i in range(len(tableData)):
-            self.MainWindow.UserTakeTransit.tableWidget.insertRow(i)
+            self.MainWindow.VisitorExploreEvent.tableWidget.insertRow(i)
             for column, key in enumerate(tableData[i].keys()):
                 newItem = QtWidgets.QTableWidgetItem()
                 newItem.setText(str(tableData[i][key]))
-                self.MainWindow.UserTakeTransit.tableWidget.setItem(i, column, newItem)
-        self.MainWindow.UserTakeTransit.tableWidget.setSortingEnabled(True)
+                self.MainWindow.VisitorExploreEvent.tableWidget.setItem(i, column, newItem)
+                if column == 5:
+                    break
+            newItem = QtWidgets.QTableWidgetItem()
+            newItem.setText(str(tableData[i]['my_visit']))
+            self.MainWindow.VisitorExploreEvent.tableWidget.setItem(i, 5, newItem)
+        self.MainWindow.VisitorExploreEvent.tableWidget.setSortingEnabled(True)
 
     def showVisitorEventDetail(self):
         Event = self.MainWindow.VisitorExploreEvent.tableWidget.selectionModel().selectedRows()[0]
-        EventDate = self.MainWindow.VisitorExploreEvent.dateEdit.date().toPydate()
+        EventDate = self.MainWindow.VisitorExploreEvent.dateEdit.date().toPyDate()
         SiteName = self.MainWindow.VisitorExploreEvent.tableWidget.item(Event.row(), 1).text()
         EventName = self.MainWindow.VisitorExploreEvent.tableWidget.item(Event.row(), 0).text()
         self.MainWindow.close()
