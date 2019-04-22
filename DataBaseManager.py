@@ -171,7 +171,7 @@ def GetAllRoutesWithPriceRange(low_price, high_price):
     with mydb as mycursor:
         mycursor.execute("select transit_type, transit_route , price, count(*) as connected_sites from connect, "
                          "(select transit_type, transit_route , price from transits where price "
-                         "BETWEEN cast(%s as unsigned) And cast(%s as unsigned)) as temp where connect.connect_type = temp.transit_type "
+                         ">= %s And price <= %s) as temp where connect.connect_type = temp.transit_type "
                          "and connect.connect_route = temp.transit_route group by transit_type , transit_route",
                          (low_price, high_price,))
         return mycursor.fetchall()
@@ -1282,14 +1282,7 @@ def GetDailyDetail():
 #     with mydb as mycursor:
 #         # first get ALL result
 #         mycursor.execute(
-#             "select * from (SELECT eachday AS date, COUNT(visit_event_name) AS event_count, staff_count, "
-#             "total_visitor, revenue, sitename FROM (SELECT eachday, SUM(total_visit) AS total_visitor, "
-#             "visit_event_name, staff_count, revenue, sitename FROM screen_29 JOIN (SELECT staff_count, event_name, "
-#             "startdate, endate, revenue, sitename FROM staff_visitor_revenue) staff "
-#             "ON visit_event_name = staff.event_name AND eachday >= staff.startdate AND eachday <= staff.endate "
-#             "GROUP BY visit_event_name , eachday) derived GROUP BY visit_event_name , eachday) derived1 "
-#             "where sitename = (select sitename from sites "
-#             "where sitemanager_id = (select employee_id from employees where username = %s))", manager_username)
+#             "select event_name, sitename, startdate, endate, staff_count from staff_visitor_revenue where event_name = %s", event_name)
 #         all_result = mycursor.fetchall()
 #         # Start filtering if this filtering type is applied
 #         if startdate is not None and endate is not None:
