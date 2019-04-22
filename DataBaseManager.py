@@ -289,7 +289,7 @@ def GetManagersNotAssignedSite():
     """
     with mydb as mycursor:
         mycursor.execute("select fname, lname from users where username in "
-                         "(select distinct username from employees where employee_id not in (select sitemanager_id from sites))")
+                         "(select distinct username from employees where erole = 'Manager' employee_id not in (select sitemanager_id from sites))")
         return mycursor.fetchall()
 
 
