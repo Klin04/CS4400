@@ -33,8 +33,8 @@ def Login(Email, Password):
         myResult = mycursor.fetchone()
         if not myResult:
             return None
-        mycursor.execute("Select * from users where username = %s and pass_word = %s",
-                         (myResult['username'], Password,))
+        mycursor.execute("Select * from users where username = %s",
+                         (myResult['username'],))
         myFinalResult = mycursor.fetchone()
         if myFinalResult and check_encrypted_password(Password, myFinalResult['pass_word']):
             return myFinalResult
