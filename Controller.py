@@ -1270,7 +1270,7 @@ class Controller():
         startDate = None
         for data in self.MainWindow.ManagerManageEvent.tableData:
             if data['event_name'] == EventName:
-                siteName = data['sitename']
+                SiteName = data['sitename']
                 startDate = data['startdate']
         DataBaseManager.DeleteEvent(EventName, SiteName, startDate)
         self.filterManageEvents()
