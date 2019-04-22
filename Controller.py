@@ -1879,7 +1879,15 @@ class Controller():
             return QtWidgets.QMessageBox.warning(self.MainWindow, "Range not valid", "Please enter both ranges",
                                                  QtWidgets.QMessageBox.Ok)
         tableData = DataBaseManager.VisitorExploreSite(self.username, Name, OpenEveryday, StartDate, EndDate, LowTotalVisitRange, HighTotalVisitRange, LowEventCount, HighEventCount)
-        print (tableData)
+        self.MainWindow.VisitorExploreSite.tableWidget.setRowCount(0)
+        self.MainWindow.VisitorExploreSite.tableWidget.setSortingEnabled(False)
+        for i in range(len(tableData)):
+            self.MainWindow.VisitorExploreSite.tableWidget.insertRow(i)
+            for column, key in enumerate(tableData[i].keys()):
+                newItem = QtWidgets.QTableWidgetItem()
+                newItem.setText(str(tableData[i][key]))
+                self.MainWindow.VisitorExploreSite.tableWidget.setItem(i, column, newItem)
+        self.MainWindow.VisitorExploreSite.tableWidget.setSortingEnabled(True)
 
 
     def showVisitorTransitDetail(self):
