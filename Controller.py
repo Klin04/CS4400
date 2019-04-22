@@ -1330,6 +1330,7 @@ class Controller():
 
 
     def filterViewEditEvents(self, EventName):
+        self.MainWindow.ManagerViewEditEvent.tableWidget.setRowCount(0)
         staffAssigned = self.MainWindow.ManagerViewEditEvent.listWidget.selectedItems()
         LowDailyVisit = self.MainWindow.ManagerViewEditEvent.lineEdit.text()
         HighDailyVisit = self.MainWindow.ManagerViewEditEvent.lineEdit_2.text()
@@ -1359,8 +1360,6 @@ class Controller():
                 if column == 2:
                     break
         self.MainWindow.ManagerViewEditEvent.tableWidget.setSortingEnabled(True)
-
-        print (tableData)
 
     def updateEvent(self, EventName, SiteName, startDate):
         staffAssigned = self.MainWindow.ManagerViewEditEvent.listWidget.selectedItems()
