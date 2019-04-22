@@ -1702,13 +1702,15 @@ class Controller():
             self.MainWindow.VisitorExploreEvent.pushButton_3.clicked.connect(self.showAdminVisitorFunctionality)
         elif self.user == 'Visitor':
             self.MainWindow.VisitorExploreEvent.pushButton_3.clicked.connect(self.showVisitorFunctionality)
+        self.MainWindow.VisitorExploreEvent.tableWidget.setSelectionMode(QtWidgets.QAbstractItemView.SingleSelection)
+        self.MainWindow.VisitorExploreEvent.tableWidget.setSelectionBehavior(QtWidgets.QAbstractItemView.SelectRows)
 
     def filterVisitorEvents(self):
         Name = self.MainWindow.VisitorExploreEvent.lineEdit.text()
         DescriptionKeyword = self.MainWindow.VisitorExploreEvent.lineEdit_2.text()
         SiteName = self.MainWindow.VisitorExploreEvent.comboBox.currentText()
-        StartDate = self.MainWindow.VisitorExploreEvent.dateEdit.date()
-        EndDate = self.MainWindow.VisitorExploreEvent.dateEdit_2.date()
+        StartDate = self.MainWindow.VisitorExploreEvent.dateEdit.date().toPydate()
+        EndDate = self.MainWindow.VisitorExploreEvent.dateEdit_2.date().toPydate()
         IncludeVisited = self.MainWindow.VisitorExploreEvent.checkBox.isChecked()
         IncludeSoldOut = self.MainWindow.VisitorExploreEvent.checkBox_2.isChecked()
         LowTotalVisitRange = self.MainWindow.VisitorExploreEvent.lineEdit_5.text()
@@ -1731,8 +1733,22 @@ class Controller():
                                                  QtWidgets.QMessageBox.Ok)
         Name = setNone(Name)
         DescriptionKeyword = setNone(DescriptionKeyword)
+        tableData = DataBaseManager.VistorExploreEvent(self.username, Name, DescriptionKeyword, SiteName, StartDate, EndDate, LowTotalVisitRange, HighTotalVisitRange, LowTicketPriceRange, HighTicketPriceRange)
+        print(tableData)
+        self.MainWindow.UserTakeTransit.tableWidget.setSortingEnabled(False)
+        for i in range(len(tableData)):
+            self.MainWindow.UserTakeTransit.tableWidget.insertRow(i)
+            for column, key in enumerate(tableData[i].keys()):
+                newItem = QtWidgets.QTableWidgetItem()
+                newItem.setText(str(tableData[i][key]))
+                self.MainWindow.UserTakeTransit.tableWidget.setItem(i, column, newItem)
+        self.MainWindow.UserTakeTransit.tableWidget.setSortingEnabled(True)
 
     def showVisitorEventDetail(self):
+        Event = self.MainWindow.VisitorExploreEvent.tableWidget.selectionModel().selectedRows()[0]
+        EventDate = self.MainWindow.VisitorExploreEvent.dateEdit.date().toPydate()
+        SiteName = self.MainWindow.VisitorExploreEvent.tableWidget.item(Event.row(), 1).text()
+        EventName = self.MainWindow.VisitorExploreEvent.tableWidget.item(Event.row(), 0).text()
         self.MainWindow.close()
         self.MainWindow = MainWindow()
         self.MainWindow.startVisitorEventDetail()
@@ -1757,6 +1773,9 @@ class Controller():
 
     def LogVisit(self):
         visitDate = self.MainWindow.VisitorEventDetail.dateEdit.date().toPyDate()
+        EventName = self.MainWindow.VisitorEventDetail.textBrowser.toPlainText()
+        Sitename = self.MainWindow.VisitorEventDetail.textBrowser_2.toPlainText()
+
 
     def showVisitorExploreSite(self):
         self.MainWindow.close()
