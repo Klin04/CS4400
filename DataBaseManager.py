@@ -1490,6 +1490,7 @@ def VisitorExploreEvent(username, sitename):
             "group by visit_site_name", username)
         all_result = mycursor.fetchall()
         # Start filtering if this filtering type is applied
+        # TODO: not done
         if sitename is not None:
             mycursor.execute(
                 "select visit_site_name, temps.event_count, temps.total_visits, count(visit_site_username) "
@@ -1498,66 +1499,6 @@ def VisitorExploreEvent(username, sitename):
                 "as total_visit from visit_site group by visit_site_name) as temp where sitename = visit_site_name "
                 "group by sitename) as temps where visit_site_name = sitename and visit_site_username = %s "
                 "group by visit_site_name", (username, sitename, ))
-            filtered_result = mycursor.fetchall()
-            all_result = [i for n, i in enumerate(all_result) if i in filtered_result]
-        if keyword is not None:
-            mycursor.execute(
-                "SELECT event_name, sitename, tickets_remainig, ticket_price, total_visit, event_description, my_visit "
-                "FROM screen_33 JOIN (select count(*) as my_visit, visit_event_startdate, visit_event_sitename, "
-                "visit_event_name from visit_event where visit_event_username = %s group by visit_event_startdate, "
-                "visit_event_sitename, visit_event_name) count_visit on count_visit.visit_event_startdate = "
-                "screen_33.startdate and count_visit.visit_event_name = screen_33.event_name "
-                "and count_visit.visit_event_sitename = screen_33.sitename where %s like concat('%', event_description, '%')", keyword)
-            filtered_result = mycursor.fetchall()
-            all_result = [i for n, i in enumerate(all_result) if i in filtered_result]
-        if sitename is not None:
-            mycursor.execute(
-                "SELECT event_name, sitename, tickets_remainig, ticket_price, total_visit, event_description, my_visit "
-                "FROM screen_33 JOIN (select count(*) as my_visit, visit_event_startdate, visit_event_sitename, "
-                "visit_event_name from visit_event where visit_event_username = %s group by visit_event_startdate, "
-                "visit_event_sitename, visit_event_name) count_visit on count_visit.visit_event_startdate = "
-                "screen_33.startdate and count_visit.visit_event_name = screen_33.event_name "
-                "and count_visit.visit_event_sitename = screen_33.sitename where sitename = %s", sitename)
-            filtered_result = mycursor.fetchall()
-            all_result = [i for n, i in enumerate(all_result) if i in filtered_result]
-        if startdate is not None:
-            mycursor.execute(
-                "SELECT event_name, sitename, tickets_remainig, ticket_price, total_visit, event_description, my_visit "
-                "FROM screen_33 JOIN (select count(*) as my_visit, visit_event_startdate, visit_event_sitename, "
-                "visit_event_name from visit_event where visit_event_username = %s group by visit_event_startdate, "
-                "visit_event_sitename, visit_event_name) count_visit on count_visit.visit_event_startdate = "
-                "screen_33.startdate and count_visit.visit_event_name = screen_33.event_name "
-                "and count_visit.visit_event_sitename = screen_33.sitename where startdate >= %s", startdate)
-            filtered_result = mycursor.fetchall()
-            all_result = [i for n, i in enumerate(all_result) if i in filtered_result]
-        if endate is not None:
-            mycursor.execute(
-                "SELECT event_name, sitename, tickets_remainig, ticket_price, total_visit, event_description, my_visit "
-                "FROM screen_33 JOIN (select count(*) as my_visit, visit_event_startdate, visit_event_sitename, "
-                "visit_event_name from visit_event where visit_event_username = %s group by visit_event_startdate, "
-                "visit_event_sitename, visit_event_name) count_visit on count_visit.visit_event_startdate = "
-                "screen_33.startdate and count_visit.visit_event_name = screen_33.event_name "
-                "and count_visit.visit_event_sitename = screen_33.sitename where endate <= %s", endate)
-            filtered_result = mycursor.fetchall()
-            all_result = [i for n, i in enumerate(all_result) if i in filtered_result]
-        if visit_range_low is not None and visit_range_high is not None:
-            mycursor.execute(
-                "SELECT event_name, sitename, tickets_remainig, ticket_price, total_visit, event_description, my_visit "
-                "FROM screen_33 JOIN (select count(*) as my_visit, visit_event_startdate, visit_event_sitename, "
-                "visit_event_name from visit_event where visit_event_username = %s group by visit_event_startdate, "
-                "visit_event_sitename, visit_event_name) count_visit on count_visit.visit_event_startdate = "
-                "screen_33.startdate and count_visit.visit_event_name = screen_33.event_name "
-                "and count_visit.visit_event_sitename = screen_33.sitename where total_visit between %s and %s", visit_range_low, visit_range_high)
-            filtered_result = mycursor.fetchall()
-            all_result = [i for n, i in enumerate(all_result) if i in filtered_result]
-        if ticket_range_low is not None and ticket_range_high is not None:
-            mycursor.execute(
-                "SELECT event_name, sitename, tickets_remainig, ticket_price, total_visit, event_description, my_visit "
-                "FROM screen_33 JOIN (select count(*) as my_visit, visit_event_startdate, visit_event_sitename, "
-                "visit_event_name from visit_event where visit_event_username = %s group by visit_event_startdate, "
-                "visit_event_sitename, visit_event_name) count_visit on count_visit.visit_event_startdate = "
-                "screen_33.startdate and count_visit.visit_event_name = screen_33.event_name "
-                "and count_visit.visit_event_sitename = screen_33.sitename where ticket_price between %s and %s", ticket_range_low, ticket_range_high)
             filtered_result = mycursor.fetchall()
             all_result = [i for n, i in enumerate(all_result) if i in filtered_result]
         return all_result
