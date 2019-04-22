@@ -1488,7 +1488,7 @@ def VisitorExploreSite(username, sitename, open_everyday, startdates, enddates, 
             "from visit_site right join (select sitename, count(site_events.event_name) as event_count, "
             "temp.total_visit as total_visits from site_events, (select visit_site_name , count(visit_site_username) "
             "as total_visit from visit_site group by visit_site_name) as temp where sitename = visit_site_name "
-            "group by sitename) as temps where visit_site_name = sitename and visit_site_username = %s "
+            "group by sitename) temps on visit_site_name = sitename and visit_site_username = %s "
             "group by visit_site_name", username)
         all_result = mycursor.fetchall()
         # Start filtering if this filtering type is applied
