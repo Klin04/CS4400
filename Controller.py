@@ -909,24 +909,26 @@ class Controller():
 
 
     def deleteSite(self):
-        Site = None
-        try:
-            Site = self.MainWindow.AdministratorManageTransit.tableWidget.selectionModel().selectedRows()[0]
-        except:
+        Site = self.MainWindow.AdministratorManageSite.tableWidget.selectionModel().selectedRows()
+        if len(Site) == 0:
             return QtWidgets.QMessageBox.warning(self.MainWindow, "Haven't selected a site",
                                                  "Please select a site first", QtWidgets.QMessageBox.Ok)
-        Sitename = self.MainWindow.AdministratorManageTransit.tableWidget.item(Site.row(), 0).text()
+        Site = self.MainWindow.AdministratorManageSite.tableWidget.selectionModel().selectedRows()[0]
+        Sitename = self.MainWindow.AdministratorManageSite.tableWidget.item(Site.row(), 0).text()
         DataBaseManager.AdminDeletesSite(Sitename)
         self.filterSites()
 
     def showAdministratorEditSite(self):
+        Site = self.MainWindow.AdministratorManageTransit.tableWidget.selectionModel().selectedRows()
+        if len(Site) == 0:
+            return QtWidgets.QMessageBox.warning(self.MainWindow, "Haven't selected a site",
+                                                 "Please select a site first", QtWidgets.QMessageBox.Ok)
         Site = self.MainWindow.AdministratorManageSite.tableWidget.selectionModel().selectedRows()[0]
         Sitename = self.MainWindow.AdministratorManageSite.tableWidget.item(Site.row(), 0).text()
         self.MainWindow.close()
         self.MainWindow = MainWindow()
         self.MainWindow.startAdministratorEditSite()
         self.MainWindow.AdministratorEditSite.pushButton.clicked.connect(self.showAdministratorManageSite)
-        self.MainWindow.AdministratorEditSite.pushButton_2.clicked.connect(lambda : self.editSite(Sitename))
         allManagers = DataBaseManager.GetCurrentSiteManagerAndAllUnAssignedManagers(Sitename)
         managerNames = []
         for manager in allManagers:
@@ -1289,8 +1291,8 @@ class Controller():
         self.MainWindow = MainWindow()
         self.MainWindow.startManagerViewEditEvent()
         self.MainWindow.ManagerViewEditEvent.pushButton_3.clicked.connect(self.showManagerManageEvent)
-        self.MainWindow.ManagerViewEditEvent.label_6.setText(EventName)
-        self.MainWindow.ManagerViewEditEvent.label_5.setText(str(Price))
+        self.MainWindow.ManagerViewEditEvent.label_3.setText(EventName)
+        self.MainWindow.ManagerViewEditEvent.label_4.setText(str(Price))
         self.MainWindow.ManagerViewEditEvent.label_7.setText(str(startDate))
         self.MainWindow.ManagerViewEditEvent.label_9.setText(str(EndDate))
         allStaff = DataBaseManager.StaffAssignedAndAvailibleStaffForEvent(EventName, SiteName, startDate, EndDate)
@@ -1303,8 +1305,9 @@ class Controller():
         for i in range(self.MainWindow.ManagerViewEditEvent.listWidget.count()):
             if self.MainWindow.ManagerViewEditEvent.listWidget.item(i).text() in allAssignedStaffNames:
                 self.MainWindow.ManagerViewEditEvent.listWidget.item(i).setSelected(True)
-        tableData = DataBaseManager.GetEventViewEditEventByFilterByVisitRange_RevenueRange(Name, Price, None, None, None, None)
-        print(tableData)
+        tableData = DataBaseManager.GetEventViewEditEventByFilterByVisitRange_RevenueRange(EventName, Price, None, None, None, None)
+        self.MainWindow.ManagerViewEditEvent.label_13.setText(str(tableData[0]['capacity']))
+        self.MainWindow.ManagerViewEditEvent.label_11.setText(str(tableData[0]['minstaffReq']))
         # if self.user == 'User':
         #     self.MainWindow.ManagerViewEditEvent.pushButton_3.clicked.connect(self.showUserFunctionality)
         # elif self.user == "Staff":
@@ -1329,6 +1332,7 @@ class Controller():
 
 
     def filterViewEditEvents(self, EventName):
+        self.MainWindow.ManagerViewEditEvent.tableWidget.setRowCount(0)
         staffAssigned = self.MainWindow.ManagerViewEditEvent.listWidget.selectedItems()
         LowDailyVisit = self.MainWindow.ManagerViewEditEvent.lineEdit.text()
         HighDailyVisit = self.MainWindow.ManagerViewEditEvent.lineEdit_2.text()
@@ -1348,9 +1352,19 @@ class Controller():
             return QtWidgets.QMessageBox.warning(self.MainWindow, "Range not valid", "Please enter both ranges",
                                                  QtWidgets.QMessageBox.Ok)
         tableData = DataBaseManager.GetEventViewEditEventByFilterByVisitRange_RevenueRange(EventName, Price, LowDailyVisit, HighDailyVisit, LowDailyRevenue, HighDailyRevenue)
-        print (tableData)
+        self.MainWindow.ManagerViewEditEvent.tableWidget.setSortingEnabled(False)
+        for i in range(len(tableData)):
+            self.MainWindow.ManagerViewEditEvent.tableWidget.insertRow(i)
+            for column, key in enumerate(tableData[i].keys()):
+                newItem = QtWidgets.QTableWidgetItem()
+                newItem.setText(str(tableData[i][key]))
+                self.MainWindow.ManagerViewEditEvent.tableWidget.setItem(i, column, newItem)
+                if column == 2:
+                    break
+        self.MainWindow.ManagerViewEditEvent.tableWidget.setSortingEnabled(True)
 
     def updateEvent(self, EventName, SiteName, startDate):
+        minstaffReq = int(self.MainWindow.ManagerViewEditEvent.label_11.text())
         staffAssigned = self.MainWindow.ManagerViewEditEvent.listWidget.selectedItems()
         Description = self.MainWindow.ManagerViewEditEvent.textBrowser.toPlainText()
         LowDailyVisit = self.MainWindow.ManagerViewEditEvent.lineEdit.text()
@@ -1358,6 +1372,10 @@ class Controller():
         LowDailyRevenue = self.MainWindow.ManagerViewEditEvent.lineEdit_3.text()
         HighDailyRevenue = self.MainWindow.ManagerViewEditEvent.lineEdit_4.text()
         selectedStaff = self.MainWindow.ManagerViewEditEvent.listWidget.selectedItems()
+        if len(staffAssigned) < minstaffReq:
+            return QtWidgets.QMessageBox.warning(self.MainWindow, "Staff not valid",
+                                                 "Chosen staffs fewer than minimum requirement",
+                                                 QtWidgets.QMessageBox.Ok)
         DataBaseManager.DeleteAllAssignedStaffsForEvent(EventName, SiteName, startDate)
         for staff in staffAssigned:
             DataBaseManager.AddAssignedStaffForEvent(staff.text(), SiteName, EventName, startDate)
