@@ -1325,8 +1325,8 @@ def StaffEventDetail(sitename):
     """
     with mydb as mycursor:
         mycursor.execute(
-            "SELECT DISTINCT staff_visitor_revenue.event_name, staff_visitor_revenue.sitename, startdate, "
-            "endate, duration, revenue / total_visit AS price, capacity, event_description, fname, lname "
+            "SELECT DISTINCT staff_visitor_revenue.event_name, staff_visitor_revenue.sitename, staff_visitor_revenue.startdate, "
+            "staff_visitor_revenue.endate, staff_visitor_revenue.duration, revenue / total_visit AS price, capacity, event_description, fname, lname "
             "FROM staff_visitor_revenue JOIN (SELECT capacity, event_description, event_name, sitename, "
             "startdate FROM site_events) cap ON cap.event_name = staff_visitor_revenue.event_name "
             "AND cap.sitename = staff_visitor_revenue.sitename AND cap.startdate = staff_visitor_revenue.startdate "
