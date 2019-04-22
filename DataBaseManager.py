@@ -769,7 +769,7 @@ def AddAssignedStaffForEvent(employee_id, sitename, event_name, startdate):
     :param startdate:
     :return:
     """
-    print("add assigned staff", employee_id, sitename, event_name, startdate)
+    # print("add assigned staff", employee_id, sitename, event_name, startdate)
     with mydb as mycursor:
         mycursor.execute(
             "insert into assign_to (employee_id, sitename, event_name, startdate) values (%s, %s, %s, %s)",
