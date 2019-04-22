@@ -1555,7 +1555,28 @@ def fetchVisitorTransitDetail(sitename, TransportType):
     """
     Screen 36
     """
-    pass
+    with mydb as mycursor:
+        # first get ALL result
+        mycursor.execute(
+            "select temp.connect_route, temp.connect_type, transits.price, temp.counts from transits, "
+            "(select connect_route , connect_type , count(*) as counts from connect where connect_route in "
+            "(select connect_route from connect where connect_name = %s ) and connect_type in "
+            "(select connect_type from connect where connect_name = %s) group by connect_route , connect_type) "
+            "as temp where transits.transit_type = temp.connect_type and transits.transit_route = temp.connect_route", (sitename, sitename))
+        all_result = mycursor.fetchall()
+        # Start filtering if this filtering type is applied
+        if sitename is not None:
+            mycursor.execute(
+                "select temp.connect_route, temp.connect_type, price, temp.counts from transits, "
+                "(select connect_route , connect_type , count(*) as counts from connect where connect_route in "
+                "(select connect_route from connect where connect_name = %s ) and connect_type in "
+                "(select connect_type from connect where connect_name = %s) group by connect_route , connect_type) "
+                "as temp where transits.transit_type = temp.connect_type and transits.transit_route = "
+                "temp.connect_route and temp.connect_type = %s",
+                (sitename, sitename, TransportType))
+            filtered_result = mycursor.fetchall()
+            all_result = [i for n, i in enumerate(all_result) if i in filtered_result]
+        return all_result
 
 
 def fetchVisitorSiteDetail(sitename):
