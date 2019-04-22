@@ -813,7 +813,7 @@ class Controller():
     def declineUsers(self):
         User = self.MainWindow.AdministratorManageUser.tableWidget.selectionModel().selectedRows()[0]
         Username = self.MainWindow.AdministratorManageUser.tableWidget.item(User.row(), 0).text()
-        Status = self.MainWindow.AdministratorManageUser.tableWidget.item(User.row(), 3).text()
+        Status = self.MainWindow.AdministratorManageUser.tableWidget.item(User.row(), 2).text()
         if Status == 'Approved':
             return QtWidgets.QMessageBox.warning(self.MainWindow, "User already approved",
                                                  "You cannot decline an approved user", QtWidgets.QMessageBox.Ok)
@@ -1893,6 +1893,7 @@ class Controller():
         Site = self.MainWindow.VisitorTransitDetail.label_2.text()
         TransportType = self.MainWindow.VisitorTransitDetail.comboBox.currentText()
         tableData = DataBaseManager.fetchVisitorTransitDetail(Site, TransportType)
+        self.MainWindow.VisitorTransitDetail.tableWidget.setRowCount(0)
         self.MainWindow.VisitorTransitDetail.tableWidget.setSortingEnabled(False)
         for i in range(len(tableData)):
             self.MainWindow.VisitorTransitDetail.tableWidget.insertRow(i)
@@ -1906,6 +1907,9 @@ class Controller():
         Site = self.MainWindow.VisitorTransitDetail.label_2.text()
         TransportType = self.MainWindow.VisitorTransitDetail.comboBox.currentText()
         TransitDate = self.MainWindow.VisitorTransitDetail.dateEdit.date().toPyDate()
+        Route = self.MainWindow.AdministratorManageUser.tableWidget.selectionModel().selectedRows()[0]
+        RouteName = self.MainWindow.AdministratorManageUser.tableWidget.item(Route.row(), 0).text()
+        TType = self.MainWindow.AdministratorManageUser.tableWidget.item(Route.row(), 1).text()
 
     def showVisitorSiteDetail(self):
         self.MainWindow.close()
