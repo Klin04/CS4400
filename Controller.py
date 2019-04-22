@@ -1379,7 +1379,7 @@ class Controller():
                                                  QtWidgets.QMessageBox.Ok)
         DataBaseManager.DeleteAllAssignedStaffsForEvent(EventName, SiteName, startDate)
         for staff in staffAssigned:
-            DataBaseManager.AddAssignedStaffForEvent(staff.text(), SiteName, EventName, startDate)
+            DataBaseManager.AddAssignedStaffForEvent(DataBaseManager.GetEmployeeIdByFullName(staff.text())['employee_id'], SiteName, EventName, startDate)
         DataBaseManager.UpdateDescriptionForEvent(Description, SiteName, EventName, startDate)
 
     def showManagerCreateEvent(self):

@@ -19,7 +19,7 @@ def check_encrypted_password(password, hashed):
 mydb = pymysql.connect(
     host="localhost",
     user="root",
-    passwd="Lkj!19990424",
+    passwd="joseph1",
     database="project3",
     cursorclass=pymysql.cursors.DictCursor
 )
@@ -769,6 +769,7 @@ def AddAssignedStaffForEvent(employee_id, sitename, event_name, startdate):
     :param startdate:
     :return:
     """
+    print("add assigned staff", employee_id, sitename, event_name, startdate)
     with mydb as mycursor:
         mycursor.execute(
             "insert into assign_to (employee_id, sitename, event_name, startdate) values (%s, %s, %s, %s)",
