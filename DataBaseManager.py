@@ -457,9 +457,9 @@ def IsSitenameUnique(sitename):
     with mydb as mycursor:
         mycursor.execute("select * from sites where sitename = %s", sitename)
         if mycursor.fetchone():
-            return True
-        else:
             return False
+        else:
+            return True
 
 
 def DeleteEvent(event_name, sitename, startdate):
@@ -1584,7 +1584,7 @@ def fetchVisitorSiteDetail(sitename):
     Screen 37
     """
     with mydb as mycursor:
-        mycursor.execute("select sitename, zipcode, openeverday from sites where sitename = %s", sitename)
+        mycursor.execute("select sitename, address, openeverday from sites where sitename = %s", sitename)
         return mycursor.fetchall()
 
 def GetVisitorVisitHistory(username, visit_event_name, visit_event_sitename, visit_event_date_startdate, visit_event_date_enddate):
