@@ -19,7 +19,7 @@ def check_encrypted_password(password, hashed):
 mydb = pymysql.connect(
     host="localhost",
     user="root",
-    passwd="Lkj!19990424",
+    passwd="joseph1",
     database="project3",
     cursorclass=pymysql.cursors.DictCursor
 )
@@ -289,7 +289,7 @@ def GetManagersNotAssignedSite():
     """
     with mydb as mycursor:
         mycursor.execute("select fname, lname from users where username in "
-                         "(select distinct username from employees where employee_id not in (select sitemanager_id from sites))")
+                         "(select distinct username from employees where erole = 'Manager' and employee_id not in (select sitemanager_id from sites))")
         return mycursor.fetchall()
 
 
@@ -1488,7 +1488,7 @@ def VisitorExploreSite(username, sitename, open_everyday, startdates, enddates, 
             "from visit_site right join (select sitename, count(site_events.event_name) as event_count, "
             "temp.total_visit as total_visits from site_events, (select visit_site_name , count(visit_site_username) "
             "as total_visit from visit_site group by visit_site_name) as temp where sitename = visit_site_name "
-            "group by sitename) as temps where visit_site_name = sitename and visit_site_username = %s "
+            "group by sitename) temps on visit_site_name = sitename and visit_site_username = %s "
             "group by visit_site_name", username)
         all_result = mycursor.fetchall()
         # Start filtering if this filtering type is applied
@@ -1586,6 +1586,13 @@ def fetchVisitorSiteDetail(sitename):
     with mydb as mycursor:
         mycursor.execute("select sitename, address, openeverday from sites where sitename = %s", sitename)
         return mycursor.fetchall()
+
+def log_visit_to_site(username, sitename):
+    with mydb as mycursor:
+        mycursor.execute("if (SELECT EXISTS(SELECT * from visit_site WHERE visit_site_name = %s "
+                         "and visit_event_date = visit_dates) = 0) then insert into visit_site "
+                         "(visit_site_username, visit_site_name, visit_event_date) value "
+                         "(%s, %s, visit_dates)", (sitename, username, sitename))
 
 def GetVisitorVisitHistory(username, visit_event_name, visit_event_sitename, visit_event_date_startdate, visit_event_date_enddate):
     """
