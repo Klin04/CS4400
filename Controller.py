@@ -909,24 +909,26 @@ class Controller():
 
 
     def deleteSite(self):
-        Site = None
-        try:
-            Site = self.MainWindow.AdministratorManageTransit.tableWidget.selectionModel().selectedRows()[0]
-        except:
+        Site = self.MainWindow.AdministratorManageSite.tableWidget.selectionModel().selectedRows()
+        if len(Site) == 0:
             return QtWidgets.QMessageBox.warning(self.MainWindow, "Haven't selected a site",
                                                  "Please select a site first", QtWidgets.QMessageBox.Ok)
-        Sitename = self.MainWindow.AdministratorManageTransit.tableWidget.item(Site.row(), 0).text()
+        Site = self.MainWindow.AdministratorManageSite.tableWidget.selectionModel().selectedRows()[0]
+        Sitename = self.MainWindow.AdministratorManageSite.tableWidget.item(Site.row(), 0).text()
         DataBaseManager.AdminDeletesSite(Sitename)
         self.filterSites()
 
     def showAdministratorEditSite(self):
+        Site = self.MainWindow.AdministratorManageSite.tableWidget.selectionModel().selectedRows()
+        if len(Site) == 0:
+            return QtWidgets.QMessageBox.warning(self.MainWindow, "Haven't selected a site",
+                                                 "Please select a site first", QtWidgets.QMessageBox.Ok)
         Site = self.MainWindow.AdministratorManageSite.tableWidget.selectionModel().selectedRows()[0]
         Sitename = self.MainWindow.AdministratorManageSite.tableWidget.item(Site.row(), 0).text()
         self.MainWindow.close()
         self.MainWindow = MainWindow()
         self.MainWindow.startAdministratorEditSite()
         self.MainWindow.AdministratorEditSite.pushButton.clicked.connect(self.showAdministratorManageSite)
-        self.MainWindow.AdministratorEditSite.pushButton_2.clicked.connect(lambda : self.editSite(Sitename))
         allManagers = DataBaseManager.GetCurrentSiteManagerAndAllUnAssignedManagers(Sitename)
         managerNames = []
         for manager in allManagers:
@@ -1888,9 +1890,9 @@ class Controller():
         self.MainWindow.VisitorTransitDetail.pushButton_2.clicked.connect(self.LogVisitorTransit)
         self.MainWindow.VisitorTransitDetail.comboBox.addItems(['All', 'MARTA', 'Bus', 'Bike'])
         self.MainWindow.VisitorTransitDetail.dateEdit.setDate(QtCore.QDate.currentDate())
-        self.MainWindow.VisitorVisitHistory.tableWidget.setSelectionMode(QtWidgets.QAbstractItemView.SingleSelection)
-        self.MainWindow.VisitorVisitHistory.tableWidget.setSelectionBehavior(QtWidgets.QAbstractItemView.SelectRows)
-        self.MainWindow.VisitorVisitHistory.comboxBox.currentTextChanged.connect(self.GetVisitorTransitDetail)
+        self.MainWindow.VisitorTransitDetail.tableWidget.setSelectionMode(QtWidgets.QAbstractItemView.SingleSelection)
+        self.MainWindow.VisitorTransitDetail.tableWidget.setSelectionBehavior(QtWidgets.QAbstractItemView.SelectRows)
+        self.MainWindow.VisitorTransitDetail.comboxBox.currentTextChanged.connect(self.GetVisitorTransitDetail)
         tableData = DataBaseManager.fetchVisitorTransitDetail()
         # if self.user == 'User':
         #     self.MainWindow.VisitorTransitDetail.pushButton.clicked.connect(self.showUserFunctionality)
@@ -1994,7 +1996,15 @@ class Controller():
         Event = setNone(Event)
         if Site == 'All':
             Site = None
-
+        tableData = DataBaseManager.GetVisitorVisitHistory(self.username, Event, Site, StartDate, EndDate)
+        self.MainWindow.VisitorVisitHistory.tableWidget.setSortingEnabled(False)
+        for i in range(len(tableData)):
+            self.MainWindow.VisitorVisitHistory.tableWidget.insertRow(i)
+            for column, key in enumerate(tableData[i].keys()):
+                newItem = QtWidgets.QTableWidgetItem()
+                newItem.setText(str(tableData[i][key]))
+                self.MainWindow.VisitorVisitHistory.tableWidget.setItem(i, column, newItem)
+        self.MainWindow.VisitorVisitHistory.tableWidget.setSortingEnabled(True)
 
 
 
