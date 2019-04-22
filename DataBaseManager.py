@@ -879,9 +879,9 @@ def GetAllAdministratorManageUserInformationFilterByStatus_EmpType_Username(user
     with mydb as mycursor:
         # first get ALL result
         mycursor.execute(
-            "select temp.username as usernames, count(*) as email_count, temp.user_status, temp.erole as UserTypes from emails, "
-            "(select users.username as username, user_status, erole from users, employees "
-            "where employees.username = users.username) as temp where emails.username = temp.username "
+            "select temp.username as usernames, count(*) as email_count, temp.user_status, temp.erole as UserTypes, temp.is_visitor from emails, "
+            "(select users.username as username, user_status, erole, is_visitor from users, employees "
+            "where employees.username = users.username union select users.username as username, user_status, 'No Role' as erole, is_visitor from users) as temp where emails.username = temp.username "
             "group by usernames")
         all_result = mycursor.fetchall()
 
@@ -890,7 +890,7 @@ def GetAllAdministratorManageUserInformationFilterByStatus_EmpType_Username(user
             if employee_type == 'Staff':
                 mycursor.execute(
                     "select temp.username as usernames, count(*) as email_count, temp.user_status, "
-                    "temp.erole as UserTypes from emails, (select users.username as username, user_status, erole from users, "
+                    "temp.erole as UserTypes, temp.is_visitor from emails, (select users.username as username, user_status, erole is_visitor from users, "
                     "employees where employees.username = users.username) as temp "
                     "where emails.username = temp.username and temp.erole = 'Staff' group by usernames")
                 filtered_result = mycursor.fetchall()
@@ -898,38 +898,38 @@ def GetAllAdministratorManageUserInformationFilterByStatus_EmpType_Username(user
             elif employee_type == 'Manager':
                 mycursor.execute(
                     "select temp.username as usernames, count(*) as email_count, temp.user_status, "
-                    "temp.erole as UserTypes from emails, (select users.username as username, user_status, erole from users, "
+                    "temp.erole as UserTypes, temp.is_visitor from emails, (select users.username as username, user_status, erole is_visitor from users, "
                     "employees where employees.username = users.username) as temp "
                     "where emails.username = temp.username and temp.erole = 'Manager' group by usernames")
                 filtered_result = mycursor.fetchall()
                 all_result = [i for n, i in enumerate(all_result) if i in filtered_result]
             elif employee_type == 'User':
                 mycursor.execute(
-                    "select temps.username as usernames, count(*) as email_count, 'User' as UserTypes, temps.user_status from emails, "
-                    "(SELECT username , user_status from users where is_visitor = 0) as temps "
+                    "select temps.username as usernames, count(*) as email_count, 'User' as UserTypes, temps.user_status, temp.is_visitor from emails, "
+                    "(SELECT username , user_status, is_visitor from users where is_visitor = 0) as temps "
                     "where emails.username = temps.username group by usernames")
                 filtered_result = mycursor.fetchall()
                 all_result = [i for n, i in enumerate(all_result) if i in filtered_result]
             elif employee_type == 'Visitor':
                 mycursor.execute(
-                    "select temps.username as usernames, count(*) as email_count, 'Visitor' as UserTypes, temps.user_status from emails, "
-                    "(SELECT username , user_status from users where is_visitor = 1) as temps "
+                    "select temps.username as usernames, count(*) as email_count, 'Visitor' as UserTypes, temps.user_status, temp.is_visitor from emails, "
+                    "(SELECT username , user_status, is_visitor from users where is_visitor = 1) as temps "
                     "where emails.username = temps.username group by usernames")
                 filtered_result = mycursor.fetchall()
                 all_result = [i for n, i in enumerate(all_result) if i in filtered_result]
         if user_status is not None:
             mycursor.execute(
                 "select temp.username as usernames, count(*) as email_count, temp.user_status, "
-                "temp.erole as UserTypes from emails, (select users.username as username, user_status, erole from users, "
-                "employees where employees.username = users.username) as temp "
+                "temp.erole as UserTypes, temp.is_visitor from emails, (select users.username as username, user_status, erole, is_visitor from users, "
+                "employees where employees.username = users.username union select users.username as username, user_status, 'No Role' as erole, is_visitor from users) as temp "
                 "where emails.username = temp.username and temp.user_status = %s group by usernames", user_status)
             filtered_result = mycursor.fetchall()
             all_result = [i for n, i in enumerate(all_result) if i in filtered_result]
         if username is not None:
             mycursor.execute(
                 "select temp.username as usernames, count(*) as email_count, temp.user_status, "
-                "temp.erole as UserTypes from emails, (select users.username as username, user_status, erole from users, "
-                "employees where employees.username = users.username) as temp "
+                "temp.erole as UserTypes, temp.is_visitor from emails, (select users.username as username, user_status, erole, is_visitor from users, "
+                "employees where employees.username = users.username union select users.username as username, user_status, 'No Role' as erole, is_visitor from users) as temp "
                 "where emails.username = temp.username and temp.username = %s group by usernames", username)
             filtered_result = mycursor.fetchall()
             all_result = [i for n, i in enumerate(all_result) if i in filtered_result]
