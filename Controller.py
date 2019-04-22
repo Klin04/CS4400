@@ -812,8 +812,8 @@ class Controller():
 
     def declineUsers(self):
         User = self.MainWindow.AdministratorManageUser.tableWidget.selectionModel().selectedRows()[0]
-        Username = self.MainWindow.AdministratorManageUser.tableWidget.item(User.row(), 0)
-        Status = self.MainWindow.AdministratorManageUser.tableWidget.item(User.row(), 3)
+        Username = self.MainWindow.AdministratorManageUser.tableWidget.item(User.row(), 0).text()
+        Status = self.MainWindow.AdministratorManageUser.tableWidget.item(User.row(), 3).text()
         if Status == 'Approved':
             return QtWidgets.QMessageBox.warning(self.MainWindow, "User already approved",
                                                  "You cannot decline an approved user", QtWidgets.QMessageBox.Ok)
