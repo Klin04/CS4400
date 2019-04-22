@@ -1448,19 +1448,19 @@ def VistorExploreEvent(username, name, keyword, sitename, startdate, endate, vis
             all_result = [i for n, i in enumerate(all_result) if i in filtered_result]
         return all_result
 
-# def VisitorEventDetail(sitename, eventname, startDate):
-#     """
-#     screen 34
-#     :param sitename:
-#     :param eventname:
-#     :param startDate:
-#     :return:
-#     """
-#     with mydb as mycursor:
-#         mycursor.execute(
-#             "SELECT event_name, sitename, startdate, endate, ticket_price, tickets_remainig, total_visit, "
-#             "event_description FROM screen_33 where sitenames = %s, eventname = %s, startDate = %s", (sitename, eventname, startDate,))
-#         return mycursor.fetchone()
+def VisitorEventDetail(sitename, eventname, startDate):
+    """
+    screen 34
+    :param sitename:
+    :param eventname:
+    :param startDate:
+    :return:
+    """
+    with mydb as mycursor:
+        mycursor.execute(
+            "SELECT event_name, sitename, startdate, endate, ticket_price, tickets_remainig, total_visit, "
+            "event_description FROM screen_33 where sitenames = %s, eventname = %s, startDate = %s", (sitename, eventname, startDate,))
+        return mycursor.fetchone()
 
 def VisitorEventLogVisit(visit_event_date, visit_event_sitename, visit_event_startdate,visit_event_name,visit_event_username):
     """
