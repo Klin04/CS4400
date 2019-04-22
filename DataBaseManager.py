@@ -1168,18 +1168,13 @@ def GetAllStaffByFilterBySite_Fname_Lname_StartDate_EndDate(sitename, fname, lna
         if startdate is not None:
             mycursor.execute(
                 "SELECT fname, lname, event_shifts FROM alluser JOIN (SELECT COUNT(*) as event_shifts, employee_id "
-                "FROM assign_to where employee_id in (select employee_id from assign_to where startdate >= %s) "
-                "GROUP BY employee_id) emp ON emp.employee_id = alluser.employee_id", startdate)
+                "FROM assign_to where employee_id in (select employee_id from assign_to join "
+                "(select endate, sitename, event_name, startdate from site_events) cry on cry.sitename = assign_to.sitename"
+                "and cry.event_name = assign_to.event_name and cry.startdate = assign_to.startdate where endate <= end)", startdate)
             filtered_result = mycursor.fetchall()
             all_result = [i for n, i in enumerate(all_result) if i in filtered_result]
         # TODO: remember to implement filter by endate!!!!
-        # if endate is not None:
-        #     mycursor.execute(
-        #         "SELECT fname, lname, event_shifts FROM alluser JOIN (SELECT COUNT(*) as event_shifts, employee_id "
-        #         "FROM assign_to where employee_id in (select employee_id from assign_to where endate <= %s) "
-        #         "GROUP BY employee_id) emp ON emp.employee_id = alluser.employee_id", endate)
-        #     filtered_result = mycursor.fetchall()
-        #     all_result = [i for n, i in enumerate(all_result) if i in filtered_result]
+
         return all_result
 
 
@@ -1459,7 +1454,7 @@ def VisitorEventDetail(sitename, eventname, startDate):
     with mydb as mycursor:
         mycursor.execute(
             "SELECT event_name, sitename, startdate, endate, ticket_price, tickets_remainig, total_visit, "
-            "event_description FROM screen_33 where sitenames = %s, eventname = %s, startDate = %s", (sitename, eventname, startDate,))
+            "event_description FROM screen_33 where sitename = %s and event_name = %s and startDate = %s", (sitename, eventname, startDate,))
         return mycursor.fetchone()
 
 def VisitorEventLogVisit(visit_event_date, visit_event_sitename, visit_event_startdate,visit_event_name,visit_event_username):
