@@ -1163,7 +1163,7 @@ def GetAllStaffByFilterBySite_Fname_Lname_StartDate_EndDate(sitename, fname, lna
             mycursor.execute(
                 "SELECT fname, lname, event_shifts FROM alluser JOIN (SELECT COUNT(*) as event_shifts, employee_id "
                 "FROM assign_to where employee_id in (select employee_id from assign_to join "
-                "(select endate, sitename, event_name, startdate from site_events) cry on cry.sitename = assign_to.sitename"
+                "(select endate, sitename, event_name, startdate from site_events) cry on cry.sitename = assign_to.sitename "
                 "and cry.event_name = assign_to.event_name and cry.startdate = assign_to.startdate where endate <= end)", startdate)
             filtered_result = mycursor.fetchall()
             all_result = [i for n, i in enumerate(all_result) if i in filtered_result]
