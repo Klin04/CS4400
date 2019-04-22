@@ -383,7 +383,7 @@ class Controller():
                   "HI", "ID", "IL", "IN", "IA", "KS", "KY", "LA", "ME", "MD",
                   "MA", "MI", "MN", "MS", "MO", "MT", "NE", "NV", "NH", "NJ",
                   "NM", "NY", "NC", "ND", "OH", "OK", "OR", "PA", "RI", "SC",
-                  "SD", "TN", "TX", "UT", "VT", "VA", "WA", "WV", "WI", "WY"]
+                  "SD", "TN", "TX", "UT", "VT", "VA", "WA", "WV", "WI", "WY", "Other"]
         self.MainWindow.RegisterEmployeePage.comboBox_2.addItems(states)
         self.MainWindow.RegisterEmployeePage.comboBox.addItems(["Manager", "Staff"])
         self.MainWindow.RegisterEmployeePage.pushButton_3.clicked.connect(self.RegisterEmployee)
