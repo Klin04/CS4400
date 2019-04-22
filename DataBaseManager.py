@@ -1484,8 +1484,8 @@ def VisitorExploreSite(username, sitename, open_everyday, startdates, enddates, 
     with mydb as mycursor:
         # first get ALL result
         mycursor.execute(
-            "select visit_site_name, temps.event_count, temps.total_visits, count(visit_site_username) "
-            "as my_visit from visit_site, (select sitename, count(site_events.event_name) as event_count, "
+            "select visit_site_name, temps.event_count, temps.total_visits, case when count(visit_site_username) is null then 0 else count(visit_site_username) end as my_visit "
+            "from visit_site right join (select sitename, count(site_events.event_name) as event_count, "
             "temp.total_visit as total_visits from site_events, (select visit_site_name , count(visit_site_username) "
             "as total_visit from visit_site group by visit_site_name) as temp where sitename = visit_site_name "
             "group by sitename) as temps where visit_site_name = sitename and visit_site_username = %s "
@@ -1494,57 +1494,57 @@ def VisitorExploreSite(username, sitename, open_everyday, startdates, enddates, 
         # Start filtering if this filtering type is applied
         if sitename is not None:
             mycursor.execute(
-                "select visit_site_name, temps.event_count, temps.total_visits, count(visit_site_username) "
-                "as my_visit from visit_site, (select sitename, count(site_events.event_name) as event_count, "
+                "select visit_site_name, temps.event_count, temps.total_visits, case when count(visit_site_username) is null then 0 else count(visit_site_username) end as my_visit "
+                "from visit_site right join (select sitename, count(site_events.event_name) as event_count, "
                 "temp.total_visit as total_visits from site_events, (select visit_site_name , "
                 "count(visit_site_username) as total_visit from visit_site group by visit_site_name) as temp "
-                "where sitename = visit_site_name group by sitename) as temps where visit_site_name = sitename "
+                "where sitename = visit_site_name group by sitename) temps on visit_site_name = sitename "
                 "and visit_site_username = %s and visit_site_name = %s group by visit_site_name",
                 (username, sitename, ))
             filtered_result = mycursor.fetchall()
             all_result = [i for n, i in enumerate(all_result) if i in filtered_result]
         if open_everyday is not None:
             mycursor.execute(
-                "select visit_site_name, temps.event_count, temps.total_visits, count(visit_site_username) "
-                "as my_visit from visit_site, (select sitename, count(site_events.event_name) as event_count, "
+                "select visit_site_name, temps.event_count, temps.total_visits, case when count(visit_site_username) is null then 0 else count(visit_site_username) end "
+                "as my_visit from visit_site right join (select sitename, count(site_events.event_name) as event_count, "
                 "temp.total_visit as total_visits from site_events, (select visit_site_name , count(visit_site_username) "
                 "as total_visit from visit_site group by visit_site_name) as temp where sitename = visit_site_name "
                 "and sitename in (select sitename from sites where openeveryday = %s) group by sitename) "
-                "as temps where visit_site_name = sitename and visit_site_username = %s group by visit_site_name",
+                "temps on visit_site_name = sitename and visit_site_username = %s group by visit_site_name",
                 (open_everyday, username, ))
             filtered_result = mycursor.fetchall()
             all_result = [i for n, i in enumerate(all_result) if i in filtered_result]
         if startdates is not None and enddates is not None:
             mycursor.execute(
-                "select visit_site_name, temps.event_count, temps.total_visits, count(visit_site_username) "
-                "as my_visit from visit_site, (select sitename, count(site_events.event_name) as event_count, "
+                "select visit_site_name, temps.event_count, temps.total_visits, case when count(visit_site_username) is null then 0 else count(visit_site_username) end "
+                "as my_visit from visit_site right join (select sitename, count(site_events.event_name) as event_count, "
                 "temp.total_visit as total_visits from site_events, (select visit_site_name , count(visit_site_username) "
                 "as total_visit from visit_site group by visit_site_name) as temp where sitename = visit_site_name "
                 "and sitename in (select visit_site_name from visit_site where visit_event_date between %s "
-                "and %s) group by sitename) as temps where visit_site_name = sitename "
+                "and %s) group by sitename) temps on visit_site_name = sitename "
                 "and visit_site_username = %s group by visit_site_name",
                 (startdates, enddates, username, ))
             filtered_result = mycursor.fetchall()
             all_result = [i for n, i in enumerate(all_result) if i in filtered_result]
         if total_visit_low is not None and total_visit_high is not None:
             mycursor.execute(
-                "select visit_site_name, temps.event_count, temps.total_visits, count(visit_site_username) "
-                "as my_visit from visit_site, (select sitename, count(site_events.event_name) as event_count, "
+                "select visit_site_name, temps.event_count, temps.total_visits, case when count(visit_site_username) is null then 0 else count(visit_site_username) end "
+                "as my_visit from visit_site right join (select sitename, count(site_events.event_name) as event_count, "
                 "temp.total_visit as total_visits from site_events, (select visit_site_name , count(visit_site_username) "
                 "as total_visit from visit_site group by visit_site_name) as temp where sitename = visit_site_name "
-                "group by sitename) as temps where visit_site_name = sitename and visit_site_username = %s "
-                "and temps.total_visits between %s and %s group by visit_site_name",
+                "group by sitename) temps on visit_site_name = sitename and visit_site_username = %s "
+                "where temps.total_visits between %s and %s group by visit_site_name",
                 (username, total_visit_low, total_visit_high, ))
             filtered_result = mycursor.fetchall()
             all_result = [i for n, i in enumerate(all_result) if i in filtered_result]
         if event_count_low is not None and event_count_high is not None:
             mycursor.execute(
-                "select visit_site_name, temps.event_count, temps.total_visits, count(visit_site_username) "
-                "as my_visit from visit_site,  (select sitename, count(site_events.event_name) as event_count, "
+                "select visit_site_name, temps.event_count, temps.total_visits, case when count(visit_site_username) is null then 0 else count(visit_site_username) end "
+                "as my_visit from visit_site right join (select sitename, count(site_events.event_name) as event_count, "
                 "temp.total_visit as total_visits from site_events, (select visit_site_name , count(visit_site_username) "
                 "as total_visit from visit_site group by visit_site_name) as temp where sitename = visit_site_name "
-                "group by sitename) as temps where visit_site_name = sitename and visit_site_username = % "
-                "and temps.event_count between % and % group by visit_site_name",
+                "group by sitename) temps on visit_site_name = sitename and visit_site_username = %s "
+                "where temps.event_count between %s and %s group by visit_site_name",
                 (username, event_count_low, event_count_high, ))
             filtered_result = mycursor.fetchall()
             all_result = [i for n, i in enumerate(all_result) if i in filtered_result]
