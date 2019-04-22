@@ -1459,7 +1459,7 @@ def VisitorEventDetail(sitename, eventname, startDate):
     with mydb as mycursor:
         mycursor.execute(
             "SELECT event_name, sitename, startdate, endate, ticket_price, tickets_remainig, total_visit, "
-            "event_description FROM screen_33 where sitenames = %s, eventname = %s, startDate = %s", (sitename, eventname, startDate,))
+            "event_description FROM screen_33 where sitenames = %s and eventname = %s and startDate = %s", (sitename, eventname, startDate,))
         return mycursor.fetchone()
 
 def VisitorEventLogVisit(visit_event_date, visit_event_sitename, visit_event_startdate,visit_event_name,visit_event_username):
