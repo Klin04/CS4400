@@ -1275,7 +1275,7 @@ def GetDailyDetail(date):
             "GROUP BY visit_event_name , eachday) derived1, alluser where date = %s and employee_id in "
             "(select employee_id from assign_to where sitename = derived1.sitename and event_name = "
             "derived1.visit_event_name)", date)
-        return mycursor.fetchone()
+        return mycursor.fetchall()
 
 def StaffViewScheduleTableFilter(event_name, keyword, startdate, endate):
     """
