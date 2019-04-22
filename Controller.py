@@ -926,7 +926,6 @@ class Controller():
         self.MainWindow = MainWindow()
         self.MainWindow.startAdministratorEditSite()
         self.MainWindow.AdministratorEditSite.pushButton.clicked.connect(self.showAdministratorManageSite)
-        self.MainWindow.AdministratorEditSite.pushButton_2.clicked.connect(lambda : self.editSite(Sitename))
         allManagers = DataBaseManager.GetCurrentSiteManagerAndAllUnAssignedManagers(Sitename)
         managerNames = []
         for manager in allManagers:
