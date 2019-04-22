@@ -87,8 +87,8 @@ class Ui_Form(object):
         item = self.tableWidget.horizontalHeaderItem(1)
         item.setText(_translate("Form", "Email Count"))
         item = self.tableWidget.horizontalHeaderItem(2)
-        item.setText(_translate("Form", "User Type"))
-        item = self.tableWidget.horizontalHeaderItem(3)
         item.setText(_translate("Form", "Status"))
+        item = self.tableWidget.horizontalHeaderItem(3)
+        item.setText(_translate("Form", "User Type"))
 
 
