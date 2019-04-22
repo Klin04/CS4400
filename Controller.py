@@ -1564,6 +1564,17 @@ class Controller():
         self.MainWindow = MainWindow()
         self.MainWindow.startManagerDailyDetail()
         self.MainWindow.ManagerDailyDetail.pushButton.clicked.connect(self.showManagerSiteReport)
+        tableData = DataBaseManager.GetDailyDetail(Date)
+        self.MainWindow.ManagerDailyDetail.tableWidget.setSortingEnabled(False)
+        for i in range(len(tableData)):
+            self.MainWindow.ManagerDailyDetail.tableWidget.insertRow(i)
+            for column, key in enumerate(tableData[i].keys()):
+                newItem = QtWidgets.QTableWidgetItem()
+                newItem.setText(str(tableData[i][key]))
+                self.MainWindow.ManagerDailyDetail.tableWidget.setItem(i, column, newItem)
+            self.MainWindow.ManagerDailyDetail.tableWidget.setItem(i, 4, newItem)
+        self.MainWindow.ManagerDailyDetail.tableWidget.setSortingEnabled(True)
+
         # if self.user == 'User':
         #     self.MainWindow.ManagerDailyDetail.pushButton.clicked.connect(self.showUserFunctionality)
         # elif self.user == "Staff":
