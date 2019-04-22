@@ -19,7 +19,7 @@ def check_encrypted_password(password, hashed):
 mydb = pymysql.connect(
     host="localhost",
     user="root",
-    passwd="joseph1",
+    passwd="Lkj!19990424",
     database="project3",
     cursorclass=pymysql.cursors.DictCursor
 )
@@ -289,9 +289,13 @@ def GetManagersNotAssignedSite():
     """
     with mydb as mycursor:
         mycursor.execute("select fname, lname from users where username in "
-                         "(select distinct username from employees where erole = 'Manager' employee_id not in (select sitemanager_id from sites))")
+                         "(select distinct username from employees where erole = 'Manager' and employee_id not in (select sitemanager_id from sites))")
         return mycursor.fetchall()
 
+def GetEmployeeIdByFullName(fullname):
+    with mydb as mycursor:
+        mycursor.execute("select employee_id from employees where username in (select username from users where %s = concat(fname, ' ', lname))", fullname)
+        return mycursor.fetchone()
 
 def GetEmployeeInformationForManageProfile(username):
     """
@@ -1584,7 +1588,7 @@ def fetchVisitorSiteDetail(sitename):
     Screen 37
     """
     with mydb as mycursor:
-        mycursor.execute("select sitename, address, openeverday from sites where sitename = %s", sitename)
+        mycursor.execute("select sitename, address, openeveryday from sites where sitename = %s", sitename)
         return mycursor.fetchall()
 
 def log_visit_to_site(username, sitename):
