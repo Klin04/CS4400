@@ -1088,7 +1088,7 @@ def GetAllAvailibleStaffForNewEvent(start_date, end_date):
     :return:
     """
     with mydb as mycursor:
-        mycursor.execute("select fname, lname from users where username in (select username from employee "
+        mycursor.execute("select fname, lname from users where username in (select username from employees "
                          "where employee_id in (select distinct employee_id from assign_to where event_name in "
                          "(select event_name from staff_visitor_revenue where (startdate > %s or endate < %s))))",
                          (end_date, start_date))
@@ -1586,3 +1586,30 @@ def fetchVisitorSiteDetail(sitename):
     with mydb as mycursor:
         mycursor.execute("select sitename, zipcode, openeverday from sites where sitename = %s", sitename)
         return mycursor.fetchall()
+
+# def GetVisitorVisitHistory():
+#     with mydb as mycursor:
+#         # first get ALL result
+#         mycursor.execute(
+#             "select temp.visit_event_date, temp.visit_event_name, temp.visit_event_sitename,site_events.price from `project3`.`site_events`,
+# (select visit_event_date, visit_event_name, visit_event_sitename from `project3`.`visit_event`
+# where visit_event_username = usernames) as temp
+# where site_events.sitename = temp.visit_event_sitename and site_events.event_name = temp.visit_event_name
+# order by(CASE WHEN OrderByClause = 'date' then temp.visit_event_date
+# 	  WHEN OrderByClause = 'event_name' then temp.visit_event_name
+#       When OrderByClause = 'site' then temp.visit_event_sitename
+#       When OrderByClause = 'price' then (CAST(site_events.price AS UNSIGNED)) else temp.visit_event_date", (sitename, sitename))
+#         all_result = mycursor.fetchall()
+#         # Start filtering if this filtering type is applied
+#         if sitename is not None:
+#             mycursor.execute(
+#                 "select temp.connect_route, temp.connect_type, price, temp.counts from transits, "
+#                 "(select connect_route , connect_type , count(*) as counts from connect where connect_route in "
+#                 "(select connect_route from connect where connect_name = %s ) and connect_type in "
+#                 "(select connect_type from connect where connect_name = %s) group by connect_route , connect_type) "
+#                 "as temp where transits.transit_type = temp.connect_type and transits.transit_route = "
+#                 "temp.connect_route and temp.connect_type = %s",
+#                 (sitename, sitename, TransportType))
+#             filtered_result = mycursor.fetchall()
+#             all_result = [i for n, i in enumerate(all_result) if i in filtered_result]
+#         return all_result
