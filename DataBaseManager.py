@@ -1319,18 +1319,21 @@ def StaffViewScheduleTableFilter(event_name, keyword, startdate, endate):
             all_result = [i for n, i in enumerate(all_result) if i in filtered_result]
         return all_result
 
-# def StaffEventDetail():
-#     with mydb as mycursor:
-#         # first get ALL result
-#         mycursor.execute(
-#             "SELECT DISTINCT staff_visitor_revenue.event_name, staff_visitor_revenue.sitename, startdate, "
-#             "endate, duration, revenue / total_visit AS price, capacity, event_description, fname, lname "
-#             "FROM staff_visitor_revenue JOIN (SELECT capacity, event_description, event_name, sitename, "
-#             "startdate FROM site_events) cap ON cap.event_name = staff_visitor_revenue.event_name "
-#             "AND cap.sitename = staff_visitor_revenue.sitename AND cap.startdate = staff_visitor_revenue.startdate "
-#             "JOIN (SELECT fname, lname, employee_id FROM alluser) name ON name.employee_id IN (SELECT employee_id "
-#             "FROM assign_to where sitename = %s) WHERE staff_visitor_revenue.sitename = %s")
-#         return mycursor.fetchall()
+def StaffEventDetail(sitename):
+    """
+    screen 32
+    :return:
+    """
+    with mydb as mycursor:
+        mycursor.execute(
+            "SELECT DISTINCT staff_visitor_revenue.event_name, staff_visitor_revenue.sitename, startdate, "
+            "endate, duration, revenue / total_visit AS price, capacity, event_description, fname, lname "
+            "FROM staff_visitor_revenue JOIN (SELECT capacity, event_description, event_name, sitename, "
+            "startdate FROM site_events) cap ON cap.event_name = staff_visitor_revenue.event_name "
+            "AND cap.sitename = staff_visitor_revenue.sitename AND cap.startdate = staff_visitor_revenue.startdate "
+            "JOIN (SELECT fname, lname, employee_id FROM alluser) name ON name.employee_id IN (SELECT employee_id "
+            "FROM assign_to where sitename = %s) WHERE staff_visitor_revenue.sitename = %s", (sitename, sitename,))
+        return mycursor.fetchone()
 
 def fetchVisitorTransitDetail(sitename, TransportType):
     """
