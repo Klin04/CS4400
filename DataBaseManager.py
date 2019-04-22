@@ -148,7 +148,7 @@ def GetAllSiteNameFromConnect():
 
 def GetAllRoutesWithSitename(sitename):
     with mydb as mycursor:
-        mycursor.execute("select transit_type, transit_route , price, count(*) as connected_sites from connect, "
+        mycursor.execute("select transit_route, transit_type , price, count(*) as connected_sites from connect, "
                          "(select transit_type, transit_route , price from transits where transit_type in (select "
                          "connect_type from connect where connect_name = %s) and transit_route in (select "
                          "connect_route from connect where connect_name =  %s)) as temp where "
@@ -159,7 +159,7 @@ def GetAllRoutesWithSitename(sitename):
 
 def GetAllRoutesWithTransportType(transit_type):
     with mydb as mycursor:
-        mycursor.execute("select transit_type, transit_route, price, count(*) as connected_sites from connect, "
+        mycursor.execute("select transit_route, transit_type, price, count(*) as connected_sites from connect, "
                          "(select transit_type, transit_route , price from transits "
                          "where transit_type = %s) as temp where connect.connect_type = temp.transit_type "
                          "and connect.connect_route = temp.transit_route group by transit_type , transit_route",
@@ -169,7 +169,7 @@ def GetAllRoutesWithTransportType(transit_type):
 
 def GetAllRoutesWithPriceRange(low_price, high_price):
     with mydb as mycursor:
-        mycursor.execute("select transit_type, transit_route , price, count(*) as connected_sites from connect, "
+        mycursor.execute("select transit_route, transit_type, price, count(*) as connected_sites from connect, "
                          "(select transit_type, transit_route , price from transits where price "
                          ">= %s And price <= %s) as temp where connect.connect_type = temp.transit_type "
                          "and connect.connect_route = temp.transit_route group by transit_type , transit_route",
@@ -179,7 +179,7 @@ def GetAllRoutesWithPriceRange(low_price, high_price):
 
 def GetAllRoutes():
     with mydb as mycursor:
-        mycursor.execute("select transit_type, transit_route , price, count(*) as connected_sites from connect, "
+        mycursor.execute("select transit_route, transit_type, price, count(*) as connected_sites from connect, "
                          "(select transit_type, transit_route , price from transits) as temp "
                          "where connect.connect_type = temp.transit_type "
                          "and connect.connect_route = temp.transit_route "
