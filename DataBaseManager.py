@@ -1446,6 +1446,23 @@ def VisitorEventDetail(sitename, eventname, startDate):
             "event_description FROM screen_33 where sitenames = %s, eventname = %s, startDate = %s", (sitename, eventname, startDate,))
         return mycursor.fetchone()
 
+def VisitorEventLogVisit(visit_event_date, visit_event_sitename, visit_event_startdate,visit_event_name,visit_event_username):
+    """
+    screen 34 log visit
+    :param visit_event_date:
+    :param visit_event_sitename:
+    :param visit_event_startdate:
+    :param visit_event_name:
+    :param visit_event_username:
+    :return:
+    """
+    with mydb as mycursor:
+        mycursor.execute(
+            "Insert into visit_event(visit_event_date, visit_event_sitename, visit_event_startdate, "
+            "visit_event_name,visit_event_username) values(%s, %s, %s, %s, %s)",
+            (visit_event_date, visit_event_sitename, visit_event_startdate,visit_event_name,visit_event_username,))
+
+
 def fetchVisitorTransitDetail(sitename, TransportType):
     """
     Screen 36
