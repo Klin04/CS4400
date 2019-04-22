@@ -1748,17 +1748,23 @@ class Controller():
             newItem.setText(str(tableData[i]['my_visit']))
             self.MainWindow.VisitorExploreEvent.tableWidget.setItem(i, 5, newItem)
         self.MainWindow.VisitorExploreEvent.tableWidget.setSortingEnabled(True)
+        self.MainWindow.VisitorExploreEvent.tableData = tableData;
 
     def showVisitorEventDetail(self):
         Event = self.MainWindow.VisitorExploreEvent.tableWidget.selectionModel().selectedRows()[0]
         EventDate = self.MainWindow.VisitorExploreEvent.dateEdit.date().toPyDate()
         SiteName = self.MainWindow.VisitorExploreEvent.tableWidget.item(Event.row(), 1).text()
         EventName = self.MainWindow.VisitorExploreEvent.tableWidget.item(Event.row(), 0).text()
+        for data in self.MainWindow.VisitorExploreEvent.tableData:
+            if data['event_name'] == EventName and data['siteName'] == SiteName:
+                EventDate = data['startDate']
         self.MainWindow.close()
         self.MainWindow = MainWindow()
         self.MainWindow.startVisitorEventDetail()
         self.MainWindow.VisitorEventDetail.pushButton.clicked.connect(self.showVisitorExploreEvent)
         self.MainWindow.VisitorEventDetail.pushButton_2.clicked.connect(self.LogVisit)
+        VisitorEventDetailDB = DataBaseManager.VisitorEventDetail(SiteName, EventName, EventDate)
+        print(VisitorEventDetailDB)
         # if self.user == 'User':
         #     self.MainWindow.VisitorEventDetail.pushButton.clicked.connect(self.showUserFunctionality)
         # elif self.user == "Staff":
@@ -1780,6 +1786,7 @@ class Controller():
         visitDate = self.MainWindow.VisitorEventDetail.dateEdit.date().toPyDate()
         EventName = self.MainWindow.VisitorEventDetail.textBrowser.toPlainText()
         Sitename = self.MainWindow.VisitorEventDetail.textBrowser_2.toPlainText()
+
 
 
     def showVisitorExploreSite(self):
