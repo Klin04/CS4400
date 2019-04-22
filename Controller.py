@@ -1618,6 +1618,25 @@ class Controller():
             self.MainWindow.StaffViewSchedule.pushButton_3.clicked.connect(self.showVisitorFunctionality)
         self.MainWindow.StaffViewSchedule.tableWidget.setSelectionMode(QtWidgets.QAbstractItemView.SingleSelection)
         self.MainWindow.StaffViewSchedule.tableWidget.setSelectionBehavior(QtWidgets.QAbstractItemView.SelectRows)
+        self.MainWindow.StaffViewSchedule.dateEdit.setDate(QtCore.QDate.currentDate())
+        self.MainWindow.StaffViewSchedule.dateEdit_2.setDate(QtCore.QDate.currentDate())
+
+    def filterStaffViewSchedule(self):
+        EventName = self.MainWindow.StaffViewSchedule.lineEdit.text()
+        DescriptionKeyword = self.MainWindow.StaffViewSchedule.lineEdit_2.text()
+        StartDate = self.MainWindow.StaffViewSchedule.dateEdit.date().toPyDate()
+        EndDate = self.MainWindow.StaffViewSchedule.dateEdit.date().toPyDate()
+        EventName = setNone(EventName)
+        DescriptionKeyword = setNone(DescriptionKeyword)
+        tableData = DataBaseManager.StaffViewScheduleTableFilter(EventName, DescriptionKeyword, StartDate, EndDate)
+        self.MainWindow.StaffViewSchedule.tableWidget.setSortingEnabled(False)
+        for i in range(len(tableData)):
+            self.MainWindow.StaffViewSchedule.tableWidget.insertRow(i)
+            for column, key in enumerate(tableData[i].keys()):
+                newItem = QtWidgets.QTableWidgetItem()
+                newItem.setText(str(tableData[i][key]))
+                self.MainWindow.StaffViewSchedule.tableWidget.setItem(i, column, newItem)
+        self.MainWindow.StaffViewSchedule.tableWidget.setSortingEnabled(True)
 
 
     def showStaffEventDetail(self):
