@@ -19,7 +19,7 @@ def check_encrypted_password(password, hashed):
 mydb = pymysql.connect(
     host="localhost",
     user="root",
-    passwd="Lkj!19990424",
+    passwd="joseph1",
     database="project3",
     cursorclass=pymysql.cursors.DictCursor
 )
@@ -1383,6 +1383,119 @@ def VistorExploreEvent(username, name, keyword, sitename, startdate, endate, vis
                 "visit_event_name from visit_event where visit_event_username = %s group by visit_event_startdate, "
                 "visit_event_sitename, visit_event_name) count_visit on count_visit.visit_event_startdate = "
                 "screen_33.startdate and count_visit.visit_event_name = screen_33.event_name "
+                "and count_visit.visit_event_sitename = screen_33.sitename where %s like concat('%', event_name, '%')", (username, name))
+            filtered_result = mycursor.fetchall()
+            all_result = [i for n, i in enumerate(all_result) if i in filtered_result]
+        if keyword is not None:
+            mycursor.execute(
+                "SELECT event_name, sitename, tickets_remainig, ticket_price, total_visit, event_description, my_visit "
+                "FROM screen_33 JOIN (select count(*) as my_visit, visit_event_startdate, visit_event_sitename, "
+                "visit_event_name from visit_event where visit_event_username = %s group by visit_event_startdate, "
+                "visit_event_sitename, visit_event_name) count_visit on count_visit.visit_event_startdate = "
+                "screen_33.startdate and count_visit.visit_event_name = screen_33.event_name "
+                "and count_visit.visit_event_sitename = screen_33.sitename where %s like concat('%', event_description, '%')", (username, keyword))
+            filtered_result = mycursor.fetchall()
+            all_result = [i for n, i in enumerate(all_result) if i in filtered_result]
+        if sitename is not None:
+            mycursor.execute(
+                "SELECT event_name, sitename, tickets_remainig, ticket_price, total_visit, event_description, my_visit "
+                "FROM screen_33 JOIN (select count(*) as my_visit, visit_event_startdate, visit_event_sitename, "
+                "visit_event_name from visit_event where visit_event_username = %s group by visit_event_startdate, "
+                "visit_event_sitename, visit_event_name) count_visit on count_visit.visit_event_startdate = "
+                "screen_33.startdate and count_visit.visit_event_name = screen_33.event_name "
+                "and count_visit.visit_event_sitename = screen_33.sitename where sitename = %s", (username, sitename))
+            filtered_result = mycursor.fetchall()
+            all_result = [i for n, i in enumerate(all_result) if i in filtered_result]
+        if startdate is not None:
+            mycursor.execute(
+                "SELECT event_name, sitename, tickets_remainig, ticket_price, total_visit, event_description, my_visit "
+                "FROM screen_33 JOIN (select count(*) as my_visit, visit_event_startdate, visit_event_sitename, "
+                "visit_event_name from visit_event where visit_event_username = %s group by visit_event_startdate, "
+                "visit_event_sitename, visit_event_name) count_visit on count_visit.visit_event_startdate = "
+                "screen_33.startdate and count_visit.visit_event_name = screen_33.event_name "
+                "and count_visit.visit_event_sitename = screen_33.sitename where startdate >= %s", (username, startdate))
+            filtered_result = mycursor.fetchall()
+            all_result = [i for n, i in enumerate(all_result) if i in filtered_result]
+        if endate is not None:
+            mycursor.execute(
+                "SELECT event_name, sitename, tickets_remainig, ticket_price, total_visit, event_description, my_visit "
+                "FROM screen_33 JOIN (select count(*) as my_visit, visit_event_startdate, visit_event_sitename, "
+                "visit_event_name from visit_event where visit_event_username = %s group by visit_event_startdate, "
+                "visit_event_sitename, visit_event_name) count_visit on count_visit.visit_event_startdate = "
+                "screen_33.startdate and count_visit.visit_event_name = screen_33.event_name "
+                "and count_visit.visit_event_sitename = screen_33.sitename where endate <= %s", (username, endate))
+            filtered_result = mycursor.fetchall()
+            all_result = [i for n, i in enumerate(all_result) if i in filtered_result]
+        if visit_range_low is not None and visit_range_high is not None:
+            mycursor.execute(
+                "SELECT event_name, sitename, tickets_remainig, ticket_price, total_visit, event_description, my_visit "
+                "FROM screen_33 JOIN (select count(*) as my_visit, visit_event_startdate, visit_event_sitename, "
+                "visit_event_name from visit_event where visit_event_username = %s group by visit_event_startdate, "
+                "visit_event_sitename, visit_event_name) count_visit on count_visit.visit_event_startdate = "
+                "screen_33.startdate and count_visit.visit_event_name = screen_33.event_name "
+                "and count_visit.visit_event_sitename = screen_33.sitename where total_visit between %s and %s", (username, visit_range_low, visit_range_high))
+            filtered_result = mycursor.fetchall()
+            all_result = [i for n, i in enumerate(all_result) if i in filtered_result]
+        if ticket_range_low is not None and ticket_range_high is not None:
+            mycursor.execute(
+                "SELECT event_name, sitename, tickets_remainig, ticket_price, total_visit, event_description, my_visit "
+                "FROM screen_33 JOIN (select count(*) as my_visit, visit_event_startdate, visit_event_sitename, "
+                "visit_event_name from visit_event where visit_event_username = %s group by visit_event_startdate, "
+                "visit_event_sitename, visit_event_name) count_visit on count_visit.visit_event_startdate = "
+                "screen_33.startdate and count_visit.visit_event_name = screen_33.event_name "
+                "and count_visit.visit_event_sitename = screen_33.sitename where ticket_price between %s and %s", (username, ticket_range_low, ticket_range_high))
+            filtered_result = mycursor.fetchall()
+            all_result = [i for n, i in enumerate(all_result) if i in filtered_result]
+        return all_result
+
+# def VisitorEventDetail(sitename, eventname, startDate):
+#     """
+#     screen 34
+#     :param sitename:
+#     :param eventname:
+#     :param startDate:
+#     :return:
+#     """
+#     with mydb as mycursor:
+#         mycursor.execute(
+#             "SELECT event_name, sitename, startdate, endate, ticket_price, tickets_remainig, total_visit, "
+#             "event_description FROM screen_33 where sitenames = %s, eventname = %s, startDate = %s", (sitename, eventname, startDate,))
+#         return mycursor.fetchone()
+
+def VisitorEventLogVisit(visit_event_date, visit_event_sitename, visit_event_startdate,visit_event_name,visit_event_username):
+    """
+    screen 34 log visit
+    :param visit_event_date:
+    :param visit_event_sitename:
+    :param visit_event_startdate:
+    :param visit_event_name:
+    :param visit_event_username:
+    :return:
+    """
+    with mydb as mycursor:
+        mycursor.execute(
+            "Insert into visit_event(visit_event_date, visit_event_sitename, visit_event_startdate, "
+            "visit_event_name,visit_event_username) values(%s, %s, %s, %s, %s)",
+            (visit_event_date, visit_event_sitename, visit_event_startdate,visit_event_name,visit_event_username,))
+
+def VisitorExploreEvent(username):
+    with mydb as mycursor:
+        # first get ALL result
+        mycursor.execute(
+            "select visit_site_name, temps.event_count, temps.total_visits, count(visit_site_username) as my_visit "
+            "from visit_site, (select sitename, count(site_events.event_name) as event_count, temp.total_visit "
+            "as total_visits from site_events, (select visit_site_name , count(visit_site_username) as total_visit "
+            "from visit_site group by visit_site_name) as temp where sitename = visit_site_name group by sitename) "
+            "as temps where visit_site_name = sitename and visit_site_username = %s group by visit_site_name", username)
+        all_result = mycursor.fetchall()
+        # Start filtering if this filtering type is applied
+        if name is not None:
+            mycursor.execute(
+                "SELECT event_name, sitename, tickets_remainig, ticket_price, total_visit, event_description, my_visit "
+                "FROM screen_33 JOIN (select count(*) as my_visit, visit_event_startdate, visit_event_sitename, "
+                "visit_event_name from visit_event where visit_event_username = %s group by visit_event_startdate, "
+                "visit_event_sitename, visit_event_name) count_visit on count_visit.visit_event_startdate = "
+                "screen_33.startdate and count_visit.visit_event_name = screen_33.event_name "
                 "and count_visit.visit_event_sitename = screen_33.sitename where %s like concat('%', event_name, '%')", name)
             filtered_result = mycursor.fetchall()
             all_result = [i for n, i in enumerate(all_result) if i in filtered_result]
@@ -1447,36 +1560,6 @@ def VistorExploreEvent(username, name, keyword, sitename, startdate, endate, vis
             filtered_result = mycursor.fetchall()
             all_result = [i for n, i in enumerate(all_result) if i in filtered_result]
         return all_result
-
-def VisitorEventDetail(sitename, eventname, startDate):
-    """
-    screen 34
-    :param sitename:
-    :param eventname:
-    :param startDate:
-    :return:
-    """
-    with mydb as mycursor:
-        mycursor.execute(
-            "SELECT event_name, sitename, startdate, endate, ticket_price, tickets_remainig, total_visit, "
-            "event_description FROM screen_33 where sitenames = %s, eventname = %s, startDate = %s", (sitename, eventname, startDate,))
-        return mycursor.fetchone()
-
-def VisitorEventLogVisit(visit_event_date, visit_event_sitename, visit_event_startdate,visit_event_name,visit_event_username):
-    """
-    screen 34 log visit
-    :param visit_event_date:
-    :param visit_event_sitename:
-    :param visit_event_startdate:
-    :param visit_event_name:
-    :param visit_event_username:
-    :return:
-    """
-    with mydb as mycursor:
-        mycursor.execute(
-            "Insert into visit_event(visit_event_date, visit_event_sitename, visit_event_startdate, "
-            "visit_event_name,visit_event_username) values(%s, %s, %s, %s, %s)",
-            (visit_event_date, visit_event_sitename, visit_event_startdate,visit_event_name,visit_event_username,))
 
 
 def fetchVisitorTransitDetail(sitename, TransportType):
