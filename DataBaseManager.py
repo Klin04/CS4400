@@ -1278,79 +1278,46 @@ def GetDailyDetail():
         all_result = mycursor.fetchall()
         return all_result
 
-# def StaffViewScheduleTableFilter():
-#     with mydb as mycursor:
-#         # first get ALL result
-#         mycursor.execute(
-#             "select event_name, sitename, startdate, endate, staff_count from staff_visitor_revenue where event_name = %s", event_name)
-#         all_result = mycursor.fetchall()
-#         # Start filtering if this filtering type is applied
-#         if startdate is not None and endate is not None:
-#             mycursor.execute(
-#                 "select * from (SELECT eachday AS date, COUNT(visit_event_name) AS event_count, staff_count, "
-#                 "total_visitor, revenue, sitename FROM (SELECT eachday, SUM(total_visit) AS total_visitor, "
-#                 "visit_event_name, staff_count, revenue, sitename FROM screen_29 JOIN (SELECT staff_count, event_name, "
-#                 "startdate, endate, revenue, sitename FROM staff_visitor_revenue) staff "
-#                 "ON visit_event_name = staff.event_name AND eachday >= staff.startdate AND eachday <= staff.endate "
-#                 "GROUP BY visit_event_name , eachday) derived GROUP BY visit_event_name , eachday) derived1 "
-#                 "where date >= %s and date <= %s and sitename = (select sitename from sites "
-#                 "where sitemanager_id = (select employee_id from employees where username = %s))", startdate, endate,
-#                 manager_username)
-#             filtered_result = mycursor.fetchall()
-#             all_result = [i for n, i in enumerate(all_result) if i in filtered_result]
-#         if event_count_low is not None and event_count_high is not None:
-#             mycursor.execute(
-#                 "select * from (SELECT eachday AS date, COUNT(visit_event_name) AS event_count, staff_count, "
-#                 "total_visitor, revenue, sitename FROM (SELECT eachday, SUM(total_visit) AS total_visitor, "
-#                 "visit_event_name, staff_count, revenue, sitename FROM screen_29 JOIN (SELECT staff_count, event_name, "
-#                 "startdate, endate, revenue, sitename FROM staff_visitor_revenue) staff "
-#                 "ON visit_event_name = staff.event_name AND eachday >= staff.startdate AND eachday <= staff.endate "
-#                 "GROUP BY visit_event_name , eachday) derived GROUP BY visit_event_name , eachday) derived1 "
-#                 "where event_count between %s and %s and sitename = (select sitename from sites "
-#                 "where sitemanager_id = (select employee_id from employees where username = %s))", event_count_low,
-#                 event_count_high, manager_username)
-#             filtered_result = mycursor.fetchall()
-#             all_result = [i for n, i in enumerate(all_result) if i in filtered_result]
-#         if staff_count_low is not None and staff_count_high is not None:
-#             mycursor.execute(
-#                 "select * from (SELECT eachday AS date, COUNT(visit_event_name) AS event_count, staff_count, "
-#                 "total_visitor, revenue, sitename FROM (SELECT eachday, SUM(total_visit) AS total_visitor, "
-#                 "visit_event_name, staff_count, revenue, sitename FROM screen_29 JOIN (SELECT staff_count, event_name, "
-#                 "startdate, endate, revenue, sitename FROM staff_visitor_revenue) staff "
-#                 "ON visit_event_name = staff.event_name AND eachday >= staff.startdate AND eachday <= staff.endate "
-#                 "GROUP BY visit_event_name , eachday) derived GROUP BY visit_event_name , eachday) derived1 "
-#                 "where staff_count between %s and %s and sitename = (select sitename from sites "
-#                 "where sitemanager_id = (select employee_id from employees where username = %s))", staff_count_low,
-#                 staff_count_high, manager_username)
-#             filtered_result = mycursor.fetchall()
-#             all_result = [i for n, i in enumerate(all_result) if i in filtered_result]
-#         if total_visitor_low is not None and total_visitor_high:
-#             mycursor.execute(
-#                 "select * from (SELECT eachday AS date, COUNT(visit_event_name) AS event_count, staff_count, "
-#                 "total_visitor, revenue, sitename FROM (SELECT eachday, SUM(total_visit) AS total_visitor, "
-#                 "visit_event_name, staff_count, revenue, sitename FROM screen_29 JOIN (SELECT staff_count, event_name, "
-#                 "startdate, endate, revenue, sitename FROM staff_visitor_revenue) staff "
-#                 "ON visit_event_name = staff.event_name AND eachday >= staff.startdate AND eachday <= staff.endate "
-#                 "GROUP BY visit_event_name , eachday) derived GROUP BY visit_event_name , eachday) derived1 "
-#                 "where total_visitor between %s and %s and sitename = (select sitename from sites "
-#                 "where sitemanager_id = (select employee_id from employees where username = %s))", total_visitor_low,
-#                 total_visitor_high, manager_username)
-#             filtered_result = mycursor.fetchall()
-#             all_result = [i for n, i in enumerate(all_result) if i in filtered_result]
-#         if revenue_low is not None and revenue_high is not None:
-#             mycursor.execute(
-#                 "select * from (SELECT eachday AS date, COUNT(visit_event_name) AS event_count, staff_count, "
-#                 "total_visitor, revenue, sitename FROM (SELECT eachday, SUM(total_visit) AS total_visitor, "
-#                 "visit_event_name, staff_count, revenue, sitename FROM screen_29 JOIN (SELECT staff_count, event_name, "
-#                 "startdate, endate, revenue, sitename FROM staff_visitor_revenue) staff "
-#                 "ON visit_event_name = staff.event_name AND eachday >= staff.startdate AND eachday <= staff.endate "
-#                 "GROUP BY visit_event_name , eachday) derived GROUP BY visit_event_name , eachday) derived1 "
-#                 "where revenue between %s and %s and sitename = (select sitename from sites "
-#                 "where sitemanager_id = (select employee_id from employees where username = %s))", revenue_low,
-#                 revenue_high, manager_username)
-#             filtered_result = mycursor.fetchall()
-#             all_result = [i for n, i in enumerate(all_result) if i in filtered_result]
-#         return all_result
+def StaffViewScheduleTableFilter(event_name, keyword, startdate, endate):
+    """
+    screen 31
+    :param event_name:
+    :param keyword:
+    :param startdate:
+    :param endate:
+    :return:
+    """
+    with mydb as mycursor:
+        # first get ALL result
+        mycursor.execute(
+            "select event_name, sitename, startdate, endate, staff_count from staff_visitor_revenue")
+        all_result = mycursor.fetchall()
+        # Start filtering if this filtering type is applied
+        if event_name is not None:
+            mycursor.execute(
+                "select event_name, sitename, startdate, endate, staff_count from staff_visitor_revenue where event_name = %s",
+                event_name)
+            filtered_result = mycursor.fetchall()
+            all_result = [i for n, i in enumerate(all_result) if i in filtered_result]
+        if keyword is not None:
+            mycursor.execute(
+                "select event_name, sitename, startdate, endate, staff_count from staff_visitor_revenue "
+                "where keyword like concat('%', keyword, '%')", keyword)
+            filtered_result = mycursor.fetchall()
+            all_result = [i for n, i in enumerate(all_result) if i in filtered_result]
+        if startdate is not None:
+            mycursor.execute(
+                "select event_name, sitename, startdate, endate, staff_count from staff_visitor_revenue "
+                "where startdate >= %s", startdate)
+            filtered_result = mycursor.fetchall()
+            all_result = [i for n, i in enumerate(all_result) if i in filtered_result]
+        if endate is not None:
+            mycursor.execute(
+                "select event_name, sitename, startdate, endate, staff_count from staff_visitor_revenue "
+                "where endate >= %s", endate)
+            filtered_result = mycursor.fetchall()
+            all_result = [i for n, i in enumerate(all_result) if i in filtered_result]
+        return all_result
 
 def fetchVisitorTransitDetail(sitename, TransportType):
     """
