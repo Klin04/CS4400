@@ -644,7 +644,7 @@ class Controller():
 
     def LogUserTransit(self):
         Route = self.MainWindow.UserTakeTransit.tableWidget.selectionModel().selectedRows()[0]
-        TransitDate = self.MainWindow.UserTakeTransit.dateEdit.date()
+        TransitDate = self.MainWindow.UserTakeTransit.dateEdit.date().toPyDate()
         TakeType = self.MainWindow.UserTakeTransit.tableWidget.item(Route.row(), 1).text()
         TakeRoute = self.MainWindow.UserTakeTransit.tableWidget.item(Route.row(), 0).text()
         DataBaseManager.UserTakeTransitLogNewTransit(self.username, TakeType, TakeRoute, TransitDate)
