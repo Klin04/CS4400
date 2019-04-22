@@ -1367,8 +1367,8 @@ class Controller():
         self.MainWindow.ManagerCreateEvent.dateEdit_2.setDate(QtCore.QDate.currentDate())
         self.MainWindow.ManagerCreateEvent.availableStaffs = []
         self.MainWindow.ManagerCreateEvent.listWidget.addItems(self.MainWindow.ManagerCreateEvent.availableStaffs)
-        self.MainWindow.ManagerCreateEvent.dateEdit.dateChanged.connect(self.getAvailableStaffs())
-        self.MainWindow.ManagerCreateEvent.dateEdit_2.dateChanged.connect(self.getAvailableStaffs())
+        self.MainWindow.ManagerCreateEvent.dateEdit.dateChanged.connect(self.getAvailableStaffs)
+        self.MainWindow.ManagerCreateEvent.dateEdit_2.dateChanged.connect(self.getAvailableStaffs)
         # if self.user == 'User':
         #     self.MainWindow.ManagerCreateEvent.pushButton.clicked.connect(self.showUserFunctionality)
         # elif self.user == "Staff":
@@ -1391,6 +1391,7 @@ class Controller():
         endDate = self.MainWindow.ManagerCreateEvent.dateEdit_2.date().toPyDate()
         allAvailableStaffs = DataBaseManager.GetAllAvailibleStaffForNewEvent(startDate, endDate)
         self.MainWindow.ManagerCreateEvent.availableStaffs = []
+        self.MainWindow.ManagerCreateEvent.listWidget.clear()
         for staff in allAvailableStaffs:
             self.MainWindow.ManagerCreateEvent.availableStaffs.append(staff['fname'] + ' ' + staff['lname'])
         self.MainWindow.ManagerCreateEvent.listWidget.addItems(self.MainWindow.ManagerCreateEvent.availableStaffs)
