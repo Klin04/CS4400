@@ -1962,7 +1962,7 @@ class Controller():
         if len(tableData):
             self.MainWindow.VisitorSiteDetail.textBrowser.setText(tableData[0]['sitename'])
             self.MainWindow.VisitorSiteDetail.textBrowser_2.setText(str(tableData[0]['openeveryday']))
-            self.MainWindow.VisitorSiteDetail.textBrowser_3.setTExt(str(tableData[0]['address']))
+            self.MainWindow.VisitorSiteDetail.textBrowser_3.setText(str(tableData[0]['address']))
         # if self.user == 'User':
         #     self.MainWindow.VisitorSiteDetail.pushButton.clicked.connect(self.showUserFunctionality)
         # elif self.user == "Staff":
