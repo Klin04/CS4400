@@ -1289,8 +1289,8 @@ class Controller():
         self.MainWindow = MainWindow()
         self.MainWindow.startManagerViewEditEvent()
         self.MainWindow.ManagerViewEditEvent.pushButton_3.clicked.connect(self.showManagerManageEvent)
-        self.MainWindow.ManagerViewEditEvent.label_6.setText(EventName)
-        self.MainWindow.ManagerViewEditEvent.label_5.setText(str(Price))
+        self.MainWindow.ManagerViewEditEvent.label_3.setText(EventName)
+        self.MainWindow.ManagerViewEditEvent.label_4.setText(str(Price))
         self.MainWindow.ManagerViewEditEvent.label_7.setText(str(startDate))
         self.MainWindow.ManagerViewEditEvent.label_9.setText(str(EndDate))
         allStaff = DataBaseManager.StaffAssignedAndAvailibleStaffForEvent(EventName, SiteName, startDate, EndDate)
@@ -1303,8 +1303,9 @@ class Controller():
         for i in range(self.MainWindow.ManagerViewEditEvent.listWidget.count()):
             if self.MainWindow.ManagerViewEditEvent.listWidget.item(i).text() in allAssignedStaffNames:
                 self.MainWindow.ManagerViewEditEvent.listWidget.item(i).setSelected(True)
-        tableData = DataBaseManager.GetEventViewEditEventByFilterByVisitRange_RevenueRange(Name, Price, None, None, None, None)
-        print(tableData)
+        tableData = DataBaseManager.GetEventViewEditEventByFilterByVisitRange_RevenueRange(EventName, Price, None, None, None, None)
+        self.MainWindow.ManagerViewEditEvent.label_13.setText(str(tableData[0]['capacity']))
+        self.MainWindow.ManagerViewEditEvent.label_11.setText(str(tableData[0]['minstaffReq']))
         # if self.user == 'User':
         #     self.MainWindow.ManagerViewEditEvent.pushButton_3.clicked.connect(self.showUserFunctionality)
         # elif self.user == "Staff":
