@@ -644,7 +644,7 @@ class Controller():
 
     def LogUserTransit(self):
         Route = self.MainWindow.UserTakeTransit.tableWidget.selectionModel().selectedRows()[0]
-        TransitDate = self.MainWindow.UserTakeTransit.dateEdit.date()
+        TransitDate = self.MainWindow.UserTakeTransit.dateEdit.date().toPyDate()
         TakeType = self.MainWindow.UserTakeTransit.tableWidget.item(Route.row(), 1).text()
         TakeRoute = self.MainWindow.UserTakeTransit.tableWidget.item(Route.row(), 0).text()
         DataBaseManager.UserTakeTransitLogNewTransit(self.username, TakeType, TakeRoute, TransitDate)
@@ -807,17 +807,19 @@ class Controller():
 
     def approveUsers(self):
         User = self.MainWindow.AdministratorManageUser.tableWidget.selectionModel().selectedRows()[0]
-        Username = self.MainWindow.AdministratorManageUser.tableWidget.item(User.row(), 0)
+        Username = self.MainWindow.AdministratorManageUser.tableWidget.item(User.row(), 0).text()
         DataBaseManager.ApproveUserStatus(Username)
+        self.filterUser()
 
     def declineUsers(self):
         User = self.MainWindow.AdministratorManageUser.tableWidget.selectionModel().selectedRows()[0]
-        Username = self.MainWindow.AdministratorManageUser.tableWidget.item(User.row(), 0)
-        Status = self.MainWindow.AdministratorManageUser.tableWidget.item(User.row(), 3)
+        Username = self.MainWindow.AdministratorManageUser.tableWidget.item(User.row(), 0).text()
+        Status = self.MainWindow.AdministratorManageUser.tableWidget.item(User.row(), 2).text()
         if Status == 'Approved':
             return QtWidgets.QMessageBox.warning(self.MainWindow, "User already approved",
                                                  "You cannot decline an approved user", QtWidgets.QMessageBox.Ok)
         DataBaseManager.DeclineUserStatus(Username)
+        self.filterUser()
 
     def filterUsers(self):
         self.MainWindow.AdministratorManageUser.tableWidget.setRowCount(0)
@@ -1287,7 +1289,7 @@ class Controller():
         self.MainWindow = MainWindow()
         self.MainWindow.startManagerViewEditEvent()
         self.MainWindow.ManagerViewEditEvent.pushButton_3.clicked.connect(self.showManagerManageEvent)
-        self.MainWindow.ManagerViewEditEvent.label_3.setText(EventName)
+        self.MainWindow.ManagerViewEditEvent.label_6.setText(EventName)
         self.MainWindow.ManagerViewEditEvent.label_5.setText(str(Price))
         self.MainWindow.ManagerViewEditEvent.label_7.setText(str(startDate))
         self.MainWindow.ManagerViewEditEvent.label_9.setText(str(EndDate))
@@ -1301,6 +1303,8 @@ class Controller():
         for i in range(self.MainWindow.ManagerViewEditEvent.listWidget.count()):
             if self.MainWindow.ManagerViewEditEvent.listWidget.item(i).text() in allAssignedStaffNames:
                 self.MainWindow.ManagerViewEditEvent.listWidget.item(i).setSelected(True)
+        tableData = DataBaseManager.GetEventViewEditEventByFilterByVisitRange_RevenueRange(Name, Price, None, None, None, None)
+        print(tableData)
         # if self.user == 'User':
         #     self.MainWindow.ManagerViewEditEvent.pushButton_3.clicked.connect(self.showUserFunctionality)
         # elif self.user == "Staff":
@@ -1826,6 +1830,8 @@ class Controller():
             self.MainWindow.VisitorExploreSite.pushButton_4.clicked.connect(self.showVisitorFunctionality)
         self.MainWindow.VisitorExploreSite.dateEdit.setDate(QtCore.QDate.currentDate())
         self.MainWindow.VisitorExploreSite.dateEdit_2.setDate(QtCore.QDate.currentDate())
+        self.MainWindow.VisitorExploreSite.tableWidget.setSelectionMode(QtWidgets.QAbstractItemView.SingleSelection)
+        self.MainWindow.VisitorExploreSite.tableWidget.setSelectionBehavior(QtWidgets.QAbstractItemView.SelectRows)
 
     def filterVisitorSites(self):
         Name = self.MainWindow.VisitorExploreSite.comboBox.currentText()
@@ -1868,6 +1874,8 @@ class Controller():
         self.MainWindow.VisitorTransitDetail.dateEdit.setDate(QtCore.QDate.currentDate())
         self.MainWindow.VisitorVisitHistory.tableWidget.setSelectionMode(QtWidgets.QAbstractItemView.SingleSelection)
         self.MainWindow.VisitorVisitHistory.tableWidget.setSelectionBehavior(QtWidgets.QAbstractItemView.SelectRows)
+        self.MainWindow.VisitorVisitHistory.comboxBox.currentTextChanged.connect(self.GetVisitorTransitDetail)
+        tableData = DataBaseManager.fetchVisitorTransitDetail()
         # if self.user == 'User':
         #     self.MainWindow.VisitorTransitDetail.pushButton.clicked.connect(self.showUserFunctionality)
         # elif self.user == "Staff":
@@ -1885,10 +1893,27 @@ class Controller():
         # elif self.user == 'Visitor':
         #     self.MainWindow.VisitorTransitDetail.pushButton.clicked.connect(self.showVisitorFunctionality)
 
+    def GetVisitorTransitDetail(self):
+        Site = self.MainWindow.VisitorTransitDetail.label_2.text()
+        TransportType = self.MainWindow.VisitorTransitDetail.comboBox.currentText()
+        tableData = DataBaseManager.fetchVisitorTransitDetail(Site, TransportType)
+        self.MainWindow.VisitorTransitDetail.tableWidget.setRowCount(0)
+        self.MainWindow.VisitorTransitDetail.tableWidget.setSortingEnabled(False)
+        for i in range(len(tableData)):
+            self.MainWindow.VisitorTransitDetail.tableWidget.insertRow(i)
+            for column, key in enumerate(tableData[i].keys()):
+                newItem = QtWidgets.QTableWidgetItem()
+                newItem.setText(str(tableData[i][key]))
+                self.MainWindow.VisitorTransitDetail.tableWidget.setItem(i, column, newItem)
+        self.MainWindow.VisitorTransitDetail.tableWidget.setSortingEnabled(True)
+
     def LogVisitorTransit(self):
         Site = self.MainWindow.VisitorTransitDetail.label_2.text()
         TransportType = self.MainWindow.VisitorTransitDetail.comboBox.currentText()
         TransitDate = self.MainWindow.VisitorTransitDetail.dateEdit.date().toPyDate()
+        Route = self.MainWindow.AdministratorManageUser.tableWidget.selectionModel().selectedRows()[0]
+        RouteName = self.MainWindow.AdministratorManageUser.tableWidget.item(Route.row(), 0).text()
+        TType = self.MainWindow.AdministratorManageUser.tableWidget.item(Route.row(), 1).text()
 
     def showVisitorSiteDetail(self):
         self.MainWindow.close()
