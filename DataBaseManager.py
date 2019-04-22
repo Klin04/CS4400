@@ -148,7 +148,7 @@ def GetAllSiteNameFromConnect():
 
 def GetAllRoutesWithSitename(sitename):
     with mydb as mycursor:
-        mycursor.execute("select transit_type, transit_route , price, count(*) as connected_sites from connect, "
+        mycursor.execute("select transit_route, transit_type , price, count(*) as connected_sites from connect, "
                          "(select transit_type, transit_route , price from transits where transit_type in (select "
                          "connect_type from connect where connect_name = %s) and transit_route in (select "
                          "connect_route from connect where connect_name =  %s)) as temp where "
@@ -159,7 +159,7 @@ def GetAllRoutesWithSitename(sitename):
 
 def GetAllRoutesWithTransportType(transit_type):
     with mydb as mycursor:
-        mycursor.execute("select transit_type, transit_route, price, count(*) as connected_sites from connect, "
+        mycursor.execute("select transit_route, transit_type, price, count(*) as connected_sites from connect, "
                          "(select transit_type, transit_route , price from transits "
                          "where transit_type = %s) as temp where connect.connect_type = temp.transit_type "
                          "and connect.connect_route = temp.transit_route group by transit_type , transit_route",
@@ -169,9 +169,9 @@ def GetAllRoutesWithTransportType(transit_type):
 
 def GetAllRoutesWithPriceRange(low_price, high_price):
     with mydb as mycursor:
-        mycursor.execute("select transit_type, transit_route , price, count(*) as connected_sites from connect, "
+        mycursor.execute("select transit_route, transit_type, price, count(*) as connected_sites from connect, "
                          "(select transit_type, transit_route , price from transits where price "
-                         "BETWEEN %s And %s) as temp where connect.connect_type = temp.transit_type "
+                         ">= %s And price <= %s) as temp where connect.connect_type = temp.transit_type "
                          "and connect.connect_route = temp.transit_route group by transit_type , transit_route",
                          (low_price, high_price,))
         return mycursor.fetchall()
@@ -179,7 +179,7 @@ def GetAllRoutesWithPriceRange(low_price, high_price):
 
 def GetAllRoutes():
     with mydb as mycursor:
-        mycursor.execute("select transit_type, transit_route , price, count(*) as connected_sites from connect, "
+        mycursor.execute("select transit_route, transit_type, price, count(*) as connected_sites from connect, "
                          "(select transit_type, transit_route , price from transits) as temp "
                          "where connect.connect_type = temp.transit_type "
                          "and connect.connect_route = temp.transit_route "
@@ -220,11 +220,19 @@ def GetCurrentSiteManagerAndAllUnAssignedManagers(sitename):
     """
     with mydb as mycursor:
         mycursor.execute(
-            "select distinct (fname, lname) as name from users where username in "
-            "(select distinct username from employees where employee_id in (select sitemanager_id from sites where sitename = %s)) "
-            "union (select username from employees where employee_id not in (select sitemanager_id from sites))",
+            "select fname, lname from users where username in "
+            "(select username from employees where employee_id in (select sitemanager_id from sites where sitename = %s) "
+            "union select username from employees where employee_id not in (select sitemanager_id from sites))",
             sitename)
         return mycursor.fetchall()
+
+
+def GetSiteManagerIdFromFname_Lname(fname, lname):
+    with mydb as mycursor:
+        mycursor.execute(
+            "select sitemanager_id from sites where fname = %s and lname = %s",
+            (fname, lname,))
+        return mycursor.fetchone()
 
 
 def UpdateSiteInformation(sitename, zipcode, address, openeveryday, sitemanager_id, new_sitename):
@@ -243,6 +251,19 @@ def UpdateSiteInformation(sitename, zipcode, address, openeveryday, sitemanager_
             "update sites SET zipcode = %s, address = %s, openeveryday = %s, sitemanager_id = %s WHERE sitename = %s",
             arguments)
         mycursor.execute("update sites set sitename = %s where sitename = %s", (new_sitename, sitename))
+
+
+def GetSiteInformationForEditSite(sitename):
+    """
+    screen 20
+    :param sitename:
+    :return:
+    """
+    with mydb as mycursor:
+        mycursor.execute(
+            "select zipcode, address, sitemanager_id, openeveryday from sites WHERE sitename = %s",
+            sitename)
+        return mycursor.fetchone()
 
 
 def GetManagersNotAssignedSite():
@@ -267,7 +288,9 @@ def GetEmployeeInformationForManageProfile(username):
         dict_fname_lname_IsVisitor = mycursor.fetchone()
         mycursor.execute("select employee_id, phone, address from employees where username = %s", username)
         dict_empId_phone_addr = mycursor.fetchone()
-        mycursor.execute("select sitename from sites where sitemanager_id in (select employee_id from employees where username = %s)", username)
+        mycursor.execute(
+            "select sitename from sites where sitemanager_id in (select employee_id from employees where username = %s)",
+            username)
         dict_sitename = mycursor.fetchone()
         return (dict_fname_lname_IsVisitor, dict_empId_phone_addr, dict_sitename)
 
@@ -390,6 +413,7 @@ def UpdateTransitDeleteAllSites(connect_type, connect_route):
 def GetAllSites():
     """
     returns all the distinct sitenames
+    also for screen 28 , 33
     :return:
     """
     with mydb as mycursor:
@@ -671,17 +695,22 @@ def StaffAssignedAndAvailibleStaffForEvent(event_name, sitename, start_date, end
     """
     with mydb as mycursor:
         mycursor.execute(
-            "select distinct (fname, lname) from ((select fname, lname from users where username in "
-            "(select username from employee where employee_id in (select employee_id from assign_to "
-            "where event_name = %s and sitename = %s and startdate = %s))) as temp"
-            "union (select fname, lname from users where username in (select username from employees "
-            "where employee_id not in (select employee_id, site_events.startdate, site_events.endate "
-            "from assign_to, site_events where assign_to.sitename = site_events.sitename "
-            "and assign_to.event_name = site_events.event_name and assign_to.sitename <> %s "
-            "and assign_to.event_name <> %s and (site_events.endate < %s or site_events.startdate > %s)))))",
+            "SELECT fname, lname FROM ((SELECT fname, lname FROM users WHERE username IN (SELECT username "
+            "FROM employees WHERE employee_id IN (SELECT employee_id FROM assign_to WHERE event_name = %s "
+            "AND sitename = %s AND startdate = %s))) AS temp) "
+            "UNION SELECT fname, lname "
+            "FROM users "
+            "WHERE username IN (SELECT username FROM employees WHERE employee_id NOT IN (SELECT employee_id "
+            "FROM assign_to, site_events WHERE assign_to.sitename = site_events.sitename "
+            "AND assign_to.event_name = site_events.event_name "
+            "AND assign_to.sitename <> %s "
+            "AND assign_to.event_name <> %s "
+            "AND (site_events.endate < %s "
+            "OR site_events.startdate > %s)))",
             (event_name, sitename, start_date, sitename, event_name, start_date, end_date,))
         all_result = mycursor.fetchall()
         return all_result
+
 
 def GetAssignedStaffsForEvent(event_name, sitename, start_date):
     """
@@ -694,7 +723,7 @@ def GetAssignedStaffsForEvent(event_name, sitename, start_date):
     """
     with mydb as mycursor:
         mycursor.execute(
-            "select distinct (fname, lname) from users where username in (select username from employee "
+            "select fname, lname from users where username in (select username from employees "
             "where employee_id in (select employee_id from assign_to WHERE event_name = %s and sitename = %s "
             "and startdate = %s))",
             (event_name, sitename, start_date,))
@@ -827,3 +856,542 @@ def GetUserTransitHistoryFilteredByTransportType_Route_StartDate_EndDate_Contain
             filtered_result = mycursor.fetchall()
             all_result = [i for n, i in enumerate(all_result) if i in filtered_result]
         return all_result
+
+
+def GetAllAdministratorManageUserInformationFilterByStatus_EmpType_Username(username, employee_type, user_status):
+    """
+    Fetch table for screen 18
+    :param username:
+    :param employee_type:
+    :param user_status:
+    :return: looks like this -> {usernames: "efw", email_count: "wef", temp.user_status: "ewe", UserTypes: "wf"}
+    """
+    with mydb as mycursor:
+        # first get ALL result
+        mycursor.execute(
+            "select temp.username as usernames, count(*) as email_count, temp.user_status, temp.erole as UserTypes from emails, "
+            "(select users.username as username, user_status, erole from users, employees "
+            "where employees.username = users.username) as temp where emails.username = temp.username "
+            "group by usernames")
+        all_result = mycursor.fetchall()
+
+        # Start filtering if this filtering type is applied
+        if employee_type is not None:
+            if employee_type == 'Staff':
+                mycursor.execute(
+                    "select temp.username as usernames, count(*) as email_count, temp.user_status, "
+                    "temp.erole as UserTypes from emails, (select users.username as username, user_status, erole from users, "
+                    "employees where employees.username = users.username) as temp "
+                    "where emails.username = temp.username and temp.erole = 'Staff' group by usernames")
+                filtered_result = mycursor.fetchall()
+                all_result = [i for n, i in enumerate(all_result) if i in filtered_result]
+            elif employee_type == 'Manager':
+                mycursor.execute(
+                    "select temp.username as usernames, count(*) as email_count, temp.user_status, "
+                    "temp.erole as UserTypes from emails, (select users.username as username, user_status, erole from users, "
+                    "employees where employees.username = users.username) as temp "
+                    "where emails.username = temp.username and temp.erole = 'Manager' group by usernames")
+                filtered_result = mycursor.fetchall()
+                all_result = [i for n, i in enumerate(all_result) if i in filtered_result]
+            elif employee_type == 'User':
+                mycursor.execute(
+                    "select temps.username as usernames, count(*) as email_count, 'User' as UserTypes, temps.user_status from emails, "
+                    "(SELECT username , user_status from users where is_visitor = 0) as temps "
+                    "where emails.username = temps.username group by usernames")
+                filtered_result = mycursor.fetchall()
+                all_result = [i for n, i in enumerate(all_result) if i in filtered_result]
+            elif employee_type == 'Visitor':
+                mycursor.execute(
+                    "select temps.username as usernames, count(*) as email_count, 'Visitor' as UserTypes, temps.user_status from emails, "
+                    "(SELECT username , user_status from users where is_visitor = 1) as temps "
+                    "where emails.username = temps.username group by usernames")
+                filtered_result = mycursor.fetchall()
+                all_result = [i for n, i in enumerate(all_result) if i in filtered_result]
+        if user_status is not None:
+            mycursor.execute(
+                "select temp.username as usernames, count(*) as email_count, temp.user_status, "
+                "temp.erole as UserTypes from emails, (select users.username as username, user_status, erole from users, "
+                "employees where employees.username = users.username) as temp "
+                "where emails.username = temp.username and temp.user_status = %s group by usernames", user_status)
+            filtered_result = mycursor.fetchall()
+            all_result = [i for n, i in enumerate(all_result) if i in filtered_result]
+        if username is not None:
+            mycursor.execute(
+                "select temp.username as usernames, count(*) as email_count, temp.user_status, "
+                "temp.erole as UserTypes from emails, (select users.username as username, user_status, erole from users, "
+                "employees where employees.username = users.username) as temp "
+                "where emails.username = temp.username and temp.username = %s group by usernames", username)
+            filtered_result = mycursor.fetchall()
+            all_result = [i for n, i in enumerate(all_result) if i in filtered_result]
+        return all_result
+
+
+def ApproveUserStatus(username):
+    """
+    IMPORTANT: Can approve a pending/declined account
+    screen 18
+    :param username:
+    :return:
+    """
+    with mydb as mycursor:
+        mycursor.execute("update users set user_status = 'Approved' where username = %s", username)
+
+
+def DeclineUserStatus(username):
+    """
+    IMPORTANT: Can decline a pending account, cannot decline an approved account
+    screen 18
+    :param username:
+    :return:
+    """
+    if GetUserStatus(username) == 'Approved':
+        raise Exception("cannot decline an approved account")
+    with mydb as mycursor:
+        mycursor.execute("update users set user_status = 'Declined' where username = %s", username)
+
+
+def GetUserStatus(username):
+    """
+    To help with determining the user type
+    for screen 18
+    :param username:
+    :return:
+    """
+    with mydb as mycursor:
+        mycursor.execute("select user_status from users where username = %s", username)
+        return mycursor.fetchone()
+
+
+def GetManagerDropdownMenuForAdminManageSite():
+    """
+    screen 19 <- manager dropdown list
+    :return:
+    """
+    with mydb as mycursor:
+        mycursor.execute(
+            "select Concat(users.fname, ' ', users.lname) from users, (select temp.sitename as sitenames, username, "
+            "temp.openeveryday as openeverydays from employees, (select sitename, sitemanager_id, "
+            "openeveryday from sites) as temp where sitemanager_id = employees.employee_id) as temps "
+            "where temps.username = users.username")
+        return mycursor.fetchall()
+
+
+def GetAllSiteInformationForManageSiteFilterBySite_Manager_OpenEveryday(site, manager_name, openeveryday):
+    """
+    Manager_name is Concat(users.fname, ' ', users.lname)
+    screen 19 table content
+    :param site:
+    :param manager_name:
+    :param openeveryday:
+    :return:
+    """
+    with mydb as mycursor:
+        # first get ALL result
+        mycursor.execute(
+            "select temps.sitenames, Concat(users.fname, ' ', users.lname), temps.openeverydays from users,"
+            "(select temp.sitename as sitenames, username, temp.openeveryday as openeverydays "
+            "from employees, (select sitename, sitemanager_id, openeveryday from sites) as temp "
+            "where sitemanager_id = employees.employee_id) as temps where temps.username = users.username")
+        all_result = mycursor.fetchall()
+
+        # Start filtering if this filtering type is applied
+        if site is not None:
+            mycursor.execute(
+                "select temps.sitenames, Concat(users.fname, ' ', users.lname), temps.openeverydays from users,"
+                "(select temp.sitename as sitenames, username, temp.openeveryday as openeverydays "
+                "from employees, (select sitename, sitemanager_id, openeveryday from sites) as temp "
+                "where sitemanager_id = employees.employee_id and sitename = %s) as temps "
+                "where temps.username = users.username", site)
+            filtered_result = mycursor.fetchall()
+            all_result = [i for n, i in enumerate(all_result) if i in filtered_result]
+        if manager_name is not None:
+            mycursor.execute(
+                "select temps.sitenames, Concat(users.fname, ' ', users.lname), temps.openeverydays from users,"
+                "(select temp.sitename as sitenames, username, temp.openeveryday as openeverydays "
+                "from employees, (select sitename, sitemanager_id, openeveryday from sites) as temp "
+                "where sitemanager_id = employees.employee_id) as temps "
+                "where temps.username = users.username and Concat(users.fname, ' ', users.lname) = %s ", manager_name)
+            filtered_result = mycursor.fetchall()
+            all_result = [i for n, i in enumerate(all_result) if i in filtered_result]
+        if openeveryday is not None:
+            mycursor.execute(
+                "select temps.sitenames, Concat(users.fname, ' ', users.lname), temps.openeverydays from users,"
+                "(select temp.sitename as sitenames, username, temp.openeveryday as openeverydays "
+                "from employees, (select sitename, sitemanager_id, openeveryday from sites) as temp "
+                "where sitemanager_id = employees.employee_id and  temp.openeveryday = %s) as temps "
+                "where temps.username = users.username", openeveryday)
+            filtered_result = mycursor.fetchall()
+            all_result = [i for n, i in enumerate(all_result) if i in filtered_result]
+        return all_result
+
+
+def AdminDeletesSite(sitename):
+    """
+    screen 19
+    :param sitename:
+    :return:
+    """
+    with mydb as mycursor:
+        mycursor.execute("delete from sites where sitename = %s", sitename)
+
+
+def GetSitenameWithManagerUsername(username):
+    """
+    screen 27
+    :param username
+    :return:
+    """
+    with mydb as mycursor:
+        mycursor.execute(
+            "select sitename from sites where sitemanager_id in (select employee_id from employees where username = %s)",
+            username)
+        return mycursor.fetchone()
+
+
+def GetEmployeeIdWithUsername(username):
+    with mydb as mycursor:
+        mycursor.execute("select employee_id from employees where username = %s", username)
+        return mycursor.fetchone()
+
+
+def GetEventWithSameNameAndDateAtSameSiteToCheckIfIsOverlapEvent(event_name, sitename):
+    """
+    Before creating an event, we need to check 'Two events with the same Name in the same Site must not overlap'
+    Use this to check
+    screen 27
+    :param event_name:
+    :param sitename:
+    :return:
+    """
+    with mydb as mycursor:
+        mycursor.execute("select event_name, sitename, startdate, endate from staff_visitor_revenue "
+                         "where event_name = %s and sitename = %s", (event_name, sitename))
+        return mycursor.fetchall()
+
+
+def GetAllAvailibleStaffForNewEvent(start_date, end_date):
+    """
+    The Assigned Staff Table, 'staffs who are not assigned to any other events during this event’s time period'
+    screen 27
+    :param start_date:
+    :param end_date:
+    :return:
+    """
+    with mydb as mycursor:
+        mycursor.execute("select fname, lname from users where username in (select username from employee "
+                         "where employee_id in (select distinct employee_id from assign_to where event_name in "
+                         "(select event_name from staff_visitor_revenue where (startdate > %s or endate < %s))))",
+                         (end_date, start_date))
+        return mycursor.fetchall()
+
+
+def ManagerCreateEvent(sitename, event_name, startdate, minstaffReq, event_description, capacity, price, endate,
+                       employee_id):
+    """
+    screen 27
+    :param sitename:
+    :param event_name:
+    :param startdate:
+    :param minstaffReq:
+    :param event_description:
+    :param capacity:
+    :param price:
+    :param endate:
+    :param employee_id:
+    :return:
+    """
+    with mydb as mycursor:
+        mycursor.execute("INSERT INTO site_events(sitename, event_name, startdate, minstaffReq, event_description, "
+                         "capacity, price, endate) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)",
+                         (sitename, event_name, startdate, minstaffReq, event_description, capacity, price, endate))
+        mycursor.execute("INSERT INTO assign_to(employee_id, sitename, event_name, startdate) VALUES "
+                         "(%s, select sitename from sites where sitemanager_id = (select employee_id "
+                         "from employees where username = manager_username), %s, %s)",
+                         (employee_id, event_name, startdate))
+
+
+def GetAllStaffByFilterBySite_Fname_Lname_StartDate_EndDate(sitename, fname, lname, startdate, endate):
+    """
+    screen 28 table
+    :param sitename:
+    :param fname:
+    :param lname:
+    :param startdate:
+    :param endate:
+    :return:
+    """
+    with mydb as mycursor:
+        # first get ALL result
+        mycursor.execute(
+            "SELECT fname, lname, event_shifts FROM alluser JOIN (SELECT COUNT(*) as event_shifts, employee_id "
+            "FROM assign_to where employee_id in (select employee_id from assign_to) "
+            "GROUP BY employee_id) emp ON emp.employee_id = alluser.employee_id")
+        all_result = mycursor.fetchall()
+        # Start filtering if this filtering type is applied
+        if sitename is not None:
+            mycursor.execute(
+                "SELECT fname, lname, event_shifts FROM alluser JOIN (SELECT COUNT(*) as event_shifts, employee_id "
+                "FROM assign_to where employee_id in (select employee_id from assign_to where sitename = %s) "
+                "GROUP BY employee_id) emp ON emp.employee_id = alluser.employee_id", sitename)
+            filtered_result = mycursor.fetchall()
+            all_result = [i for n, i in enumerate(all_result) if i in filtered_result]
+        if fname is not None:
+            mycursor.execute(
+                "SELECT fname, lname, event_shifts FROM alluser JOIN (SELECT COUNT(*) as event_shifts, employee_id "
+                "FROM assign_to where employee_id in (select employee_id from assign_to where fname = %s) "
+                "GROUP BY employee_id) emp ON emp.employee_id = alluser.employee_id", fname)
+            filtered_result = mycursor.fetchall()
+            all_result = [i for n, i in enumerate(all_result) if i in filtered_result]
+        if lname is not None:
+            mycursor.execute(
+                "SELECT fname, lname, event_shifts FROM alluser JOIN (SELECT COUNT(*) as event_shifts, employee_id "
+                "FROM assign_to where employee_id in (select employee_id from assign_to where lname = %s) "
+                "GROUP BY employee_id) emp ON emp.employee_id = alluser.employee_id", lname)
+            filtered_result = mycursor.fetchall()
+            all_result = [i for n, i in enumerate(all_result) if i in filtered_result]
+        if startdate is not None:
+            mycursor.execute(
+                "SELECT fname, lname, event_shifts FROM alluser JOIN (SELECT COUNT(*) as event_shifts, employee_id "
+                "FROM assign_to where employee_id in (select employee_id from assign_to where startdate >= %s) "
+                "GROUP BY employee_id) emp ON emp.employee_id = alluser.employee_id", startdate)
+            filtered_result = mycursor.fetchall()
+            all_result = [i for n, i in enumerate(all_result) if i in filtered_result]
+        # TODO: remember to implement filter by endate!!!!
+        # if endate is not None:
+        #     mycursor.execute(
+        #         "SELECT fname, lname, event_shifts FROM alluser JOIN (SELECT COUNT(*) as event_shifts, employee_id "
+        #         "FROM assign_to where employee_id in (select employee_id from assign_to where endate <= %s) "
+        #         "GROUP BY employee_id) emp ON emp.employee_id = alluser.employee_id", endate)
+        #     filtered_result = mycursor.fetchall()
+        #     all_result = [i for n, i in enumerate(all_result) if i in filtered_result]
+        return all_result
+
+
+def GetAllSiteReportByFilter(manager_username, startdate, endate, event_count_low, event_count_high, staff_count_low,
+                             staff_count_high, total_visitor_low, total_visitor_high, revenue_low, revenue_high):
+    """
+    screen 29 table
+    :param sitename:
+    :param fname:
+    :param lname:
+    :param startdate:
+    :param endate:
+    :return:
+    """
+    with mydb as mycursor:
+        # first get ALL result
+        mycursor.execute(
+            "select * from (SELECT eachday AS date, COUNT(visit_event_name) AS event_count, staff_count, "
+            "total_visitor, revenue, sitename FROM (SELECT eachday, SUM(total_visit) AS total_visitor, "
+            "visit_event_name, staff_count, revenue, sitename FROM screen_29 JOIN (SELECT staff_count, event_name, "
+            "startdate, endate, revenue, sitename FROM staff_visitor_revenue) staff "
+            "ON visit_event_name = staff.event_name AND eachday >= staff.startdate AND eachday <= staff.endate "
+            "GROUP BY visit_event_name , eachday) derived GROUP BY visit_event_name , eachday) derived1 "
+            "where sitename = (select sitename from sites "
+            "where sitemanager_id = (select employee_id from employees where username = %s))", manager_username)
+        all_result = mycursor.fetchall()
+        # Start filtering if this filtering type is applied
+        if startdate is not None and endate is not None:
+            mycursor.execute(
+                "select * from (SELECT eachday AS date, COUNT(visit_event_name) AS event_count, staff_count, "
+                "total_visitor, revenue, sitename FROM (SELECT eachday, SUM(total_visit) AS total_visitor, "
+                "visit_event_name, staff_count, revenue, sitename FROM screen_29 JOIN (SELECT staff_count, event_name, "
+                "startdate, endate, revenue, sitename FROM staff_visitor_revenue) staff "
+                "ON visit_event_name = staff.event_name AND eachday >= staff.startdate AND eachday <= staff.endate "
+                "GROUP BY visit_event_name , eachday) derived GROUP BY visit_event_name , eachday) derived1 "
+                "where date >= %s and date <= %s and sitename = (select sitename from sites "
+                "where sitemanager_id = (select employee_id from employees where username = %s))", (startdate, endate,
+                manager_username,))
+            filtered_result = mycursor.fetchall()
+            all_result = [i for n, i in enumerate(all_result) if i in filtered_result]
+        if event_count_low is not None and event_count_high is not None:
+            mycursor.execute(
+                "select * from (SELECT eachday AS date, COUNT(visit_event_name) AS event_count, staff_count, "
+                "total_visitor, revenue, sitename FROM (SELECT eachday, SUM(total_visit) AS total_visitor, "
+                "visit_event_name, staff_count, revenue, sitename FROM screen_29 JOIN (SELECT staff_count, event_name, "
+                "startdate, endate, revenue, sitename FROM staff_visitor_revenue) staff "
+                "ON visit_event_name = staff.event_name AND eachday >= staff.startdate AND eachday <= staff.endate "
+                "GROUP BY visit_event_name , eachday) derived GROUP BY visit_event_name , eachday) derived1 "
+                "where event_count between %s and %s and sitename = (select sitename from sites "
+                "where sitemanager_id = (select employee_id from employees where username = %s))", (event_count_low,
+                event_count_high, manager_username,))
+            filtered_result = mycursor.fetchall()
+            all_result = [i for n, i in enumerate(all_result) if i in filtered_result]
+        if staff_count_low is not None and staff_count_high is not None:
+            mycursor.execute(
+                "select * from (SELECT eachday AS date, COUNT(visit_event_name) AS event_count, staff_count, "
+                "total_visitor, revenue, sitename FROM (SELECT eachday, SUM(total_visit) AS total_visitor, "
+                "visit_event_name, staff_count, revenue, sitename FROM screen_29 JOIN (SELECT staff_count, event_name, "
+                "startdate, endate, revenue, sitename FROM staff_visitor_revenue) staff "
+                "ON visit_event_name = staff.event_name AND eachday >= staff.startdate AND eachday <= staff.endate "
+                "GROUP BY visit_event_name , eachday) derived GROUP BY visit_event_name , eachday) derived1 "
+                "where staff_count between %s and %s and sitename = (select sitename from sites "
+                "where sitemanager_id = (select employee_id from employees where username = %s))", (staff_count_low,
+                staff_count_high, manager_username,))
+            filtered_result = mycursor.fetchall()
+            all_result = [i for n, i in enumerate(all_result) if i in filtered_result]
+        if total_visitor_low is not None and total_visitor_high:
+            mycursor.execute(
+                "select * from (SELECT eachday AS date, COUNT(visit_event_name) AS event_count, staff_count, "
+                "total_visitor, revenue, sitename FROM (SELECT eachday, SUM(total_visit) AS total_visitor, "
+                "visit_event_name, staff_count, revenue, sitename FROM screen_29 JOIN (SELECT staff_count, event_name, "
+                "startdate, endate, revenue, sitename FROM staff_visitor_revenue) staff "
+                "ON visit_event_name = staff.event_name AND eachday >= staff.startdate AND eachday <= staff.endate "
+                "GROUP BY visit_event_name , eachday) derived GROUP BY visit_event_name , eachday) derived1 "
+                "where total_visitor between %s and %s and sitename = (select sitename from sites "
+                "where sitemanager_id = (select employee_id from employees where username = %s))", (total_visitor_low,
+                total_visitor_high, manager_username,))
+            filtered_result = mycursor.fetchall()
+            all_result = [i for n, i in enumerate(all_result) if i in filtered_result]
+        if revenue_low is not None and revenue_high is not None:
+            mycursor.execute(
+                "select * from (SELECT eachday AS date, COUNT(visit_event_name) AS event_count, staff_count, "
+                "total_visitor, revenue, sitename FROM (SELECT eachday, SUM(total_visit) AS total_visitor, "
+                "visit_event_name, staff_count, revenue, sitename FROM screen_29 JOIN (SELECT staff_count, event_name, "
+                "startdate, endate, revenue, sitename FROM staff_visitor_revenue) staff "
+                "ON visit_event_name = staff.event_name AND eachday >= staff.startdate AND eachday <= staff.endate "
+                "GROUP BY visit_event_name , eachday) derived GROUP BY visit_event_name , eachday) derived1 "
+                "where revenue between %s and %s and sitename = (select sitename from sites "
+                "where sitemanager_id = (select employee_id from employees where username = %s))", (revenue_low,
+                revenue_high, manager_username,))
+            filtered_result = mycursor.fetchall()
+            all_result = [i for n, i in enumerate(all_result) if i in filtered_result]
+        return all_result
+
+def GetDailyDetail(date):
+    """
+    screen 30
+    :return:
+    """
+    with mydb as mycursor:
+        # first get ALL result
+        mycursor.execute(
+            "select date, visit_event_name, staff_count, total_visitor, revenue, sitename, fname, lname from "
+            "(SELECT eachday AS date, visit_event_name, staff_count, total_visitor, revenue, sitename "
+            "FROM (SELECT eachday, SUM(total_visit) AS total_visitor, visit_event_name, staff_count, revenue, "
+            "sitename FROM screen_29 JOIN (SELECT staff_count, event_name, startdate, endate, revenue, sitename "
+            "FROM staff_visitor_revenue) staff ON visit_event_name = staff.event_name AND eachday >= staff.startdate "
+            "AND eachday <= staff.endate GROUP BY visit_event_name , eachday) derived "
+            "GROUP BY visit_event_name , eachday) derived1, alluser where date = %s and employee_id in "
+            "(select employee_id from assign_to where sitename = derived1.sitename and event_name = "
+            "derived1.visit_event_name)", date)
+        return mycursor.fetchall()
+
+def StaffViewScheduleTableFilter(event_name, keyword, startdate, endate):
+    """
+    screen 31
+    :param event_name:
+    :param keyword:
+    :param startdate:
+    :param endate:
+    :return:
+    """
+    with mydb as mycursor:
+        # first get ALL result
+        mycursor.execute(
+            "select event_name, sitename, startdate, endate, staff_count from staff_visitor_revenue")
+        all_result = mycursor.fetchall()
+        # Start filtering if this filtering type is applied
+        if event_name is not None:
+            mycursor.execute(
+                "select event_name, sitename, startdate, endate, staff_count from staff_visitor_revenue where event_name = %s",
+                event_name)
+            filtered_result = mycursor.fetchall()
+            all_result = [i for n, i in enumerate(all_result) if i in filtered_result]
+        if keyword is not None:
+            mycursor.execute(
+                "select event_name, sitename, startdate, endate, staff_count from staff_visitor_revenue "
+                "where keyword like concat('%', keyword, '%')", keyword)
+            filtered_result = mycursor.fetchall()
+            all_result = [i for n, i in enumerate(all_result) if i in filtered_result]
+        if startdate is not None:
+            mycursor.execute(
+                "select event_name, sitename, startdate, endate, staff_count from staff_visitor_revenue "
+                "where startdate >= %s", startdate)
+            filtered_result = mycursor.fetchall()
+            all_result = [i for n, i in enumerate(all_result) if i in filtered_result]
+        if endate is not None:
+            mycursor.execute(
+                "select event_name, sitename, startdate, endate, staff_count from staff_visitor_revenue "
+                "where endate >= %s", endate)
+            filtered_result = mycursor.fetchall()
+            all_result = [i for n, i in enumerate(all_result) if i in filtered_result]
+        return all_result
+
+def StaffEventDetail(sitename):
+    """
+    screen 32
+    :return:
+    """
+    with mydb as mycursor:
+        mycursor.execute(
+            "SELECT DISTINCT staff_visitor_revenue.event_name, staff_visitor_revenue.sitename, staff_visitor_revenue.startdate, "
+            "staff_visitor_revenue.endate, staff_visitor_revenue.duration, revenue / total_visit AS price, capacity, event_description, fname, lname "
+            "FROM staff_visitor_revenue JOIN (SELECT capacity, event_description, event_name, sitename, "
+            "startdate FROM site_events) cap ON cap.event_name = staff_visitor_revenue.event_name "
+            "AND cap.sitename = staff_visitor_revenue.sitename AND cap.startdate = staff_visitor_revenue.startdate "
+            "JOIN (SELECT fname, lname, employee_id FROM alluser) name ON name.employee_id IN (SELECT employee_id "
+            "FROM assign_to where sitename = %s) WHERE staff_visitor_revenue.sitename = %s", (sitename, sitename,))
+        return mycursor.fetchall()
+
+# def VistorExploreEvent():
+#     with mydb as mycursor:
+#         # first get ALL result
+#         mycursor.execute(
+#             "select event_name, sitename, startdate, endate, staff_count from staff_visitor_revenue")
+#         all_result = mycursor.fetchall()
+#         # Start filtering if this filtering type is applied
+#         if event_name is not None:
+#             mycursor.execute(
+#                 "select event_name, sitename, startdate, endate, staff_count from staff_visitor_revenue where event_name = %s",
+#                 event_name)
+#             filtered_result = mycursor.fetchall()
+#             all_result = [i for n, i in enumerate(all_result) if i in filtered_result]
+#         if keyword is not None:
+#             mycursor.execute(
+#                 "select event_name, sitename, startdate, endate, staff_count from staff_visitor_revenue "
+#                 "where keyword like concat('%', keyword, '%')", keyword)
+#             filtered_result = mycursor.fetchall()
+#             all_result = [i for n, i in enumerate(all_result) if i in filtered_result]
+#         if startdate is not None:
+#             mycursor.execute(
+#                 "select event_name, sitename, startdate, endate, staff_count from staff_visitor_revenue "
+#                 "where startdate >= %s", startdate)
+#             filtered_result = mycursor.fetchall()
+#             all_result = [i for n, i in enumerate(all_result) if i in filtered_result]
+#         if endate is not None:
+#             mycursor.execute(
+#                 "select event_name, sitename, startdate, endate, staff_count from staff_visitor_revenue "
+#                 "where endate >= %s", endate)
+#             filtered_result = mycursor.fetchall()
+#             all_result = [i for n, i in enumerate(all_result) if i in filtered_result]
+#         return all_result
+
+def VisitorEventDetail(sitename, eventname, startDate):
+    """
+    screen 34
+    :param sitename:
+    :param eventname:
+    :param startDate:
+    :return:
+    """
+    with mydb as mycursor:
+        mycursor.execute(
+            "SELECT event_name, sitename, startdate, endate, ticket_price, tickets_remainig, total_visit, "
+            "event_description FROM screen_33 where sitenames = %s, eventname = %s, startDate = %s", (sitename, eventname, startDate,))
+        return mycursor.fetchone()
+
+def fetchVisitorTransitDetail(sitename, TransportType):
+    """
+    Screen 36
+    """
+    pass
+
+
+def fetchVisitorSiteDetail(sitename):
+    """
+    Screen 37
+    """
+    with mydb as mycursor:
+        mycursor.execute("select sitename, zipcode, openeverday from sites where sitename = %s", sitename)
+        return mycursor.fetchall()
