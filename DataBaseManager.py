@@ -144,7 +144,7 @@ def AddEmailForUsername(email, username):
 
 def GetAllTransportTypeFromTransits():
     """
-    For Screen 15/22 drop down menu for Transport Type
+    For Screen 15/22/36 drop down menu for Transport Type
     :return: list of transport
     """
     with mydb as mycursor:
