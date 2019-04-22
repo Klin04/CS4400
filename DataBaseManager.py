@@ -19,7 +19,7 @@ def check_encrypted_password(password, hashed):
 mydb = pymysql.connect(
     host="localhost",
     user="root",
-    passwd="Lkj!19990424",
+    passwd="joseph1",
     database="project3",
     cursorclass=pymysql.cursors.DictCursor
 )
@@ -1586,6 +1586,13 @@ def fetchVisitorSiteDetail(sitename):
     with mydb as mycursor:
         mycursor.execute("select sitename, address, openeverday from sites where sitename = %s", sitename)
         return mycursor.fetchall()
+
+def log_visit_to_site(username, sitename):
+    with mydb as mycursor:
+        mycursor.execute("if (SELECT EXISTS(SELECT * from visit_site WHERE visit_site_name = %s "
+                         "and visit_event_date = visit_dates) = 0) then insert into visit_site "
+                         "(visit_site_username, visit_site_name, visit_event_date) value "
+                         "(%s, %s, visit_dates)", (sitename, username, sitename))
 
 def GetVisitorVisitHistory(username, visit_event_name, visit_event_sitename, visit_event_date_startdate, visit_event_date_enddate):
     """
