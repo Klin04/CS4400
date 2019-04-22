@@ -226,12 +226,14 @@ def GetCurrentSiteManagerAndAllUnAssignedManagers(sitename):
             sitename)
         return mycursor.fetchall()
 
+
 def GetSiteManagerIdFromFname_Lname(fname, lname):
     with mydb as mycursor:
         mycursor.execute(
             "select sitemanager_id from sites where fname = %s and lname = %s",
-            (fname, lname, ))
+            (fname, lname,))
         return mycursor.fetchone()
+
 
 def UpdateSiteInformation(sitename, zipcode, address, openeveryday, sitemanager_id, new_sitename):
     """
@@ -250,6 +252,7 @@ def UpdateSiteInformation(sitename, zipcode, address, openeveryday, sitemanager_
             arguments)
         mycursor.execute("update sites set sitename = %s where sitename = %s", (new_sitename, sitename))
 
+
 def GetSiteInformationForEditSite(sitename):
     """
     screen 20
@@ -261,6 +264,7 @@ def GetSiteInformationForEditSite(sitename):
             "select zipcode, address, sitemanager_id, openeveryday from sites WHERE sitename = %s",
             sitename)
         return mycursor.fetchone()
+
 
 def GetManagersNotAssignedSite():
     """
@@ -921,6 +925,7 @@ def GetAllAdministratorManageUserInformationFilterByStatus_EmpType_Username(user
             all_result = [i for n, i in enumerate(all_result) if i in filtered_result]
         return all_result
 
+
 def ApproveUserStatus(username):
     """
     IMPORTANT: Can approve a pending/declined account
@@ -930,6 +935,7 @@ def ApproveUserStatus(username):
     """
     with mydb as mycursor:
         mycursor.execute("update users set user_status = 'Approved' where username = %s", username)
+
 
 def DeclineUserStatus(username):
     """
@@ -943,6 +949,7 @@ def DeclineUserStatus(username):
     with mydb as mycursor:
         mycursor.execute("update users set user_status = 'Declined' where username = %s", username)
 
+
 def GetUserStatus(username):
     """
     To help with determining the user type
@@ -954,17 +961,20 @@ def GetUserStatus(username):
         mycursor.execute("select user_status from users where username = %s", username)
         return mycursor.fetchone()
 
+
 def GetManagerDropdownMenuForAdminManageSite():
     """
     screen 19 <- manager dropdown list
     :return:
     """
     with mydb as mycursor:
-        mycursor.execute("select Concat(users.fname, ' ', users.lname) from users, (select temp.sitename as sitenames, username, "
-                         "temp.openeveryday as openeverydays from employees, (select sitename, sitemanager_id, "
-                         "openeveryday from sites) as temp where sitemanager_id = employees.employee_id) as temps "
-                         "where temps.username = users.username")
+        mycursor.execute(
+            "select Concat(users.fname, ' ', users.lname) from users, (select temp.sitename as sitenames, username, "
+            "temp.openeveryday as openeverydays from employees, (select sitename, sitemanager_id, "
+            "openeveryday from sites) as temp where sitemanager_id = employees.employee_id) as temps "
+            "where temps.username = users.username")
         return mycursor.fetchall()
+
 
 def GetAllSiteInformationForManageSiteFilterBySite_Manager_OpenEveryday(site, manager_name, openeveryday):
     """
@@ -1014,6 +1024,7 @@ def GetAllSiteInformationForManageSiteFilterBySite_Manager_OpenEveryday(site, ma
             all_result = [i for n, i in enumerate(all_result) if i in filtered_result]
         return all_result
 
+
 def AdminDeletesSite(sitename):
     """
     screen 19
@@ -1023,6 +1034,7 @@ def AdminDeletesSite(sitename):
     with mydb as mycursor:
         mycursor.execute("delete from sites where sitename = %s", sitename)
 
+
 def GetSitenameWithManagerUsername(username):
     """
     screen 27
@@ -1030,8 +1042,11 @@ def GetSitenameWithManagerUsername(username):
     :return:
     """
     with mydb as mycursor:
-        mycursor.execute("select sitename from sites where sitemanager_id in (select employee_id from employees where username = %s)", username)
+        mycursor.execute(
+            "select sitename from sites where sitemanager_id in (select employee_id from employees where username = %s)",
+            username)
         return mycursor.fetchone()
+
 
 def GetEmployeeIdWithUsername(username):
     with mydb as mycursor:
@@ -1053,6 +1068,7 @@ def GetEventWithSameNameAndDateAtSameSiteToCheckIfIsOverlapEvent(event_name, sit
                          "where event_name = %s and sitename = %s", (event_name, sitename))
         return mycursor.fetchall()
 
+
 def GetAllAvailibleStaffForNewEvent(start_date, end_date):
     """
     The Assigned Staff Table, 'staffs who are not assigned to any other events during this event’s time period'
@@ -1068,7 +1084,9 @@ def GetAllAvailibleStaffForNewEvent(start_date, end_date):
                          (end_date, start_date))
         return mycursor.fetchall()
 
-def ManagerCreateEvent(sitename, event_name, startdate, minstaffReq, event_description, capacity, price, endate, employee_id):
+
+def ManagerCreateEvent(sitename, event_name, startdate, minstaffReq, event_description, capacity, price, endate,
+                       employee_id):
     """
     screen 27
     :param sitename:
@@ -1090,6 +1108,7 @@ def ManagerCreateEvent(sitename, event_name, startdate, minstaffReq, event_descr
                          "(%s, select sitename from sites where sitemanager_id = (select employee_id "
                          "from employees where username = manager_username), %s, %s)",
                          (employee_id, event_name, startdate))
+
 
 def GetAllStaffByFilterBySite_Fname_Lname_StartDate_EndDate(sitename, fname, lname, startdate, endate):
     """
@@ -1137,14 +1156,108 @@ def GetAllStaffByFilterBySite_Fname_Lname_StartDate_EndDate(sitename, fname, lna
                 "GROUP BY employee_id) emp ON emp.employee_id = alluser.employee_id", startdate)
             filtered_result = mycursor.fetchall()
             all_result = [i for n, i in enumerate(all_result) if i in filtered_result]
-        if endate is not None:
+        # TODO: remember to implement filter by endate!!!!
+        # if endate is not None:
+        #     mycursor.execute(
+        #         "SELECT fname, lname, event_shifts FROM alluser JOIN (SELECT COUNT(*) as event_shifts, employee_id "
+        #         "FROM assign_to where employee_id in (select employee_id from assign_to where endate <= %s) "
+        #         "GROUP BY employee_id) emp ON emp.employee_id = alluser.employee_id", endate)
+        #     filtered_result = mycursor.fetchall()
+        #     all_result = [i for n, i in enumerate(all_result) if i in filtered_result]
+        return all_result
+
+
+def GetAllSiteReportByFilter(manager_username, startdate, endate, event_count_low, event_count_high, staff_count_low,
+                             staff_count_high, total_visitor_low, total_visitor_high, revenue_low, revenue_high):
+    """
+    screen 29 table
+    :param sitename:
+    :param fname:
+    :param lname:
+    :param startdate:
+    :param endate:
+    :return:
+    """
+    with mydb as mycursor:
+        # first get ALL result
+        mycursor.execute(
+            "select * from (SELECT eachday AS date, COUNT(visit_event_name) AS event_count, staff_count, "
+            "total_visitor, revenue, sitename FROM (SELECT eachday, SUM(total_visit) AS total_visitor, "
+            "visit_event_name, staff_count, revenue, sitename FROM screen_29 JOIN (SELECT staff_count, event_name, "
+            "startdate, endate, revenue, sitename FROM staff_visitor_revenue) staff "
+            "ON visit_event_name = staff.event_name AND eachday >= staff.startdate AND eachday <= staff.endate "
+            "GROUP BY visit_event_name , eachday) derived GROUP BY visit_event_name , eachday) derived1 "
+            "where sitename = (select sitename from sites "
+            "where sitemanager_id = (select employee_id from employees where username = %s))", manager_username)
+        all_result = mycursor.fetchall()
+        # Start filtering if this filtering type is applied
+        if startdate is not None and endate is not None:
             mycursor.execute(
-                "SELECT fname, lname, event_shifts FROM alluser JOIN (SELECT COUNT(*) as event_shifts, employee_id "
-                "FROM assign_to where employee_id in (select employee_id from assign_to where endate <= %s) "
-                "GROUP BY employee_id) emp ON emp.employee_id = alluser.employee_id", endate)
+                "select * from (SELECT eachday AS date, COUNT(visit_event_name) AS event_count, staff_count, "
+                "total_visitor, revenue, sitename FROM (SELECT eachday, SUM(total_visit) AS total_visitor, "
+                "visit_event_name, staff_count, revenue, sitename FROM screen_29 JOIN (SELECT staff_count, event_name, "
+                "startdate, endate, revenue, sitename FROM staff_visitor_revenue) staff "
+                "ON visit_event_name = staff.event_name AND eachday >= staff.startdate AND eachday <= staff.endate "
+                "GROUP BY visit_event_name , eachday) derived GROUP BY visit_event_name , eachday) derived1 "
+                "where date >= %s and date <= %s and sitename = (select sitename from sites "
+                "where sitemanager_id = (select employee_id from employees where username = %s))", startdate, endate,
+                manager_username)
+            filtered_result = mycursor.fetchall()
+            all_result = [i for n, i in enumerate(all_result) if i in filtered_result]
+        if event_count_low is not None and event_count_high is not None:
+            mycursor.execute(
+                "select * from (SELECT eachday AS date, COUNT(visit_event_name) AS event_count, staff_count, "
+                "total_visitor, revenue, sitename FROM (SELECT eachday, SUM(total_visit) AS total_visitor, "
+                "visit_event_name, staff_count, revenue, sitename FROM screen_29 JOIN (SELECT staff_count, event_name, "
+                "startdate, endate, revenue, sitename FROM staff_visitor_revenue) staff "
+                "ON visit_event_name = staff.event_name AND eachday >= staff.startdate AND eachday <= staff.endate "
+                "GROUP BY visit_event_name , eachday) derived GROUP BY visit_event_name , eachday) derived1 "
+                "where event_count between %s and %s and sitename = (select sitename from sites "
+                "where sitemanager_id = (select employee_id from employees where username = %s))", event_count_low,
+                event_count_high, manager_username)
+            filtered_result = mycursor.fetchall()
+            all_result = [i for n, i in enumerate(all_result) if i in filtered_result]
+        if staff_count_low is not None and staff_count_high is not None:
+            mycursor.execute(
+                "select * from (SELECT eachday AS date, COUNT(visit_event_name) AS event_count, staff_count, "
+                "total_visitor, revenue, sitename FROM (SELECT eachday, SUM(total_visit) AS total_visitor, "
+                "visit_event_name, staff_count, revenue, sitename FROM screen_29 JOIN (SELECT staff_count, event_name, "
+                "startdate, endate, revenue, sitename FROM staff_visitor_revenue) staff "
+                "ON visit_event_name = staff.event_name AND eachday >= staff.startdate AND eachday <= staff.endate "
+                "GROUP BY visit_event_name , eachday) derived GROUP BY visit_event_name , eachday) derived1 "
+                "where staff_count between %s and %s and sitename = (select sitename from sites "
+                "where sitemanager_id = (select employee_id from employees where username = %s))", staff_count_low,
+                staff_count_high, manager_username)
+            filtered_result = mycursor.fetchall()
+            all_result = [i for n, i in enumerate(all_result) if i in filtered_result]
+        if total_visitor_low is not None and total_visitor_high:
+            mycursor.execute(
+                "select * from (SELECT eachday AS date, COUNT(visit_event_name) AS event_count, staff_count, "
+                "total_visitor, revenue, sitename FROM (SELECT eachday, SUM(total_visit) AS total_visitor, "
+                "visit_event_name, staff_count, revenue, sitename FROM screen_29 JOIN (SELECT staff_count, event_name, "
+                "startdate, endate, revenue, sitename FROM staff_visitor_revenue) staff "
+                "ON visit_event_name = staff.event_name AND eachday >= staff.startdate AND eachday <= staff.endate "
+                "GROUP BY visit_event_name , eachday) derived GROUP BY visit_event_name , eachday) derived1 "
+                "where total_visitor between %s and %s and sitename = (select sitename from sites "
+                "where sitemanager_id = (select employee_id from employees where username = %s))", total_visitor_low,
+                total_visitor_high, manager_username)
+            filtered_result = mycursor.fetchall()
+            all_result = [i for n, i in enumerate(all_result) if i in filtered_result]
+        if revenue_low is not None and revenue_high is not None:
+            mycursor.execute(
+                "select * from (SELECT eachday AS date, COUNT(visit_event_name) AS event_count, staff_count, "
+                "total_visitor, revenue, sitename FROM (SELECT eachday, SUM(total_visit) AS total_visitor, "
+                "visit_event_name, staff_count, revenue, sitename FROM screen_29 JOIN (SELECT staff_count, event_name, "
+                "startdate, endate, revenue, sitename FROM staff_visitor_revenue) staff "
+                "ON visit_event_name = staff.event_name AND eachday >= staff.startdate AND eachday <= staff.endate "
+                "GROUP BY visit_event_name , eachday) derived GROUP BY visit_event_name , eachday) derived1 "
+                "where revenue between %s and %s and sitename = (select sitename from sites "
+                "where sitemanager_id = (select employee_id from employees where username = %s))", revenue_low,
+                revenue_high, manager_username)
             filtered_result = mycursor.fetchall()
             all_result = [i for n, i in enumerate(all_result) if i in filtered_result]
         return all_result
+
 
 def fetchVisitorTransitDetail(sitename, TransportType):
     """
