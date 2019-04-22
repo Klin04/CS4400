@@ -1734,7 +1734,6 @@ class Controller():
         Name = setNone(Name)
         DescriptionKeyword = setNone(DescriptionKeyword)
         tableData = DataBaseManager.VistorExploreEvent(self.username, Name, DescriptionKeyword, SiteName, StartDate, EndDate, LowTotalVisitRange, HighTotalVisitRange, LowTicketPriceRange, HighTicketPriceRange)
-        print(tableData)
         self.MainWindow.VisitorExploreEvent.tableWidget.setSortingEnabled(False)
         for i in range(len(tableData)):
             self.MainWindow.VisitorExploreEvent.tableWidget.insertRow(i)
@@ -1748,7 +1747,7 @@ class Controller():
             newItem.setText(str(tableData[i]['my_visit']))
             self.MainWindow.VisitorExploreEvent.tableWidget.setItem(i, 5, newItem)
         self.MainWindow.VisitorExploreEvent.tableWidget.setSortingEnabled(True)
-        self.MainWindow.VisitorExploreEvent.tableData = tableData;
+        self.MainWindow.VisitorExploreEvent.tableData = tableData
 
     def showVisitorEventDetail(self):
         Event = self.MainWindow.VisitorExploreEvent.tableWidget.selectionModel().selectedRows()[0]
@@ -1756,8 +1755,8 @@ class Controller():
         SiteName = self.MainWindow.VisitorExploreEvent.tableWidget.item(Event.row(), 1).text()
         EventName = self.MainWindow.VisitorExploreEvent.tableWidget.item(Event.row(), 0).text()
         for data in self.MainWindow.VisitorExploreEvent.tableData:
-            if data['event_name'] == EventName and data['siteName'] == SiteName:
-                EventDate = data['startDate']
+            if data['event_name'] == EventName and data['sitename'] == SiteName:
+                EventDate = data['startdate']
         self.MainWindow.close()
         self.MainWindow = MainWindow()
         self.MainWindow.startVisitorEventDetail()
