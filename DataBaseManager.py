@@ -1258,6 +1258,25 @@ def GetAllSiteReportByFilter(manager_username, startdate, endate, event_count_lo
             all_result = [i for n, i in enumerate(all_result) if i in filtered_result]
         return all_result
 
+def GetDailyDetail():
+    """
+    screen 30
+    :return:
+    """
+    with mydb as mycursor:
+        # first get ALL result
+        mycursor.execute(
+            "select date, visit_event_name, staff_count, total_visitor, revenue, sitename, fname, lname from "
+            "(SELECT eachday AS date, visit_event_name, staff_count, total_visitor, revenue, sitename "
+            "FROM (SELECT eachday, SUM(total_visit) AS total_visitor, visit_event_name, staff_count, revenue, "
+            "sitename FROM screen_29 JOIN (SELECT staff_count, event_name, startdate, endate, revenue, sitename "
+            "FROM staff_visitor_revenue) staff ON visit_event_name = staff.event_name AND eachday >= staff.startdate "
+            "AND eachday <= staff.endate GROUP BY visit_event_name , eachday) derived "
+            "GROUP BY visit_event_name , eachday) derived1, alluser where employee_id in "
+            "(select employee_id from assign_to where sitename = derived1.sitename and event_name = "
+            "derived1.visit_event_name)")
+        all_result = mycursor.fetchall()
+        return all_result
 
 def fetchVisitorTransitDetail(sitename, TransportType):
     """
