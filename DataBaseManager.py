@@ -1272,7 +1272,7 @@ def GetDailyDetail(date):
             "sitename FROM screen_29 JOIN (SELECT staff_count, event_name, startdate, endate, revenue, sitename "
             "FROM staff_visitor_revenue) staff ON visit_event_name = staff.event_name AND eachday >= staff.startdate "
             "AND eachday <= staff.endate GROUP BY visit_event_name , eachday) derived "
-            "GROUP BY visit_event_name , eachday) derived1, alluser where date = %s employee_id in "
+            "GROUP BY visit_event_name , eachday) derived1, alluser where date = %s and employee_id in "
             "(select employee_id from assign_to where sitename = derived1.sitename and event_name = "
             "derived1.visit_event_name)", date)
         return mycursor.fetchone()
