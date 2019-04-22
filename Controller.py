@@ -341,7 +341,7 @@ class Controller():
                 return QtWidgets.QMessageBox.warning(self.MainWindow, "Email already registered", "Please use a new email", QtWidgets.QMessageBox.Ok)
         if not DataBaseManager.IsUsernameUnique(Username):
             return QtWidgets.QMessageBox.warning(self.MainWindow, "Username not unique", "Please use a new username", QtWidgets.QMessageBox.Ok)
-        DataBaseManager.RegisterUser(Fname, Lname, Username, Password, Emails)
+        DataBaseManager.RegisterUser(Fname, Lname, Username, DataBaseManager.encrypt_password(Password), Emails)
         self.showLogin()
 
     def showRegisterVisitorOnly(self):
@@ -371,7 +371,7 @@ class Controller():
                 return QtWidgets.QMessageBox.warning(self.MainWindow, "Email already registered", "Please use a new email", QtWidgets.QMessageBox.Ok)
         if not DataBaseManager.IsUsernameUnique(Username):
             return QtWidgets.QMessageBox.warning(self.MainWindow, "Username not unique", "Please use a new username", QtWidgets.QMessageBox.Ok)
-        DataBaseManager.RegisterVisitor(Fname, Lname, Username, Password, Emails)
+        DataBaseManager.RegisterVisitor(Fname, Lname, Username, DataBaseManager.encrypt_password(Password), Emails)
         self.showLogin()
 
     def showRegisterEmployee(self):
@@ -426,7 +426,7 @@ class Controller():
             return QtWidgets.QMessageBox.warning(self.MainWindow, "Phone already used", "Please use a new phone", QtWidgets.QMessageBox.Ok)
         if not DataBaseManager.IsUsernameUnique(Username):
             return QtWidgets.QMessageBox.warning(self.MainWindow, "Username not unique", "Please use a new username", QtWidgets.QMessageBox.Ok)
-        DataBaseManager.RegisterEmployeeVisitor(Fname, Lname, Username, Password, Emails, self.generate_unique_employee_id(), int(Phone), Address, City, State, int(Zipcode), Erole)
+        DataBaseManager.RegisterEmployeeVisitor(Fname, Lname, Username, DataBaseManager.encrypt_password(Password), Emails, self.generate_unique_employee_id(), int(Phone), Address, City, State, int(Zipcode), Erole)
         self.showLogin()
 
     def showRegisterEmployeeVisitor(self):
@@ -475,7 +475,7 @@ class Controller():
             return QtWidgets.QMessageBox.warning(self.MainWindow, "Zipcode not valid", "Please confirm your zipcode", QtWidgets.QMessageBox.Ok)
         if not DataBaseManager.IsUsernameUnique(Username):
             return QtWidgets.QMessageBox.warning(self.MainWindow, "Username not unique", "Please use a new username", QtWidgets.QMessageBox.Ok)
-        DataBaseManager.RegisterEmployeeVisitor(Fname, Lname, Username, Password, Emails, self.generate_unique_employee_id(), int(Phone), Address, City, State, int(Zipcode), Erole)
+        DataBaseManager.RegisterEmployeeVisitor(Fname, Lname, Username, DataBaseManager.encrypt_password(Password), Emails, self.generate_unique_employee_id(), int(Phone), Address, City, State, int(Zipcode), Erole)
         self.showLogin()
 
     def showUserFunctionality(self):
