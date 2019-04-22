@@ -1742,11 +1742,16 @@ class Controller():
                 newItem = QtWidgets.QTableWidgetItem()
                 newItem.setText(str(tableData[i][key]))
                 self.MainWindow.VisitorExploreEvent.tableWidget.setItem(i, column, newItem)
+                if column == 5:
+                    break
+            newItem = QtWidgets.QTableWidgetItem()
+            newItem.setText(str(tableData[i]['my_visit']))
+            self.MainWindow.VisitorExploreEvent.tableWidget.setItem(i, 5, newItem)
         self.MainWindow.VisitorExploreEvent.tableWidget.setSortingEnabled(True)
 
     def showVisitorEventDetail(self):
         Event = self.MainWindow.VisitorExploreEvent.tableWidget.selectionModel().selectedRows()[0]
-        EventDate = self.MainWindow.VisitorExploreEvent.dateEdit.date().toPydate()
+        EventDate = self.MainWindow.VisitorExploreEvent.dateEdit.date().toPyDate()
         SiteName = self.MainWindow.VisitorExploreEvent.tableWidget.item(Event.row(), 1).text()
         EventName = self.MainWindow.VisitorExploreEvent.tableWidget.item(Event.row(), 0).text()
         self.MainWindow.close()
