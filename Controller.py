@@ -341,7 +341,7 @@ class Controller():
                 return QtWidgets.QMessageBox.warning(self.MainWindow, "Email already registered", "Please use a new email", QtWidgets.QMessageBox.Ok)
         if not DataBaseManager.IsUsernameUnique(Username):
             return QtWidgets.QMessageBox.warning(self.MainWindow, "Username not unique", "Please use a new username", QtWidgets.QMessageBox.Ok)
-        DataBaseManager.RegisterUser(Fname, Lname, Username, Password, Emails)
+        DataBaseManager.RegisterUser(Fname, Lname, Username, DataBaseManager.encrypt_password(Password), Emails)
         self.showLogin()
 
     def showRegisterVisitorOnly(self):
@@ -371,7 +371,7 @@ class Controller():
                 return QtWidgets.QMessageBox.warning(self.MainWindow, "Email already registered", "Please use a new email", QtWidgets.QMessageBox.Ok)
         if not DataBaseManager.IsUsernameUnique(Username):
             return QtWidgets.QMessageBox.warning(self.MainWindow, "Username not unique", "Please use a new username", QtWidgets.QMessageBox.Ok)
-        DataBaseManager.RegisterVisitor(Fname, Lname, Username, Password, Emails)
+        DataBaseManager.RegisterVisitor(Fname, Lname, Username, DataBaseManager.encrypt_password(Password), Emails)
         self.showLogin()
 
     def showRegisterEmployee(self):
@@ -383,7 +383,7 @@ class Controller():
                   "HI", "ID", "IL", "IN", "IA", "KS", "KY", "LA", "ME", "MD",
                   "MA", "MI", "MN", "MS", "MO", "MT", "NE", "NV", "NH", "NJ",
                   "NM", "NY", "NC", "ND", "OH", "OK", "OR", "PA", "RI", "SC",
-                  "SD", "TN", "TX", "UT", "VT", "VA", "WA", "WV", "WI", "WY"]
+                  "SD", "TN", "TX", "UT", "VT", "VA", "WA", "WV", "WI", "WY", "Other"]
         self.MainWindow.RegisterEmployeePage.comboBox_2.addItems(states)
         self.MainWindow.RegisterEmployeePage.comboBox.addItems(["Manager", "Staff"])
         self.MainWindow.RegisterEmployeePage.pushButton_3.clicked.connect(self.RegisterEmployee)
@@ -426,7 +426,7 @@ class Controller():
             return QtWidgets.QMessageBox.warning(self.MainWindow, "Phone already used", "Please use a new phone", QtWidgets.QMessageBox.Ok)
         if not DataBaseManager.IsUsernameUnique(Username):
             return QtWidgets.QMessageBox.warning(self.MainWindow, "Username not unique", "Please use a new username", QtWidgets.QMessageBox.Ok)
-        DataBaseManager.RegisterEmployeeVisitor(Fname, Lname, Username, Password, Emails, self.generate_unique_employee_id(), int(Phone), Address, City, State, int(Zipcode), Erole)
+        DataBaseManager.RegisterEmployeeVisitor(Fname, Lname, Username, DataBaseManager.encrypt_password(Password), Emails, self.generate_unique_employee_id(), int(Phone), Address, City, State, int(Zipcode), Erole)
         self.showLogin()
 
     def showRegisterEmployeeVisitor(self):
@@ -475,7 +475,7 @@ class Controller():
             return QtWidgets.QMessageBox.warning(self.MainWindow, "Zipcode not valid", "Please confirm your zipcode", QtWidgets.QMessageBox.Ok)
         if not DataBaseManager.IsUsernameUnique(Username):
             return QtWidgets.QMessageBox.warning(self.MainWindow, "Username not unique", "Please use a new username", QtWidgets.QMessageBox.Ok)
-        DataBaseManager.RegisterEmployeeVisitor(Fname, Lname, Username, Password, Emails, self.generate_unique_employee_id(), int(Phone), Address, City, State, int(Zipcode), Erole)
+        DataBaseManager.RegisterEmployeeVisitor(Fname, Lname, Username, DataBaseManager.encrypt_password(Password), Emails, self.generate_unique_employee_id(), int(Phone), Address, City, State, int(Zipcode), Erole)
         self.showLogin()
 
     def showUserFunctionality(self):
@@ -1824,16 +1824,39 @@ class Controller():
             self.MainWindow.VisitorExploreSite.pushButton_4.clicked.connect(self.showAdminVisitorFunctionality)
         elif self.user == 'Visitor':
             self.MainWindow.VisitorExploreSite.pushButton_4.clicked.connect(self.showVisitorFunctionality)
+        self.MainWindow.VisitorExploreSite.dateEdit.setDate(QtCore.QDate.currentDate())
+        self.MainWindow.VisitorExploreSite.dateEdit_2.setDate(QtCore.QDate.currentDate())
 
     def filterVisitorSites(self):
         Name = self.MainWindow.VisitorExploreSite.comboBox.currentText()
         OpenEveryday = self.MainWindow.VisitorExploreSite.comboBox_2.currentText()
-        StartDate = self.MainWindow.VisitorExploreSite.dateEdit.date()
-        EndDate = self.MainWindow.VisitorExploreSite.dateEdit_2.date()
+        StartDate = self.MainWindow.VisitorExploreSite.dateEdit.date().toPyDate()
+        EndDate = self.MainWindow.VisitorExploreSite.dateEdit_2.date().toPyDate()
         LowTotalVisitRange = self.MainWindow.VisitorExploreSite.lineEdit.text()
         HighTotalVisitRange = self.MainWindow.VisitorExploreSite.lineEdit_2.text()
         LowEventCount = self.MainWindow.VisitorExploreSite.lineEdit_3.text()
         HighEventCount = self.MainWindow.VisitorExploreSite.lineEdit_4.text()
+        IncludeVisited = self.MainWindow.VisitorExploreSite.checkBox_2.isChecked()
+        Name = setNone(Name)
+        if len(OpenEveryday) == 0:
+            OpenEveryday = None
+        else:
+            OpenEveryday = False if OpenEveryday == 'No' else 'Yes'
+        if len(LowTotalVisitRange) == 0 and len(HighTotalVisitRange) == 0:
+            LowTotalVisitRange = None
+            HighTotalVisitRange = None
+        elif len(LowTotalVisitRange) * len(HighTotalVisitRange) == 0:
+            return QtWidgets.QMessageBox.warning(self.MainWindow, "Range not valid", "Please enter both ranges",
+                                                 QtWidgets.QMessageBox.Ok)
+        if len(LowEventCount) == 0 and len(HighEventCount) == 0:
+            LowEventCount = None
+            HighEventCount = None
+        elif len(LowEventCount) * len(HighEventCount) == 0:
+            return QtWidgets.QMessageBox.warning(self.MainWindow, "Range not valid", "Please enter both ranges",
+                                                 QtWidgets.QMessageBox.Ok)
+        tableData = DataBaseManager.VisitorExploreSite(self.username, Name, OpenEveryday, StartDate, EndDate, LowTotalVisitRange, HighTotalVisitRange, LowEventCount, HighEventCount)
+        print (tableData)
+
 
     def showVisitorTransitDetail(self):
         self.MainWindow.close()
