@@ -1200,8 +1200,8 @@ def GetAllSiteReportByFilter(manager_username, startdate, endate, event_count_lo
                 "ON visit_event_name = staff.event_name AND eachday >= staff.startdate AND eachday <= staff.endate "
                 "GROUP BY visit_event_name , eachday) derived GROUP BY visit_event_name , eachday) derived1 "
                 "where date >= %s and date <= %s and sitename = (select sitename from sites "
-                "where sitemanager_id = (select employee_id from employees where username = %s))", startdate, endate,
-                manager_username)
+                "where sitemanager_id = (select employee_id from employees where username = %s))", (startdate, endate,
+                manager_username,))
             filtered_result = mycursor.fetchall()
             all_result = [i for n, i in enumerate(all_result) if i in filtered_result]
         if event_count_low is not None and event_count_high is not None:
@@ -1213,8 +1213,8 @@ def GetAllSiteReportByFilter(manager_username, startdate, endate, event_count_lo
                 "ON visit_event_name = staff.event_name AND eachday >= staff.startdate AND eachday <= staff.endate "
                 "GROUP BY visit_event_name , eachday) derived GROUP BY visit_event_name , eachday) derived1 "
                 "where event_count between %s and %s and sitename = (select sitename from sites "
-                "where sitemanager_id = (select employee_id from employees where username = %s))", event_count_low,
-                event_count_high, manager_username)
+                "where sitemanager_id = (select employee_id from employees where username = %s))", (event_count_low,
+                event_count_high, manager_username,))
             filtered_result = mycursor.fetchall()
             all_result = [i for n, i in enumerate(all_result) if i in filtered_result]
         if staff_count_low is not None and staff_count_high is not None:
@@ -1226,8 +1226,8 @@ def GetAllSiteReportByFilter(manager_username, startdate, endate, event_count_lo
                 "ON visit_event_name = staff.event_name AND eachday >= staff.startdate AND eachday <= staff.endate "
                 "GROUP BY visit_event_name , eachday) derived GROUP BY visit_event_name , eachday) derived1 "
                 "where staff_count between %s and %s and sitename = (select sitename from sites "
-                "where sitemanager_id = (select employee_id from employees where username = %s))", staff_count_low,
-                staff_count_high, manager_username)
+                "where sitemanager_id = (select employee_id from employees where username = %s))", (staff_count_low,
+                staff_count_high, manager_username,))
             filtered_result = mycursor.fetchall()
             all_result = [i for n, i in enumerate(all_result) if i in filtered_result]
         if total_visitor_low is not None and total_visitor_high:
@@ -1239,8 +1239,8 @@ def GetAllSiteReportByFilter(manager_username, startdate, endate, event_count_lo
                 "ON visit_event_name = staff.event_name AND eachday >= staff.startdate AND eachday <= staff.endate "
                 "GROUP BY visit_event_name , eachday) derived GROUP BY visit_event_name , eachday) derived1 "
                 "where total_visitor between %s and %s and sitename = (select sitename from sites "
-                "where sitemanager_id = (select employee_id from employees where username = %s))", total_visitor_low,
-                total_visitor_high, manager_username)
+                "where sitemanager_id = (select employee_id from employees where username = %s))", (total_visitor_low,
+                total_visitor_high, manager_username,))
             filtered_result = mycursor.fetchall()
             all_result = [i for n, i in enumerate(all_result) if i in filtered_result]
         if revenue_low is not None and revenue_high is not None:
@@ -1252,8 +1252,8 @@ def GetAllSiteReportByFilter(manager_username, startdate, endate, event_count_lo
                 "ON visit_event_name = staff.event_name AND eachday >= staff.startdate AND eachday <= staff.endate "
                 "GROUP BY visit_event_name , eachday) derived GROUP BY visit_event_name , eachday) derived1 "
                 "where revenue between %s and %s and sitename = (select sitename from sites "
-                "where sitemanager_id = (select employee_id from employees where username = %s))", revenue_low,
-                revenue_high, manager_username)
+                "where sitemanager_id = (select employee_id from employees where username = %s))", (revenue_low,
+                revenue_high, manager_username,))
             filtered_result = mycursor.fetchall()
             all_result = [i for n, i in enumerate(all_result) if i in filtered_result]
         return all_result
@@ -1318,6 +1318,19 @@ def StaffViewScheduleTableFilter(event_name, keyword, startdate, endate):
             filtered_result = mycursor.fetchall()
             all_result = [i for n, i in enumerate(all_result) if i in filtered_result]
         return all_result
+
+# def StaffEventDetail():
+#     with mydb as mycursor:
+#         # first get ALL result
+#         mycursor.execute(
+#             "SELECT DISTINCT staff_visitor_revenue.event_name, staff_visitor_revenue.sitename, startdate, "
+#             "endate, duration, revenue / total_visit AS price, capacity, event_description, fname, lname "
+#             "FROM staff_visitor_revenue JOIN (SELECT capacity, event_description, event_name, sitename, "
+#             "startdate FROM site_events) cap ON cap.event_name = staff_visitor_revenue.event_name "
+#             "AND cap.sitename = staff_visitor_revenue.sitename AND cap.startdate = staff_visitor_revenue.startdate "
+#             "JOIN (SELECT fname, lname, employee_id FROM alluser) name ON name.employee_id IN (SELECT employee_id "
+#             "FROM assign_to where sitename = %s) WHERE staff_visitor_revenue.sitename = %s")
+#         return mycursor.fetchall()
 
 def fetchVisitorTransitDetail(sitename, TransportType):
     """
