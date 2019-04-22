@@ -1129,7 +1129,7 @@ class Controller():
     def updateTransit(self, oldRoute):
         Route = self.MainWindow.AdministratorEditTransit.lineEdit.text()
         Price = self.MainWindow.AdministratorEditTransit.lineEdit_2.text()
-        TransitType = self.MainWindow.AdministratorEditTransit.label_2.setText.text()
+        TransitType = self.MainWindow.AdministratorEditTransit.label_2.text()
         if not isFloat(Price):
             return QtWidgets.QMessageBox.warning(self.MainWindow, "Price not valid", "Price must be a float",
                                                  QtWidgets.QMessageBox.Ok)
@@ -1972,7 +1972,7 @@ class Controller():
         OpenEveryday = self.MainWindow.VisitorSiteDetail.textBrowser_2.toPlainText()
         Address = self.MainWindow.VisitorSiteDetail.textBrowser_3.toPlainText()
         VisitDate = self.MainWindow.VisitorSiteDetail.dateEdit.date().toPyDate()
-        
+
 
     def showVisitorVisitHistory(self):
         self.MainWindow.close()
