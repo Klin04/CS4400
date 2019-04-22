@@ -413,7 +413,7 @@ def UpdateTransitDeleteAllSites(connect_type, connect_route):
 def GetAllSites():
     """
     returns all the distinct sitenames
-    also for screen 28
+    also for screen 28 , 33
     :return:
     """
     with mydb as mycursor:
@@ -1272,9 +1272,9 @@ def GetDailyDetail(date):
             "sitename FROM screen_29 JOIN (SELECT staff_count, event_name, startdate, endate, revenue, sitename "
             "FROM staff_visitor_revenue) staff ON visit_event_name = staff.event_name AND eachday >= staff.startdate "
             "AND eachday <= staff.endate GROUP BY visit_event_name , eachday) derived "
-            "GROUP BY visit_event_name , eachday) derived1, alluser where employee_id in "
+            "GROUP BY visit_event_name , eachday) derived1, alluser where date = %s employee_id in "
             "(select employee_id from assign_to where sitename = derived1.sitename and event_name = "
-            "derived1.visit_event_name) where date = %s", date)
+            "derived1.visit_event_name)", date)
         return mycursor.fetchone()
 
 def StaffViewScheduleTableFilter(event_name, keyword, startdate, endate):
@@ -1332,6 +1332,53 @@ def StaffEventDetail(sitename):
             "AND cap.sitename = staff_visitor_revenue.sitename AND cap.startdate = staff_visitor_revenue.startdate "
             "JOIN (SELECT fname, lname, employee_id FROM alluser) name ON name.employee_id IN (SELECT employee_id "
             "FROM assign_to where sitename = %s) WHERE staff_visitor_revenue.sitename = %s", (sitename, sitename,))
+        return mycursor.fetchone()
+
+# def VistorExploreEvent():
+#     with mydb as mycursor:
+#         # first get ALL result
+#         mycursor.execute(
+#             "select event_name, sitename, startdate, endate, staff_count from staff_visitor_revenue")
+#         all_result = mycursor.fetchall()
+#         # Start filtering if this filtering type is applied
+#         if event_name is not None:
+#             mycursor.execute(
+#                 "select event_name, sitename, startdate, endate, staff_count from staff_visitor_revenue where event_name = %s",
+#                 event_name)
+#             filtered_result = mycursor.fetchall()
+#             all_result = [i for n, i in enumerate(all_result) if i in filtered_result]
+#         if keyword is not None:
+#             mycursor.execute(
+#                 "select event_name, sitename, startdate, endate, staff_count from staff_visitor_revenue "
+#                 "where keyword like concat('%', keyword, '%')", keyword)
+#             filtered_result = mycursor.fetchall()
+#             all_result = [i for n, i in enumerate(all_result) if i in filtered_result]
+#         if startdate is not None:
+#             mycursor.execute(
+#                 "select event_name, sitename, startdate, endate, staff_count from staff_visitor_revenue "
+#                 "where startdate >= %s", startdate)
+#             filtered_result = mycursor.fetchall()
+#             all_result = [i for n, i in enumerate(all_result) if i in filtered_result]
+#         if endate is not None:
+#             mycursor.execute(
+#                 "select event_name, sitename, startdate, endate, staff_count from staff_visitor_revenue "
+#                 "where endate >= %s", endate)
+#             filtered_result = mycursor.fetchall()
+#             all_result = [i for n, i in enumerate(all_result) if i in filtered_result]
+#         return all_result
+
+def VisitorEventDetail(sitename, eventname, startDate):
+    """
+    screen 34
+    :param sitename:
+    :param eventname:
+    :param startDate:
+    :return:
+    """
+    with mydb as mycursor:
+        mycursor.execute(
+            "SELECT event_name, sitename, startdate, endate, ticket_price, tickets_remainig, total_visit, "
+            "event_description FROM screen_33 where sitenames = %s, eventname = %s, startDate = %s", (sitename, eventname, startDate,))
         return mycursor.fetchone()
 
 def fetchVisitorTransitDetail(sitename, TransportType):
