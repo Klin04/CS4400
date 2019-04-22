@@ -171,7 +171,7 @@ def GetAllRoutesWithPriceRange(low_price, high_price):
     with mydb as mycursor:
         mycursor.execute("select transit_type, transit_route , price, count(*) as connected_sites from connect, "
                          "(select transit_type, transit_route , price from transits where price "
-                         "BETWEEN %s And %s) as temp where connect.connect_type = temp.transit_type "
+                         ">= %s And price <= %s) as temp where connect.connect_type = temp.transit_type "
                          "and connect.connect_route = temp.transit_route group by transit_type , transit_route",
                          (low_price, high_price,))
         return mycursor.fetchall()
@@ -1258,6 +1258,66 @@ def GetAllSiteReportByFilter(manager_username, startdate, endate, event_count_lo
             all_result = [i for n, i in enumerate(all_result) if i in filtered_result]
         return all_result
 
+def GetDailyDetail():
+    """
+    screen 30
+    :return:
+    """
+    with mydb as mycursor:
+        # first get ALL result
+        mycursor.execute(
+            "select date, visit_event_name, staff_count, total_visitor, revenue, sitename, fname, lname from "
+            "(SELECT eachday AS date, visit_event_name, staff_count, total_visitor, revenue, sitename "
+            "FROM (SELECT eachday, SUM(total_visit) AS total_visitor, visit_event_name, staff_count, revenue, "
+            "sitename FROM screen_29 JOIN (SELECT staff_count, event_name, startdate, endate, revenue, sitename "
+            "FROM staff_visitor_revenue) staff ON visit_event_name = staff.event_name AND eachday >= staff.startdate "
+            "AND eachday <= staff.endate GROUP BY visit_event_name , eachday) derived "
+            "GROUP BY visit_event_name , eachday) derived1, alluser where employee_id in "
+            "(select employee_id from assign_to where sitename = derived1.sitename and event_name = "
+            "derived1.visit_event_name)")
+        all_result = mycursor.fetchall()
+        return all_result
+
+def StaffViewScheduleTableFilter(event_name, keyword, startdate, endate):
+    """
+    screen 31
+    :param event_name:
+    :param keyword:
+    :param startdate:
+    :param endate:
+    :return:
+    """
+    with mydb as mycursor:
+        # first get ALL result
+        mycursor.execute(
+            "select event_name, sitename, startdate, endate, staff_count from staff_visitor_revenue")
+        all_result = mycursor.fetchall()
+        # Start filtering if this filtering type is applied
+        if event_name is not None:
+            mycursor.execute(
+                "select event_name, sitename, startdate, endate, staff_count from staff_visitor_revenue where event_name = %s",
+                event_name)
+            filtered_result = mycursor.fetchall()
+            all_result = [i for n, i in enumerate(all_result) if i in filtered_result]
+        if keyword is not None:
+            mycursor.execute(
+                "select event_name, sitename, startdate, endate, staff_count from staff_visitor_revenue "
+                "where keyword like concat('%', keyword, '%')", keyword)
+            filtered_result = mycursor.fetchall()
+            all_result = [i for n, i in enumerate(all_result) if i in filtered_result]
+        if startdate is not None:
+            mycursor.execute(
+                "select event_name, sitename, startdate, endate, staff_count from staff_visitor_revenue "
+                "where startdate >= %s", startdate)
+            filtered_result = mycursor.fetchall()
+            all_result = [i for n, i in enumerate(all_result) if i in filtered_result]
+        if endate is not None:
+            mycursor.execute(
+                "select event_name, sitename, startdate, endate, staff_count from staff_visitor_revenue "
+                "where endate >= %s", endate)
+            filtered_result = mycursor.fetchall()
+            all_result = [i for n, i in enumerate(all_result) if i in filtered_result]
+        return all_result
 
 def fetchVisitorTransitDetail(sitename, TransportType):
     """
