@@ -354,7 +354,7 @@ class Controller():
     def RegisterVisitor(self):
         Fname = self.MainWindow.RegisterVisitorOnlyPage.lineEdit.text()
         Lname = self.MainWindow.RegisterVisitorOnlyPage.lineEdit_2.text()
-        Username = self.MainWindow.RegisterVistorOnlyPage.lineEdit_3.text()
+        Username = self.MainWindow.RegisterVisitorOnlyPage.lineEdit_3.text()
         Password = self.MainWindow.RegisterVisitorOnlyPage.lineEdit_4.text()
         CPassword = self.MainWindow.RegisterVisitorOnlyPage.lineEdit_5.text()
         Emails = []
@@ -832,6 +832,7 @@ class Controller():
             Username = None
         tableData = DataBaseManager.GetAllAdministratorManageUserInformationFilterByStatus_EmpType_Username(
             Username, Type, Status)
+        print(tableData)
         self.MainWindow.AdministratorManageUser.tableWidget.setSortingEnabled(False)
         for i in range(len(tableData)):
             self.MainWindow.AdministratorManageUser.tableWidget.insertRow(i)
