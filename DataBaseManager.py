@@ -1584,7 +1584,7 @@ def fetchVisitorSiteDetail(sitename):
     Screen 37
     """
     with mydb as mycursor:
-        mycursor.execute("select sitename, address, openeverday from sites where sitename = %s", sitename)
+        mycursor.execute("select sitename, address, openeveryday from sites where sitename = %s", sitename)
         return mycursor.fetchall()
 
 def log_visit_to_site(username, sitename):
