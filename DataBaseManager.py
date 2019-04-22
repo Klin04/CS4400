@@ -711,18 +711,12 @@ def StaffAssignedAndAvailibleStaffForEvent(event_name, sitename, start_date, end
     """
     with mydb as mycursor:
         mycursor.execute(
-            "SELECT fname, lname FROM ((SELECT fname, lname FROM users WHERE username IN (SELECT username "
-            "FROM employees WHERE employee_id IN (SELECT employee_id FROM assign_to WHERE event_name = %s "
-            "AND sitename = %s AND startdate = %s))) AS temp) "
-            "UNION SELECT fname, lname "
-            "FROM users "
-            "WHERE username IN (SELECT username FROM employees WHERE employee_id NOT IN (SELECT employee_id "
-            "FROM assign_to, site_events WHERE assign_to.sitename = site_events.sitename "
-            "AND assign_to.event_name = site_events.event_name "
-            "AND assign_to.sitename <> %s "
-            "AND assign_to.event_name <> %s "
-            "AND (site_events.endate < %s "
-            "OR site_events.startdate > %s)))",
+            "SELECT fname, lname from users where username in (select username from employees where employee_id in (select employee_id "
+            "from assign_to where event_name = %s and sitename = %s and startdate = %s)) "
+            "union "
+            "(select fname, lname from users where username in (select username from employees where employee_id not in "
+            "(select employee_id from assign_to, site_events where assign_to.sitename = site_events.sitename and assign_to.event_name = site_events.event_name "
+            "and assign_to.sitename <> %s and assign_to.event_name <> %s and (site_events.endate < %s or site_events.startdate > %s))))",
             (event_name, sitename, start_date, sitename, event_name, start_date, end_date,))
         all_result = mycursor.fetchall()
         return all_result
@@ -1473,7 +1467,20 @@ def VisitorEventLogVisit(visit_event_date, visit_event_sitename, visit_event_sta
             "visit_event_name,visit_event_username) values(%s, %s, %s, %s, %s)",
             (visit_event_date, visit_event_sitename, visit_event_startdate,visit_event_name,visit_event_username,))
 
-def VisitorExploreEvent(username, sitename):
+def VisitorExploreSite(username, sitename, open_everyday, startdates, enddates, total_visit_low, total_visit_high, event_count_low, event_count_high):
+    """
+    screen 35
+    :param username:
+    :param sitename:
+    :param open_everyday:
+    :param startdates:
+    :param enddates:
+    :param total_visit_low:
+    :param total_visit_high:
+    :param event_count_low:
+    :param event_count_high:
+    :return:
+    """
     with mydb as mycursor:
         # first get ALL result
         mycursor.execute(
@@ -1485,15 +1492,60 @@ def VisitorExploreEvent(username, sitename):
             "group by visit_site_name", username)
         all_result = mycursor.fetchall()
         # Start filtering if this filtering type is applied
-        # TODO: not done
         if sitename is not None:
+            mycursor.execute(
+                "select visit_site_name, temps.event_count, temps.total_visits, count(visit_site_username) "
+                "as my_visit from visit_site, (select sitename, count(site_events.event_name) as event_count, "
+                "temp.total_visit as total_visits from site_events, (select visit_site_name , "
+                "count(visit_site_username) as total_visit from visit_site group by visit_site_name) as temp "
+                "where sitename = visit_site_name group by sitename) as temps where visit_site_name = sitename "
+                "and visit_site_username = %s and visit_site_name = %s group by visit_site_name",
+                (username, sitename, ))
+            filtered_result = mycursor.fetchall()
+            all_result = [i for n, i in enumerate(all_result) if i in filtered_result]
+        if open_everyday is not None:
+            mycursor.execute(
+                "select visit_site_name, temps.event_count, temps.total_visits, count(visit_site_username) "
+                "as my_visit from visit_site, (select sitename, count(site_events.event_name) as event_count, "
+                "temp.total_visit as total_visits from site_events, (select visit_site_name , count(visit_site_username) "
+                "as total_visit from visit_site group by visit_site_name) as temp where sitename = visit_site_name "
+                "and sitename in (select sitename from sites where openeveryday = %s) group by sitename) "
+                "as temps where visit_site_name = sitename and visit_site_username = %s group by visit_site_name",
+                (open_everyday, username, ))
+            filtered_result = mycursor.fetchall()
+            all_result = [i for n, i in enumerate(all_result) if i in filtered_result]
+        if startdates is not None and enddates is not None:
+            mycursor.execute(
+                "select visit_site_name, temps.event_count, temps.total_visits, count(visit_site_username) "
+                "as my_visit from visit_site, (select sitename, count(site_events.event_name) as event_count, "
+                "temp.total_visit as total_visits from site_events, (select visit_site_name , count(visit_site_username) "
+                "as total_visit from visit_site group by visit_site_name) as temp where sitename = visit_site_name "
+                "and sitename in (select visit_site_name from visit_site where visit_event_date between %s "
+                "and %s) group by sitename) as temps where visit_site_name = sitename "
+                "and visit_site_username = %s group by visit_site_name",
+                (startdates, enddates, username, ))
+            filtered_result = mycursor.fetchall()
+            all_result = [i for n, i in enumerate(all_result) if i in filtered_result]
+        if total_visit_low is not None and total_visit_high is not None:
             mycursor.execute(
                 "select visit_site_name, temps.event_count, temps.total_visits, count(visit_site_username) "
                 "as my_visit from visit_site, (select sitename, count(site_events.event_name) as event_count, "
                 "temp.total_visit as total_visits from site_events, (select visit_site_name , count(visit_site_username) "
                 "as total_visit from visit_site group by visit_site_name) as temp where sitename = visit_site_name "
                 "group by sitename) as temps where visit_site_name = sitename and visit_site_username = %s "
-                "group by visit_site_name", (username, sitename, ))
+                "and temps.total_visits between %s and %s group by visit_site_name",
+                (username, total_visit_low, total_visit_high, ))
+            filtered_result = mycursor.fetchall()
+            all_result = [i for n, i in enumerate(all_result) if i in filtered_result]
+        if event_count_low is not None and event_count_high is not None:
+            mycursor.execute(
+                "select visit_site_name, temps.event_count, temps.total_visits, count(visit_site_username) "
+                "as my_visit from visit_site,  (select sitename, count(site_events.event_name) as event_count, "
+                "temp.total_visit as total_visits from site_events, (select visit_site_name , count(visit_site_username) "
+                "as total_visit from visit_site group by visit_site_name) as temp where sitename = visit_site_name "
+                "group by sitename) as temps where visit_site_name = sitename and visit_site_username = % "
+                "and temps.event_count between % and % group by visit_site_name",
+                (username, event_count_low, event_count_high, ))
             filtered_result = mycursor.fetchall()
             all_result = [i for n, i in enumerate(all_result) if i in filtered_result]
         return all_result
