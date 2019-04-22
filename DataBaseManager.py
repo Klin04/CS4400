@@ -292,6 +292,10 @@ def GetManagersNotAssignedSite():
                          "(select distinct username from employees where erole = 'Manager' and employee_id not in (select sitemanager_id from sites))")
         return mycursor.fetchall()
 
+def GetEmployeeIdByFullName(fullname):
+    with mydb as mycursor:
+        mycursor.execute("select employee_id from employees where username in (select username from users where %s = concat(fname, ' ', lname))", fullname)
+        return mycursor.fetchone()
 
 def GetEmployeeInformationForManageProfile(username):
     """

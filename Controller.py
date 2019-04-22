@@ -1008,6 +1008,7 @@ class Controller():
         if not DataBaseManager.IsSitenameUnique(Name):
             return QtWidgets.QMessageBox.warning(self.MainWindow, "Sitename not valid", "Sitename is not unique",
                                                  QtWidgets.QMessageBox.Ok)
+        Manager = DataBaseManager.GetEmployeeIdByFullName(Manager)['employee_id']
         DataBaseManager.AddNewSites(Name, int(Zipcode), Address, openEveryday, Manager)
 
     def showAdministratorManageTransit(self):
