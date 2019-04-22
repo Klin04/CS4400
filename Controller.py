@@ -1764,7 +1764,13 @@ class Controller():
         self.MainWindow.VisitorEventDetail.pushButton_2.clicked.connect(self.LogVisit)
         self.MainWindow.VisitorEventDetail.startDate = EventDate
         VisitorEventDetailDB = DataBaseManager.VisitorEventDetail(SiteName, EventName, EventDate)
-        print(VisitorEventDetailDB)
+        self.MainWindow.VisitorEventDetail.textBrowser.setText(VisitorEventDetailDB['event_name'])
+        self.MainWindow.VisitorEventDetail.textBrowser_2.setText(VisitorEventDetailDB['sitename'])
+        self.MainWindow.VisitorEventDetail.textBrowser_3.setText(str(EventDate))
+        self.MainWindow.VisitorEventDetail.textBrowser_4.setText(str(VisitorEventDetailDB['endate']))
+        self.MainWindow.VisitorEventDetail.textBrowser_5.setText(VisitorEventDetailDB['ticket_price'])
+        self.MainWindow.VisitorEventDetail.textBrowser_6.setText(VisitorEventDetailDB['ticket_remainig'])
+        self.MainWindow.VisitorEventDetail.textBrowser.setText(VisitorEventDetailDB['dsecription'])
         # if self.user == 'User':
         #     self.MainWindow.VisitorEventDetail.pushButton.clicked.connect(self.showUserFunctionality)
         # elif self.user == "Staff":
