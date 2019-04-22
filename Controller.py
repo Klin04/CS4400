@@ -909,10 +909,8 @@ class Controller():
 
 
     def deleteSite(self):
-        Site = None
-        try:
-            Site = self.MainWindow.AdministratorManageTransit.tableWidget.selectionModel().selectedRows()[0]
-        except:
+        Site = self.MainWindow.AdministratorManageTransit.tableWidget.selectionModel().selectedRows()
+        if len(Site) == 0:
             return QtWidgets.QMessageBox.warning(self.MainWindow, "Haven't selected a site",
                                                  "Please select a site first", QtWidgets.QMessageBox.Ok)
         Sitename = self.MainWindow.AdministratorManageTransit.tableWidget.item(Site.row(), 0).text()
