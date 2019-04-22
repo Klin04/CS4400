@@ -807,7 +807,7 @@ class Controller():
 
     def approveUsers(self):
         User = self.MainWindow.AdministratorManageUser.tableWidget.selectionModel().selectedRows()[0]
-        Username = self.MainWindow.AdministratorManageUser.tableWidget.item(User.row(), 0)
+        Username = self.MainWindow.AdministratorManageUser.tableWidget.item(User.row(), 0).text()
         DataBaseManager.ApproveUserStatus(Username)
 
     def declineUsers(self):
@@ -1826,6 +1826,8 @@ class Controller():
             self.MainWindow.VisitorExploreSite.pushButton_4.clicked.connect(self.showVisitorFunctionality)
         self.MainWindow.VisitorExploreSite.dateEdit.setDate(QtCore.QDate.currentDate())
         self.MainWindow.VisitorExploreSite.dateEdit_2.setDate(QtCore.QDate.currentDate())
+        self.MainWindow.VisitorExploreSite.tableWidget.setSelectionMode(QtWidgets.QAbstractItemView.SingleSelection)
+        self.MainWindow.VisitorExploreSite.tableWidget.setSelectionBehavior(QtWidgets.QAbstractItemView.SelectRows)
 
     def filterVisitorSites(self):
         Name = self.MainWindow.VisitorExploreSite.comboBox.currentText()
@@ -1868,6 +1870,8 @@ class Controller():
         self.MainWindow.VisitorTransitDetail.dateEdit.setDate(QtCore.QDate.currentDate())
         self.MainWindow.VisitorVisitHistory.tableWidget.setSelectionMode(QtWidgets.QAbstractItemView.SingleSelection)
         self.MainWindow.VisitorVisitHistory.tableWidget.setSelectionBehavior(QtWidgets.QAbstractItemView.SelectRows)
+        self.MainWindow.VisitorVisitHistory.comboxBox.currentTextChanged.connect(self.GetVisitorTransitDetail)
+        tableData = DataBaseManager.fetchVisitorTransitDetail()
         # if self.user == 'User':
         #     self.MainWindow.VisitorTransitDetail.pushButton.clicked.connect(self.showUserFunctionality)
         # elif self.user == "Staff":
@@ -1884,6 +1888,19 @@ class Controller():
         #     self.MainWindow.VisitorTransitDetail.pushButton.clicked.connect(self.showAdminVisitorFunctionality)
         # elif self.user == 'Visitor':
         #     self.MainWindow.VisitorTransitDetail.pushButton.clicked.connect(self.showVisitorFunctionality)
+
+    def GetVisitorTransitDetail(self):
+        Site = self.MainWindow.VisitorTransitDetail.label_2.text()
+        TransportType = self.MainWindow.VisitorTransitDetail.comboBox.currentText()
+        tableData = DataBaseManager.fetchVisitorTransitDetail(Site, TransportType)
+        self.MainWindow.VisitorTransitDetail.tableWidget.setSortingEnabled(False)
+        for i in range(len(tableData)):
+            self.MainWindow.VisitorTransitDetail.tableWidget.insertRow(i)
+            for column, key in enumerate(tableData[i].keys()):
+                newItem = QtWidgets.QTableWidgetItem()
+                newItem.setText(str(tableData[i][key]))
+                self.MainWindow.VisitorTransitDetail.tableWidget.setItem(i, column, newItem)
+        self.MainWindow.VisitorTransitDetail.tableWidget.setSortingEnabled(True)
 
     def LogVisitorTransit(self):
         Site = self.MainWindow.VisitorTransitDetail.label_2.text()
