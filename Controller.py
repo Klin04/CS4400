@@ -41,6 +41,7 @@ import VisitorSiteDetail
 import VisitorVisitHistory
 import DataBaseManager
 import validators
+from datetime import datetime
 
 def isValidEmail(email):
     return bool(validators.email(email))
@@ -1554,17 +1555,18 @@ class Controller():
         self.MainWindow.ManagerSiteReport.tableWidget.setSortingEnabled(True)
 
     def showManagerDailyDetail(self):
-        if len(self.MainWindow.ManagerSiteReport.tableWidget.selectionModel().selectedRows()):
+        if not len(self.MainWindow.ManagerSiteReport.tableWidget.selectionModel().selectedRows()):
             return QtWidgets.QMessageBox.warning(self.MainWindow, "Haven't selected a row",
                                                  "Please select a row before seeing detail",
                                                  QtWidgets.QMessageBox.Ok)
         Date = self.MainWindow.ManagerSiteReport.tableWidget.selectionModel().selectedRows()[0]
-        selectedDate = self.MainWindow.AdministratorManageTransit.tableWidget.item(Date.row(), 0).text()
+        selectedDate = self.MainWindow.ManagerSiteReport.tableWidget.item(Date.row(), 0).text()
+        selectedDate = datetime.strptime(selectedDate, '%Y-%m-%d').date()
         self.MainWindow.close()
         self.MainWindow = MainWindow()
         self.MainWindow.startManagerDailyDetail()
         self.MainWindow.ManagerDailyDetail.pushButton.clicked.connect(self.showManagerSiteReport)
-        tableData = DataBaseManager.GetDailyDetail(Date)
+        tableData = DataBaseManager.GetDailyDetail(selectedDate)
         self.MainWindow.ManagerDailyDetail.tableWidget.setSortingEnabled(False)
         for i in range(len(tableData)):
             self.MainWindow.ManagerDailyDetail.tableWidget.insertRow(i)
