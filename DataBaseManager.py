@@ -4,7 +4,7 @@ import base64
 mydb = pymysql.connect(
     host="localhost",
     user="root",
-    passwd="Lkj!19990424",
+    passwd="",
     database="project3",
     cursorclass=pymysql.cursors.DictCursor
 )
